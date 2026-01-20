@@ -1,0 +1,106 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 600;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+/* Tamaños */
+.badge--small {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.badge--medium {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.badge--large {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+}
+
+/* Variantes */
+.badge--default {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.badge--primary {
+  background-color: #ddd6fe;
+  color: #5b21b6;
+}
+
+.badge--success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.badge--danger {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.badge--warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.badge--info {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.badge--dark {
+  background-color: #1f2937;
+  color: white;
+}
+
+/* Badge redondeado (pill) */
+.badge--rounded {
+  border-radius: 999px;
+}
+
+/* Badge con punto */
+.badge--dot {
+  padding-left: 0.5rem;
+}
+
+.badge__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge--default .badge__dot {
+  background-color: #6b7280;
+}
+
+.badge--primary .badge__dot {
+  background-color: #7c3aed;
+}
+
+.badge--success .badge__dot {
+  background-color: #10b981;
+}
+
+.badge--danger .badge__dot {
+  background-color: #ef4444;
+}
+
+.badge--warning .badge__dot {
+  background-color: #f59e0b;
+}
+
+.badge--info .badge__dot {
+  background-color: #3b82f6;
+}
+
+.badge--dark .badge__dot {
+  background-color: #f3f4f6;
+}

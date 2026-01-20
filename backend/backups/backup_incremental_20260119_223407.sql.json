@@ -1,0 +1,8 @@
+{
+  "backup_id": "backup_incremental_20260119_223407",
+  "type": "incremental",
+  "timestamp": "2026-01-19T22:34:07.833987",
+  "filename": "backup_incremental_20260119_223407.sql",
+  "tables": null,
+  "size_bytes": 10626
+}

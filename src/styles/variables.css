@@ -1,0 +1,377 @@
+/**
+ * Variables CSS Globales - NIER AUTOMATA THEME
+ * Inspirado en 2B: elegancia, tecnología y contraste
+ */
+
+:root {
+  /* ========================================
+     COLORES PRINCIPALES - NIER AUTOMATA THEME
+     ======================================== */
+  --primary: #d4af37; /* Dorado elegante (detalles de 2B) */
+  --primary-dark: #b8941f;
+  --primary-light: #e6c966;
+  --secondary: #00d9ff; /* Cian tecnológico (HUD) */
+  --secondary-dark: #00b8d4;
+  --secondary-light: #5ce1ff;
+
+  --accent-pearl: #e8e6e3; /* Blanco perla (cabello de 2B) */
+  --accent-leather: #2d2520; /* Negro cuero */
+  --accent-metal: #8b8680; /* Gris metálico */
+
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, #d4af37 0%, #00d9ff 100%);
+  --gradient-light: linear-gradient(135deg, #e6c966 0%, #5ce1ff 100%);
+  --gradient-dark: linear-gradient(135deg, #b8941f 0%, #00b8d4 100%);
+  --gradient-elegant: linear-gradient(
+    180deg,
+    #0a0a0a 0%,
+    #1a1a1a 50%,
+    #0a0a0a 100%
+  );
+  --gradient-panel: linear-gradient(145deg, #1a1a1a 0%, #0f0f0f 100%);
+  --gradient-glow: radial-gradient(
+    circle,
+    rgba(212, 175, 55, 0.15) 0%,
+    transparent 70%
+  );
+
+  /* ========================================
+     COLORES SEMÁNTICOS
+     ======================================== */
+  --success: #4ade80;
+  --success-light: rgba(74, 222, 128, 0.15);
+  --success-dark: #22c55e;
+
+  --error: #ff4757;
+  --error-light: rgba(255, 71, 87, 0.15);
+  --error-dark: #d63447;
+
+  --warning: #ffa502;
+  --warning-light: rgba(255, 165, 2, 0.15);
+  --warning-dark: #ff7f00;
+
+  --info: #00d9ff;
+  --info-light: rgba(0, 217, 255, 0.15);
+  --info-dark: #00b8d4;
+
+  /* ========================================
+     COLORES NEUTRALES - DARK THEME
+     ======================================== */
+  --gray-50: #f5f5f5;
+  --gray-100: #e8e6e3;
+  --gray-200: #c4c2bf;
+  --gray-300: #9a9895;
+  --gray-400: #706d6a;
+  --gray-500: #4a4845;
+  --gray-600: #353330;
+  --gray-700: #252320;
+  --gray-800: #1a1918;
+  --gray-900: #0f0e0d;
+
+  --white: #ffffff;
+  --black: #000000;
+  --pure-black: #0a0a0a;
+
+  /* ========================================
+     TIPOGRAFÍA
+     ======================================== */
+  --font-family-base:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-family-heading: 'Rajdhani', 'Orbitron', var(--font-family-base);
+  --font-family-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+
+  /* Tamaños de fuente */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+  --font-size-5xl: 3rem; /* 48px */
+
+  /* Pesos de fuente */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Line heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* ========================================
+     ESPACIADO
+     ======================================== */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem; /* 4px */
+  --spacing-2: 0.5rem; /* 8px */
+  --spacing-3: 0.75rem; /* 12px */
+  --spacing-4: 1rem; /* 16px */
+  --spacing-5: 1.25rem; /* 20px */
+  --spacing-6: 1.5rem; /* 24px */
+  --spacing-8: 2rem; /* 32px */
+  --spacing-10: 2.5rem; /* 40px */
+  --spacing-12: 3rem; /* 48px */
+  --spacing-16: 4rem; /* 64px */
+  --spacing-20: 5rem; /* 80px */
+
+  /* ========================================
+     BORDES
+     ======================================== */
+  --border-radius-sm: 2px;
+  --border-radius-base: 4px;
+  --border-radius-lg: 8px;
+  --border-radius-xl: 12px;
+  --border-radius-2xl: 16px;
+  --border-radius-full: 9999px;
+
+  --border-width-thin: 1px;
+  --border-width-base: 2px;
+  --border-width-thick: 3px;
+
+  /* ========================================
+     SOMBRAS - ELEGANTES Y SUTILES
+     ======================================== */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.8);
+  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.85);
+  --shadow-2xl: 0 20px 60px rgba(0, 0, 0, 0.9);
+
+  /* Sombras con glow dorado */
+  --shadow-glow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
+  --shadow-glow-cyan: 0 0 20px rgba(0, 217, 255, 0.3);
+  --shadow-glow-strong:
+    0 0 30px rgba(212, 175, 55, 0.5), 0 0 60px rgba(212, 175, 55, 0.2);
+
+  /* ========================================
+     TRANSICIONES
+     ======================================== */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slower: 600ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ========================================
+     Z-INDEX
+     ======================================== */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+
+  /* ========================================
+     BREAKPOINTS (para uso en JS)
+     ======================================== */
+  --breakpoint-mobile: 640px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  --breakpoint-wide: 1280px;
+
+  /* ========================================
+     DIMENSIONES
+     ======================================== */
+  --navbar-height: 70px;
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 80px;
+  --max-width-container: 1400px;
+
+  /* ========================================
+     TEMA OSCURO (DEFAULT)
+     ======================================== */
+  --bg-primary: #0f0e0d;
+  --bg-secondary: #1a1918;
+  --bg-tertiary: #252320;
+  --bg-elevated: #2d2520;
+  --text-primary: #e8e6e3;
+  --text-secondary: #9a9895;
+  --text-muted: #706d6a;
+  --border-color: #353330;
+  --border-subtle: #252320;
+}
+
+/* ========================================
+   TEMA CLARO (OPCIONAL)
+   ======================================== */
+[data-theme='light'] {
+  --bg-primary: #f5f5f5;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8e6e3;
+  --bg-elevated: #ffffff;
+  --text-primary: #0f0e0d;
+  --text-secondary: #4a4845;
+  --text-muted: #706d6a;
+  --border-color: #c4c2bf;
+  --border-subtle: #e8e6e3;
+
+  /* Ajustar sombras para tema claro */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* ========================================
+   UTILIDADES DE GRADIENTES
+   ======================================== */
+.gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.gradient-elegant {
+  background: var(--gradient-elegant);
+}
+
+.gradient-panel {
+  background: var(--gradient-panel);
+}
+
+.gradient-text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #e6c966 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================================
+   UTILIDADES DE SOMBRAS
+   ======================================== */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow {
+  box-shadow: var(--shadow-base);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+.shadow-2xl {
+  box-shadow: var(--shadow-2xl);
+}
+
+.shadow-glow-gold {
+  box-shadow: var(--shadow-glow-gold);
+}
+.shadow-glow-cyan {
+  box-shadow: var(--shadow-glow-cyan);
+}
+.shadow-glow-strong {
+  box-shadow: var(--shadow-glow-strong);
+}
+
+/* ========================================
+   EFECTOS ESPECIALES - NIER STYLE
+   ======================================== */
+.glass-effect {
+  background: rgba(26, 25, 24, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.metal-panel {
+  background: var(--gradient-panel);
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.metal-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212, 175, 55, 0.3),
+    transparent
+  );
+}
+
+.hud-element {
+  font-family: var(--font-family-mono);
+  color: var(--secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: var(--font-size-sm);
+}
+
+/* ========================================
+   UTILIDADES DE ANIMACIÓN
+   ======================================== */
+.transition {
+  transition: all var(--transition-base);
+}
+.transition-fast {
+  transition: all var(--transition-fast);
+}
+.transition-slow {
+  transition: all var(--transition-slow);
+}
+
+/* Animación de parpadeo sutil (como HUD) */
+@keyframes subtle-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.pulse-subtle {
+  animation: subtle-pulse 3s ease-in-out infinite;
+}
+
+/* Animación de escaneo */
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.scan-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--secondary),
+    transparent
+  );
+  animation: scan-line 3s linear infinite;
+  opacity: 0.3;
+}
