@@ -18,9 +18,9 @@ import {
 } from './pages'
 import ProtectedRoute from './components/ProtectedRoute'
 import NotificationContainer from './components/NotificationContainer'
+import DatabaseMonitor from './components/DatabaseMonitor'
+import EventDetail from './pages/EventDetail'
 import './styles/globals.css'
-
-import EventDetail from './pages/EventDetail' // ← AGREGAR IMPORT
 
 function App() {
   return (
@@ -37,8 +37,7 @@ function App() {
                 {/* Rutas Públicas y de Usuario */}
                 <Route element={<MainLayout />}>
                   <Route path='/' element={<Home />} />
-                  <Route path='/event/:id' element={<EventDetail />} />{' '}
-                  {/* ← AGREGAR */}
+                  <Route path='/event/:id' element={<EventDetail />} />
                   <Route
                     path='/profile'
                     element={
@@ -51,12 +50,22 @@ function App() {
 
                 {/* Rutas de Dashboard */}
                 <Route element={<DashboardLayout />}>
-                  {/* Admin */}
+                  {/* Admin - Dashboard Principal */}
                   <Route
                     path='/admin'
                     element={
                       <ProtectedRoute allowedRoles={['admin']}>
                         <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  {/* Admin - Monitor de Base de Datos */}
+                  <Route
+                    path='/admin/database-monitor'
+                    element={
+                      <ProtectedRoute allowedRoles={['admin']}>
+                        <DatabaseMonitor />
                       </ProtectedRoute>
                     }
                   />

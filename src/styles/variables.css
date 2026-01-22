@@ -10,18 +10,20 @@
   --primary: #d4af37; /* Dorado elegante (detalles de 2B) */
   --primary-dark: #b8941f;
   --primary-light: #e6c966;
-  --secondary: #00d9ff; /* Cian tecnológico (HUD) */
-  --secondary-dark: #00b8d4;
-  --secondary-light: #5ce1ff;
+  --secondary: #c0c0c0; /* Plateado metálico (actualizado) */
+  --secondary-dark: #a0a0a0;
+  --secondary-light: #d4d4d4;
+  --accent-cyan: #00d9ff; /* Cian tecnológico (HUD) */
 
-  --accent-pearl: #e8e6e3; /* Blanco perla (cabello de 2B) */
-  --accent-leather: #2d2520; /* Negro cuero */
-  --accent-metal: #8b8680; /* Gris metálico */
+  --accent-pearl: #ffffff; /* Blanco puro (actualizado) */
+  --accent-leather: #0a0a0a; /* Negro profundo */
+  --accent-metal: #888888; /* Gris metálico */
 
-  /* Gradientes */
-  --gradient-primary: linear-gradient(135deg, #d4af37 0%, #00d9ff 100%);
-  --gradient-light: linear-gradient(135deg, #e6c966 0%, #5ce1ff 100%);
-  --gradient-dark: linear-gradient(135deg, #b8941f 0%, #00b8d4 100%);
+  /* Gradientes - Actualizados con dorado y plateado */
+  --gradient-primary: linear-gradient(135deg, #d4af37 0%, #c0c0c0 100%);
+  --gradient-secondary: linear-gradient(135deg, #c0c0c0 0%, #ffffff 100%);
+  --gradient-light: linear-gradient(135deg, #e6c966 0%, #d4d4d4 100%);
+  --gradient-dark: linear-gradient(135deg, #b8941f 0%, #a0a0a0 100%);
   --gradient-elegant: linear-gradient(
     180deg,
     #0a0a0a 0%,
@@ -34,43 +36,50 @@
     rgba(212, 175, 55, 0.15) 0%,
     transparent 70%
   );
+  --gradient-text: linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+  --gradient-accent: linear-gradient(
+    135deg,
+    #d4af37 0%,
+    #ffffff 50%,
+    #c0c0c0 100%
+  );
 
   /* ========================================
      COLORES SEMÁNTICOS
      ======================================== */
-  --success: #4ade80;
-  --success-light: rgba(74, 222, 128, 0.15);
-  --success-dark: #22c55e;
+  --success: #10b981;
+  --success-light: rgba(16, 185, 129, 0.15);
+  --success-dark: #059669;
 
-  --error: #ff4757;
-  --error-light: rgba(255, 71, 87, 0.15);
-  --error-dark: #d63447;
+  --error: #ef4444;
+  --error-light: rgba(239, 68, 68, 0.15);
+  --error-dark: #dc2626;
 
-  --warning: #ffa502;
-  --warning-light: rgba(255, 165, 2, 0.15);
-  --warning-dark: #ff7f00;
+  --warning: #f59e0b;
+  --warning-light: rgba(245, 158, 11, 0.15);
+  --warning-dark: #d97706;
 
-  --info: #00d9ff;
-  --info-light: rgba(0, 217, 255, 0.15);
-  --info-dark: #00b8d4;
+  --info: #3b82f6;
+  --info-light: rgba(59, 130, 246, 0.15);
+  --info-dark: #2563eb;
 
   /* ========================================
      COLORES NEUTRALES - DARK THEME
      ======================================== */
   --gray-50: #f5f5f5;
   --gray-100: #e8e6e3;
-  --gray-200: #c4c2bf;
-  --gray-300: #9a9895;
-  --gray-400: #706d6a;
-  --gray-500: #4a4845;
-  --gray-600: #353330;
-  --gray-700: #252320;
-  --gray-800: #1a1918;
-  --gray-900: #0f0e0d;
+  --gray-200: #c0c0c0;
+  --gray-300: #a0a0a0;
+  --gray-400: #888888;
+  --gray-500: #666666;
+  --gray-600: #4a4a4a;
+  --gray-700: #2a2a2a;
+  --gray-800: #1a1a1a;
+  --gray-900: #0a0a0a;
 
   --white: #ffffff;
-  --black: #000000;
-  --pure-black: #0a0a0a;
+  --black: #0a0a0a;
+  --pure-black: #000000;
 
   /* ========================================
      TIPOGRAFÍA
@@ -79,7 +88,7 @@
     -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
     'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --font-family-heading: 'Rajdhani', 'Orbitron', var(--font-family-base);
-  --font-family-mono: 'Consolas', 'Monaco', 'Courier New', monospace;
+  --font-family-mono: 'Courier New', 'Consolas', 'Monaco', monospace;
 
   /* Tamaños de fuente */
   --font-size-xs: 0.75rem; /* 12px */
@@ -99,6 +108,7 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
+  --font-weight-black: 900;
 
   /* Line heights */
   --line-height-tight: 1.25;
@@ -124,11 +134,11 @@
   /* ========================================
      BORDES
      ======================================== */
-  --border-radius-sm: 2px;
-  --border-radius-base: 4px;
-  --border-radius-lg: 8px;
-  --border-radius-xl: 12px;
-  --border-radius-2xl: 16px;
+  --border-radius-sm: 0px;
+  --border-radius-base: 0px;
+  --border-radius-lg: 4px;
+  --border-radius-xl: 8px;
+  --border-radius-2xl: 12px;
   --border-radius-full: 9999px;
 
   --border-width-thin: 1px;
@@ -138,30 +148,35 @@
   /* ========================================
      SOMBRAS - ELEGANTES Y SUTILES
      ======================================== */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.6);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.7);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.8);
-  --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.85);
-  --shadow-2xl: 0 20px 60px rgba(0, 0, 0, 0.9);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.6);
+  --shadow-base: 0 4px 16px rgba(0, 0, 0, 0.7);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.8);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.85);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.9);
+  --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.95);
 
-  /* Sombras con glow dorado */
-  --shadow-glow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
-  --shadow-glow-cyan: 0 0 20px rgba(0, 217, 255, 0.3);
+  /* Sombras con glow */
+  --shadow-glow-gold:
+    0 4px 20px rgba(212, 175, 55, 0.3), 0 0 30px rgba(212, 175, 55, 0.1);
+  --shadow-glow-silver:
+    0 4px 20px rgba(192, 192, 192, 0.3), 0 0 30px rgba(192, 192, 192, 0.1);
+  --shadow-glow-cyan:
+    0 4px 20px rgba(0, 217, 255, 0.3), 0 0 30px rgba(0, 217, 255, 0.1);
   --shadow-glow-strong:
-    0 0 30px rgba(212, 175, 55, 0.5), 0 0 60px rgba(212, 175, 55, 0.2);
+    0 8px 40px rgba(212, 175, 55, 0.5), 0 0 60px rgba(212, 175, 55, 0.2);
 
   /* ========================================
      TRANSICIONES
      ======================================== */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slower: 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slower: 800ms cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ========================================
      Z-INDEX
      ======================================== */
+  --z-base: 0;
   --z-dropdown: 100;
   --z-sticky: 200;
   --z-fixed: 300;
@@ -169,6 +184,7 @@
   --z-modal: 500;
   --z-popover: 600;
   --z-tooltip: 700;
+  --z-notification: 800;
 
   /* ========================================
      BREAKPOINTS (para uso en JS)
@@ -177,27 +193,35 @@
   --breakpoint-tablet: 768px;
   --breakpoint-desktop: 1024px;
   --breakpoint-wide: 1280px;
+  --breakpoint-ultrawide: 1536px;
 
   /* ========================================
      DIMENSIONES
      ======================================== */
   --navbar-height: 70px;
-  --sidebar-width: 260px;
+  --sidebar-width: 280px;
   --sidebar-collapsed-width: 80px;
   --max-width-container: 1400px;
+  --max-width-content: 1200px;
+  --max-width-text: 800px;
 
   /* ========================================
      TEMA OSCURO (DEFAULT)
      ======================================== */
-  --bg-primary: #0f0e0d;
-  --bg-secondary: #1a1918;
-  --bg-tertiary: #252320;
-  --bg-elevated: #2d2520;
-  --text-primary: #e8e6e3;
-  --text-secondary: #9a9895;
-  --text-muted: #706d6a;
-  --border-color: #353330;
-  --border-subtle: #252320;
+  --bg-primary: #0f0f0f;
+  --bg-secondary: #1a1a1a;
+  --bg-tertiary: #2a2a2a;
+  --bg-elevated: #0a0a0a;
+  --bg-overlay: rgba(10, 10, 10, 0.95);
+
+  --text-primary: #ffffff;
+  --text-secondary: #c0c0c0;
+  --text-muted: #888888;
+  --text-disabled: #666666;
+
+  --border-color: #2a2a2a;
+  --border-subtle: #1a1a1a;
+  --border-emphasis: #3a3a3a;
 }
 
 /* ========================================
@@ -206,19 +230,26 @@
 [data-theme='light'] {
   --bg-primary: #f5f5f5;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #e8e6e3;
+  --bg-tertiary: #e8e8e8;
   --bg-elevated: #ffffff;
-  --text-primary: #0f0e0d;
-  --text-secondary: #4a4845;
-  --text-muted: #706d6a;
-  --border-color: #c4c2bf;
-  --border-subtle: #e8e6e3;
+  --bg-overlay: rgba(255, 255, 255, 0.95);
+
+  --text-primary: #0a0a0a;
+  --text-secondary: #4a4a4a;
+  --text-muted: #666666;
+  --text-disabled: #a0a0a0;
+
+  --border-color: #d0d0d0;
+  --border-subtle: #e8e8e8;
+  --border-emphasis: #b0b0b0;
 
   /* Ajustar sombras para tema claro */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.12);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.18);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-base: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.18);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.2);
+  --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.22);
 }
 
 /* ========================================
@@ -226,6 +257,10 @@
    ======================================== */
 .gradient-primary {
   background: var(--gradient-primary);
+}
+
+.gradient-secondary {
+  background: var(--gradient-secondary);
 }
 
 .gradient-elegant {
@@ -237,14 +272,14 @@
 }
 
 .gradient-text {
-  background: var(--gradient-primary);
+  background: var(--gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.gradient-text-gold {
-  background: linear-gradient(135deg, #d4af37 0%, #e6c966 100%);
+.gradient-text-accent {
+  background: var(--gradient-accent);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -275,6 +310,9 @@
 .shadow-glow-gold {
   box-shadow: var(--shadow-glow-gold);
 }
+.shadow-glow-silver {
+  box-shadow: var(--shadow-glow-silver);
+}
 .shadow-glow-cyan {
   box-shadow: var(--shadow-glow-cyan);
 }
@@ -286,7 +324,7 @@
    EFECTOS ESPECIALES - NIER STYLE
    ======================================== */
 .glass-effect {
-  background: rgba(26, 25, 24, 0.7);
+  background: rgba(26, 26, 26, 0.7);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(212, 175, 55, 0.1);
@@ -294,8 +332,9 @@
 
 .metal-panel {
   background: var(--gradient-panel);
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   position: relative;
+  clip-path: polygon(0 0, 100% 0, 100% 98%, 99% 100%, 0 100%);
 }
 
 .metal-panel::before {
@@ -304,21 +343,22 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
+  height: 2px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(212, 175, 55, 0.3),
+    rgba(192, 192, 192, 0.5),
     transparent
   );
 }
 
 .hud-element {
   font-family: var(--font-family-mono);
-  color: var(--secondary);
+  color: var(--accent-cyan);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
 }
 
 /* ========================================
@@ -359,6 +399,11 @@
   }
 }
 
+.scan-effect {
+  position: relative;
+  overflow: hidden;
+}
+
 .scan-effect::after {
   content: '';
   position: absolute;
@@ -369,9 +414,30 @@
   background: linear-gradient(
     90deg,
     transparent,
-    var(--secondary),
+    var(--accent-cyan),
     transparent
   );
   animation: scan-line 3s linear infinite;
   opacity: 0.3;
+}
+
+/* Animación de shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.2) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }

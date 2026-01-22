@@ -22,28 +22,21 @@ BACKUP_DIR.mkdir(exist_ok=True)
 # ============================================
 def get_mysqldump_path():
     """Obtener la ruta de mysqldump según el sistema operativo"""
-
-    # Si está en PATH, usar directamente
     try:
-        result = subprocess.run(
-            ["mysqldump", "--version"],
-            capture_output=True,
-            text=True
-        )
+        result = subprocess.run(["mysqldump", "--version"], capture_output=True, text=True)
         if result.returncode == 0:
             return "mysqldump"
     except FileNotFoundError:
         pass
 
-    # Rutas comunes en Windows
     if platform.system() == "Windows":
         possible_paths = [
-            r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump.exe",
-            r"C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump.exe",
             r"C:\xampp\mysql\bin\mysqldump.exe",
             r"C:\wamp64\bin\mysql\mysql8.0.31\bin\mysqldump.exe",
             r"C:\wamp64\bin\mysql\mysql8.0.30\bin\mysqldump.exe",
             r"C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysqldump.exe",
+            r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump.exe",
+            r"C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqldump.exe",
         ]
 
         for path in possible_paths:
@@ -51,29 +44,12 @@ def get_mysqldump_path():
                 print(f"✅ mysqldump encontrado en: {path}")
                 return path
 
-        # Si no se encuentra, intentar buscar automáticamente
-        program_files = [r"C:\Program Files", r"C:\Program Files (x86)"]
-        for pf in program_files:
-            mysql_dirs = Path(pf).glob("MySQL/MySQL Server */bin/mysqldump.exe")
-            for mysql_path in mysql_dirs:
-                if mysql_path.exists():
-                    print(f"✅ mysqldump encontrado en: {mysql_path}")
-                    return str(mysql_path)
-
-    raise FileNotFoundError(
-        "No se pudo encontrar mysqldump. "
-        "Por favor, instala MySQL o agrega la ruta de MySQL/bin al PATH de Windows."
-    )
+    raise FileNotFoundError("No se pudo encontrar mysqldump.")
 
 def get_mysql_path():
     """Obtener la ruta de mysql según el sistema operativo"""
-
     try:
-        result = subprocess.run(
-            ["mysql", "--version"],
-            capture_output=True,
-            text=True
-        )
+        result = subprocess.run(["mysql", "--version"], capture_output=True, text=True)
         if result.returncode == 0:
             return "mysql"
     except FileNotFoundError:
@@ -81,24 +57,17 @@ def get_mysql_path():
 
     if platform.system() == "Windows":
         possible_paths = [
-            r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe",
-            r"C:\Program Files\MySQL\MySQL Server 5.7\bin\mysql.exe",
             r"C:\xampp\mysql\bin\mysql.exe",
             r"C:\wamp64\bin\mysql\mysql8.0.31\bin\mysql.exe",
+            r"C:\wamp64\bin\mysql\mysql8.0.30\bin\mysql.exe",
             r"C:\laragon\bin\mysql\mysql-8.0.30-winx64\bin\mysql.exe",
         ]
-
         for path in possible_paths:
             if os.path.exists(path):
-                print(f"✅ mysql encontrado en: {path}")
                 return path
 
-    raise FileNotFoundError(
-        "No se pudo encontrar mysql. "
-        "Por favor, instala MySQL o agrega la ruta de MySQL/bin al PATH de Windows."
-    )
+    raise FileNotFoundError("No se pudo encontrar mysql.")
 
-# Dependencia para obtener la sesión de BD
 def get_db():
     from main import SessionLocal
     db = SessionLocal()
@@ -133,6 +102,42 @@ def get_mysql_credentials():
         "database": os.getenv("MYSQL_DATABASE", "laika_club")
     }
 
+def repair_corrupted_tables(db: Session):
+    """Reparar tablas corruptas de MySQL/MariaDB"""
+    try:
+        print("🔧 Reparando tablas corruptas...")
+        system_tables = ['proxies_priv', 'proc', 'event', 'user', 'db', 'tables_priv', 'columns_priv']
+        repaired_count = 0
+        failed_tables = []
+
+        for table in system_tables:
+            try:
+                db.execute(text(f"REPAIR TABLE mysql.{table}"))
+                print(f"  ✅ mysql.{table} - reparada")
+                repaired_count += 1
+            except Exception:
+                try:
+                    db.execute(text(f"REPAIR TABLE mysql.{table} USE_FRM"))
+                    print(f"  ✅ mysql.{table} - reparada con USE_FRM")
+                    repaired_count += 1
+                except Exception as e:
+                    if "doesn't exist" not in str(e).lower():
+                        print(f"  ⚠️ mysql.{table} - no se pudo reparar")
+                        failed_tables.append(table)
+
+        try:
+            db.execute(text("FLUSH TABLES"))
+            print("  ✅ FLUSH TABLES ejecutado")
+        except:
+            pass
+
+        print(f"✅ Reparación completada ({repaired_count} tablas procesadas)")
+        return True, failed_tables
+
+    except Exception as e:
+        print(f"⚠️ Error durante reparación: {e}")
+        return False, []
+
 def create_backup_metadata(backup_type: str, filename: str, tables: Optional[List[str]] = None):
     """Crear archivo de metadatos del respaldo"""
     metadata = {
@@ -162,27 +167,43 @@ async def create_backup(
 ):
     """
     Crear respaldo de la base de datos
+    COMPATIBLE CON XAMPP, WAMP, LARAGON - Todas las versiones de MySQL/MariaDB
     """
     try:
+        print(f"\n{'='*60}")
         print(f"📤 Creando respaldo tipo: {request.type}")
+        print(f"{'='*60}")
 
-        # Validar tipo de respaldo
+        # ============================================
+        # PASO 1: REPARAR TABLAS CORRUPTAS
+        # ============================================
+        print("\n🔧 PASO 1: Reparando tablas corruptas...")
+        repair_success, failed_tables = repair_corrupted_tables(db)
+
+        if failed_tables:
+            print(f"⚠️ Advertencia: Algunas tablas no se pudieron reparar: {failed_tables}")
+
+        # ============================================
+        # PASO 2: VALIDAR TIPO DE RESPALDO
+        # ============================================
         if request.type not in ['completo', 'incremental', 'selectivo']:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Tipo de respaldo inválido: {request.type}. Use 'completo', 'incremental' o 'selectivo'"
+                detail=f"Tipo de respaldo inválido: {request.type}"
             )
 
-        # Validar tablas para respaldo selectivo
         if request.type == 'selectivo' and not request.tables:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Debe especificar las tablas para respaldo selectivo"
             )
 
-        # Obtener ruta de mysqldump
+        # ============================================
+        # PASO 3: OBTENER RUTA DE MYSQLDUMP
+        # ============================================
         try:
             mysqldump_cmd = get_mysqldump_path()
+            print(f"\n📋 Usando mysqldump: {mysqldump_cmd}")
         except FileNotFoundError as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -194,7 +215,9 @@ async def create_backup(
         filename = f"backup_{request.type}_{timestamp}.sql"
         filepath = BACKUP_DIR / filename
 
-        # Construir comando mysqldump
+        # ============================================
+        # PASO 4: CONSTRUIR COMANDO MYSQLDUMP
+        # ============================================
         cmd = [
             mysqldump_cmd,
             f"--host={credentials['host']}",
@@ -205,26 +228,42 @@ async def create_backup(
         if credentials['password']:
             cmd.append(f"--password={credentials['password']}")
 
+        # ⭐ OPCIONES UNIVERSALMENTE COMPATIBLES
+        # NO usamos --set-gtid-purged porque no todas las versiones lo soportan
+        cmd.extend([
+            "--skip-lock-tables",      # Evitar bloqueos
+            "--single-transaction",    # Consistencia sin bloqueos
+            "--skip-comments",         # Menos metadata
+            "--compact",               # Salida más compacta
+        ])
+
         # Configurar según tipo de respaldo
         if request.type == 'completo':
             cmd.extend([
-                "--all-databases",
-                "--routines",
-                "--triggers",
-                "--events"
+                "--routines",          # Incluir procedimientos almacenados
+                "--triggers",          # Incluir triggers
+                "--events",            # Incluir eventos
+                credentials['database']  # Solo la BD del usuario (NO mysql.*)
             ])
+            print(f"📦 Respaldo COMPLETO de: {credentials['database']}")
+
         elif request.type == 'incremental':
             cmd.extend([
-                "--single-transaction",
                 "--flush-logs",
                 credentials['database']
             ])
+            print(f"📦 Respaldo INCREMENTAL de: {credentials['database']}")
+
         elif request.type == 'selectivo':
             cmd.append(credentials['database'])
             cmd.extend(request.tables)
+            print(f"📦 Respaldo SELECTIVO de tablas: {', '.join(request.tables)}")
 
-        # Ejecutar respaldo
-        print(f"🔧 Ejecutando: {cmd[0]} con {len(cmd)-1} parámetros...")
+        # ============================================
+        # PASO 5: EJECUTAR RESPALDO
+        # ============================================
+        print(f"\n🔧 PASO 2: Ejecutando mysqldump...")
+        print(f"   Archivo destino: {filepath}")
 
         with open(filepath, 'w', encoding='utf-8') as f:
             result = subprocess.run(
@@ -235,16 +274,41 @@ async def create_backup(
             )
 
         if result.returncode != 0:
-            print(f"❌ Error en mysqldump: {result.stderr}")
-            # Eliminar archivo vacío
+            stderr_output = result.stderr
+            print(f"\n❌ ERROR EN MYSQLDUMP:")
+            print(f"   Return code: {result.returncode}")
+            print(f"   Error: {stderr_output}")
+
+            # Eliminar archivo vacío o incompleto
             if filepath.exists():
                 filepath.unlink()
+                print(f"   🗑️ Archivo incompleto eliminado")
+
+            # Mensaje de error más descriptivo
+            if "proxies_priv" in stderr_output:
+                error_msg = (
+                    "Tabla 'proxies_priv' corrupta. "
+                    "Ejecuta en MySQL: REPAIR TABLE mysql.proxies_priv USE_FRM;"
+                )
+            elif "unknown variable" in stderr_output.lower():
+                error_msg = f"Opción no compatible con tu versión de MySQL: {stderr_output}"
+            else:
+                error_msg = stderr_output
+
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error al ejecutar mysqldump: {result.stderr}"
+                detail=error_msg
             )
 
-        # Crear metadatos
+        # ============================================
+        # PASO 6: VERIFICAR Y CREAR METADATOS
+        # ============================================
+        if not filepath.exists() or filepath.stat().st_size == 0:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="El archivo de respaldo está vacío o no se creó"
+            )
+
         metadata = create_backup_metadata(request.type, filename, request.tables)
         file_size = filepath.stat().st_size
         metadata["size_bytes"] = file_size
@@ -254,7 +318,10 @@ async def create_backup(
         with open(metadata_file, 'w') as f:
             json.dump(metadata, f, indent=2)
 
-        print(f"✅ Respaldo creado: {filename} ({file_size / 1024 / 1024:.2f} MB)")
+        print(f"\n✅ RESPALDO CREADO EXITOSAMENTE")
+        print(f"   Archivo: {filename}")
+        print(f"   Tamaño: {file_size / 1024 / 1024:.2f} MB")
+        print(f"{'='*60}\n")
 
         return {
             "success": True,
@@ -263,13 +330,16 @@ async def create_backup(
             "filename": filename,
             "size_mb": round(file_size / 1024 / 1024, 2),
             "timestamp": metadata["timestamp"],
-            "type": request.type
+            "type": request.type,
+            "repaired_tables": not bool(failed_tables),
+            "warnings": f"Tablas no reparadas: {failed_tables}" if failed_tables else None
         }
 
     except HTTPException:
         raise
     except Exception as e:
-        print(f"❌ Error al crear respaldo: {e}")
+        print(f"\n❌ ERROR GENERAL:")
+        print(f"   {str(e)}")
         traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -280,15 +350,12 @@ async def create_backup(
 async def list_backups():
     """Listar todos los respaldos disponibles"""
     try:
-        print("📤 Listando respaldos disponibles...")
-
         backups = []
 
         for metadata_file in BACKUP_DIR.glob("*.json"):
             try:
                 with open(metadata_file, 'r') as f:
                     metadata = json.load(f)
-
                     sql_file = BACKUP_DIR / metadata['filename']
                     if sql_file.exists():
                         metadata['size_mb'] = round(sql_file.stat().st_size / 1024 / 1024, 2)
@@ -298,8 +365,6 @@ async def list_backups():
 
         backups.sort(key=lambda x: x['timestamp'], reverse=True)
 
-        print(f"✅ {len(backups)} respaldos encontrados")
-
         return {
             "success": True,
             "count": len(backups),
@@ -307,30 +372,17 @@ async def list_backups():
         }
 
     except Exception as e:
-        print(f"❌ Error al listar respaldos: {e}")
-        traceback.print_exc()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al listar respaldos: {str(e)}"
-        )
+        raise HTTPException(500, f"Error al listar respaldos: {str(e)}")
 
 @router.post("/restore")
-async def restore_backup(
-    request: RestoreRequest,
-    db: Session = Depends(get_db)
-):
+async def restore_backup(request: RestoreRequest, db: Session = Depends(get_db)):
     """Restaurar base de datos desde un respaldo"""
     try:
-        print(f"📤 Restaurando respaldo: {request.backup_id}")
-
         sql_file = BACKUP_DIR / f"{request.backup_id}.sql"
         metadata_file = BACKUP_DIR / f"{request.backup_id}.sql.json"
 
         if not sql_file.exists():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Respaldo no encontrado: {request.backup_id}"
-            )
+            raise HTTPException(404, f"Respaldo no encontrado: {request.backup_id}")
 
         if metadata_file.exists():
             with open(metadata_file, 'r') as f:
@@ -338,15 +390,7 @@ async def restore_backup(
         else:
             metadata = {"type": "unknown"}
 
-        # Obtener ruta de mysql
-        try:
-            mysql_cmd = get_mysql_path()
-        except FileNotFoundError as e:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=str(e)
-            )
-
+        mysql_cmd = get_mysql_path()
         credentials = get_mysql_credentials()
 
         cmd = [
@@ -364,21 +408,12 @@ async def restore_backup(
         print(f"🔧 Restaurando desde {sql_file.name}...")
 
         with open(sql_file, 'r', encoding='utf-8') as f:
-            result = subprocess.run(
-                cmd,
-                stdin=f,
-                stderr=subprocess.PIPE,
-                text=True
-            )
+            result = subprocess.run(cmd, stdin=f, stderr=subprocess.PIPE, text=True)
 
         if result.returncode != 0:
-            print(f"❌ Error en mysql: {result.stderr}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error al restaurar: {result.stderr}"
-            )
+            raise HTTPException(500, f"Error al restaurar: {result.stderr}")
 
-        print(f"✅ Base de datos restaurada desde {sql_file.name}")
+        print(f"✅ Base de datos restaurada")
 
         return {
             "success": True,
@@ -391,191 +426,125 @@ async def restore_backup(
     except HTTPException:
         raise
     except Exception as e:
-        print(f"❌ Error al restaurar: {e}")
-        traceback.print_exc()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al restaurar respaldo: {str(e)}"
-        )
+        raise HTTPException(500, f"Error al restaurar: {str(e)}")
 
 @router.delete("/backups/{backup_id}")
 async def delete_backup(backup_id: str):
     """Eliminar un respaldo"""
     try:
-        print(f"📤 Eliminando respaldo: {backup_id}")
-
         sql_file = BACKUP_DIR / f"{backup_id}.sql"
         metadata_file = BACKUP_DIR / f"{backup_id}.sql.json"
 
         if not sql_file.exists():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Respaldo no encontrado: {backup_id}"
-            )
+            raise HTTPException(404, "Respaldo no encontrado")
 
         sql_file.unlink()
         if metadata_file.exists():
             metadata_file.unlink()
 
-        print(f"✅ Respaldo eliminado: {backup_id}")
+        return {"success": True, "message": "Respaldo eliminado"}
 
-        return {
-            "success": True,
-            "message": "Respaldo eliminado exitosamente",
-            "backup_id": backup_id
-        }
-
-    except HTTPException:
-        raise
     except Exception as e:
-        print(f"❌ Error al eliminar respaldo: {e}")
-        traceback.print_exc()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al eliminar respaldo: {str(e)}"
-        )
+        raise HTTPException(500, str(e))
 
 @router.get("/tables")
 async def list_tables(db: Session = Depends(get_db)):
     """Listar todas las tablas disponibles"""
     try:
-        print("📤 Listando tablas...")
-
-        query = text("SHOW TABLES")
-        result = db.execute(query)
+        result = db.execute(text("SHOW TABLES"))
         tables = [row[0] for row in result.fetchall()]
 
         table_info = []
         for table in tables:
-            count_query = text(f"SELECT COUNT(*) as count FROM `{table}`")
-            count = db.execute(count_query).fetchone()[0]
+            count = db.execute(text(f"SELECT COUNT(*) FROM `{table}`")).fetchone()[0]
+            table_info.append({"name": table, "row_count": count})
 
-            table_info.append({
-                "name": table,
-                "row_count": count
-            })
-
-        print(f"✅ {len(tables)} tablas encontradas")
-
-        return {
-            "success": True,
-            "count": len(tables),
-            "tables": table_info
-        }
+        return {"success": True, "count": len(tables), "tables": table_info}
 
     except Exception as e:
-        print(f"❌ Error al listar tablas: {e}")
-        traceback.print_exc()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error al listar tablas: {str(e)}"
-        )
+        raise HTTPException(500, str(e))
 
 @router.post("/clear-cache")
 def clear_cache():
     """Limpiar caché del sistema"""
-    try:
-        print("📤 Limpiando caché...")
-        print("✅ Caché limpiado")
-        return {
-            "success": True,
-            "message": "Caché limpiado exitosamente",
-            "timestamp": datetime.now().isoformat()
-        }
-    except Exception as e:
-        print(f"❌ Error al limpiar caché: {e}")
-        traceback.print_exc()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error al limpiar caché"
-        )
+    return {"success": True, "message": "Caché limpiado exitosamente"}
 
 @router.post("/optimize")
 def optimize_database(db: Session = Depends(get_db)):
     """Optimizar todas las tablas"""
     try:
-        print("📤 Optimizando base de datos...")
-
-        tables_query = text("SHOW TABLES")
-        result = db.execute(tables_query)
+        result = db.execute(text("SHOW TABLES"))
         tables = [row[0] for row in result.fetchall()]
-
-        optimized_tables = []
+        optimized = []
 
         for table in tables:
             try:
-                optimize_query = text(f"OPTIMIZE TABLE `{table}`")
-                db.execute(optimize_query)
-                optimized_tables.append(table)
-                print(f"  ✅ Tabla optimizada: {table}")
-            except Exception as e:
-                print(f"  ⚠️ Error al optimizar {table}: {e}")
+                db.execute(text(f"OPTIMIZE TABLE `{table}`"))
+                optimized.append(table)
+            except:
+                pass
 
         db.commit()
-
-        print(f"✅ Base de datos optimizada ({len(optimized_tables)} tablas)")
-
-        return {
-            "success": True,
-            "message": "Base de datos optimizada exitosamente",
-            "optimized_tables": optimized_tables,
-            "total_optimized": len(optimized_tables),
-            "timestamp": datetime.now().isoformat()
-        }
+        return {"success": True, "optimized_tables": optimized, "total_optimized": len(optimized)}
 
     except Exception as e:
-        print(f"❌ Error al optimizar base de datos: {e}")
-        traceback.print_exc()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error al optimizar base de datos"
-        )
+        raise HTTPException(500, str(e))
 
 @router.get("/stats")
 def get_database_stats(db: Session = Depends(get_db)):
     """Obtener estadísticas de la base de datos"""
     try:
-        print("📤 Obteniendo estadísticas de la BD...")
+        size_result = db.execute(text("""
+            SELECT table_schema, ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb
+            FROM information_schema.tables WHERE table_schema = DATABASE() GROUP BY table_schema
+        """)).fetchone()
 
-        size_query = text("""
-            SELECT
-                table_schema AS 'database_name',
-                ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'size_mb'
-            FROM information_schema.tables
-            WHERE table_schema = DATABASE()
-            GROUP BY table_schema
-        """)
-
-        result = db.execute(size_query).fetchone()
-
-        tables_query = text("SHOW TABLES")
-        tables_result = db.execute(tables_query)
-        tables = [row[0] for row in tables_result.fetchall()]
-
+        tables = [row[0] for row in db.execute(text("SHOW TABLES")).fetchall()]
         table_counts = {}
-        total_records = 0
+        total = 0
 
         for table in tables:
-            count_query = text(f"SELECT COUNT(*) as count FROM `{table}`")
-            count = db.execute(count_query).fetchone()[0]
+            count = db.execute(text(f"SELECT COUNT(*) FROM `{table}`")).fetchone()[0]
             table_counts[table] = count
-            total_records += count
-
-        print(f"✅ Estadísticas obtenidas")
+            total += count
 
         return {
-            "database": result[0] if result else "unknown",
-            "size_mb": float(result[1]) if result else 0,
+            "database": size_result[0] if size_result else "unknown",
+            "size_mb": float(size_result[1]) if size_result else 0,
             "tables": table_counts,
             "total_tables": len(tables),
-            "total_records": total_records,
+            "total_records": total,
             "timestamp": datetime.now().isoformat()
         }
 
     except Exception as e:
-        print(f"❌ Error al obtener estadísticas: {e}")
-        traceback.print_exc()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Error al obtener estadísticas de BD"
-        )
+        raise HTTPException(500, str(e))
+
+@router.post("/repair")
+async def repair_database(db: Session = Depends(get_db)):
+    """Endpoint para reparar manualmente las tablas corruptas"""
+    try:
+        print("🔧 Iniciando reparación manual de tablas...")
+        success, failed = repair_corrupted_tables(db)
+
+        if success and not failed:
+            return {
+                "success": True,
+                "message": "Todas las tablas fueron reparadas exitosamente",
+                "timestamp": datetime.now().isoformat()
+            }
+        elif success and failed:
+            return {
+                "success": True,
+                "message": "Reparación completada con advertencias",
+                "failed_tables": failed,
+                "recommendation": "Considera reiniciar MySQL o ejecutar CHECK TABLE manualmente",
+                "timestamp": datetime.now().isoformat()
+            }
+        else:
+            raise HTTPException(500, "Error durante la reparación")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Error al reparar tablas: {str(e)}")

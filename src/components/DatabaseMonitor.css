@@ -1,0 +1,327 @@
+/* DatabaseMonitor.css - Temática 2B NieR: Automata */
+
+.database-monitor {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+  padding: 2.5rem;
+  position: relative;
+}
+
+.database-monitor::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(192, 192, 192, 0.02) 2px, rgba(192, 192, 192, 0.02) 4px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.database-monitor > * {
+  position: relative;
+  z-index: 1;
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid;
+  border-image: linear-gradient(90deg, #c0c0c0 0%, #d4af37 50%, #c0c0c0 100%);
+  border-image-slice: 1;
+}
+
+.monitor-header h1 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #c0c0c0 0%, #ffffff 50%, #d4af37 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.monitor-subtitle {
+  color: #888888;
+  font-size: 0.9rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Courier New', monospace;
+}
+
+.monitor-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.connection-status {
+  font-size: 0.875rem;
+  padding: 0.625rem 1.25rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.auto-refresh-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #c0c0c0;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+
+.auto-refresh-toggle:hover {
+  color: #d4af37;
+}
+
+.auto-refresh-toggle input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #d4af37;
+}
+
+.monitor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.status-item,
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #2a2a2a;
+  transition: all 0.3s ease;
+}
+
+.status-item:hover,
+.metric-row:hover {
+  padding-left: 0.5rem;
+  border-left: 3px solid #c0c0c0;
+}
+
+.status-item:last-child,
+.metric-row:last-child {
+  border-bottom: none;
+}
+
+.status-label,
+.metric-row span {
+  color: #888888;
+  font-size: 0.875rem;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+
+.status-value,
+.metric-row strong {
+  color: #ffffff;
+  font-weight: 700;
+  font-family: 'Rajdhani', monospace;
+  font-size: 1.1rem;
+}
+
+.usage-bar {
+  margin-top: 1.25rem;
+}
+
+.usage-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+  color: #888888;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.progress-bar {
+  height: 10px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  border: 1px solid #2a2a2a;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(192, 192, 192, 0.3), transparent);
+}
+
+.progress-fill {
+  height: 100%;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  to {
+    left: 100%;
+  }
+}
+
+.progress-fill.healthy {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+.progress-fill.warning {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+}
+
+.progress-fill.critical {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+.resource-metric {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.4) 0%, rgba(10, 10, 10, 0.4) 100%);
+  border: 1px solid #2a2a2a;
+  border-left: 3px solid #c0c0c0;
+  clip-path: polygon(0 0, 100% 0, 100% 98%, 99% 100%, 0 100%);
+}
+
+.resource-metric:last-child {
+  margin-bottom: 0;
+}
+
+.resource-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.resource-header span {
+  color: #888888;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.resource-header strong {
+  color: #ffffff;
+  font-weight: 800;
+  font-family: 'Rajdhani', monospace;
+  font-size: 1.1rem;
+}
+
+.resource-detail {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #666666;
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+.sessions-card {
+  grid-column: 1 / -1;
+}
+
+.sessions-table {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.sessions-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sessions-table th,
+.sessions-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.sessions-table th {
+  color: #888888;
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: 'Rajdhani', sans-serif;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(10, 10, 10, 0.6) 100%);
+}
+
+.sessions-table td {
+  color: #c0c0c0;
+  font-size: 0.875rem;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.sessions-table tr:hover {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.05), transparent);
+}
+
+.host-cell,
+.state-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .database-monitor {
+    padding: 1.5rem;
+  }
+
+  .monitor-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .monitor-header h1 {
+    font-size: 2rem;
+  }
+
+  .monitor-grid {
+    grid-template-columns: 1fr;
+  }
+}

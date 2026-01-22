@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Button, Badge, Spinner } from '../components'
 import { useAuth } from '../context/AuthContext'
 import { useNotification } from '../context/NotificationContext'
+import api from '../services/api' // ✅ IMPORTAR API
 import './EventDetail.css'
 
 const EventDetail = () => {
@@ -14,6 +15,7 @@ const EventDetail = () => {
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
+  const [purchasing, setPurchasing] = useState(false)
 
   useEffect(() => {
     fetchEventDetail()
@@ -22,106 +24,74 @@ const EventDetail = () => {
   const fetchEventDetail = async () => {
     setLoading(true)
     try {
-      // Simulación - eventos de prueba
-      await new Promise(resolve => setTimeout(resolve, 800))
+      console.log(`📤 Obteniendo detalles del evento ID: ${id}`)
 
-      const mockEvents = {
-        1: {
-          id: 1,
-          name: 'Festival de Música Electrónica',
-          description:
-            'Los mejores DJs internacionales en un solo lugar. Una experiencia única con los mejores sets de música electrónica.',
-          date: '2025-02-15',
-          time: '20:00',
-          location: 'Arena CDMX',
-          venue: 'Arena CDMX - Sala Principal',
-          category: 'festival',
-          price: 850,
-          totalTickets: 1000,
-          availableTickets: 500,
-          image:
-            'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800'
-        },
-        2: {
-          id: 2,
-          name: 'Obra de Teatro: El Rey León',
-          description: 'Musical premiado con efectos especiales',
-          date: '2025-02-20',
-          time: '19:00',
-          location: 'Teatro Metropolitan',
-          venue: 'Teatro Metropolitan',
-          category: 'theater',
-          price: 650,
-          totalTickets: 300,
-          availableTickets: 120,
-          image:
-            'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800'
-        },
-        3: {
-          id: 3,
-          name: 'Partido: América vs Guadalajara',
-          description: 'Clásico Nacional - Semifinal',
-          date: '2025-02-18',
-          time: '21:00',
-          location: 'Estadio Azteca',
-          venue: 'Estadio Azteca',
-          category: 'sport',
-          price: 450,
-          totalTickets: 5000,
-          availableTickets: 2000,
-          image:
-            'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800'
-        },
-        4: {
-          id: 4,
-          name: 'Concierto: Café Tacvba',
-          description: 'Tour 30 años de carrera',
-          date: '2025-03-01',
-          time: '21:00',
-          location: 'Foro Sol',
-          venue: 'Foro Sol',
-          category: 'concert',
-          price: 950,
-          totalTickets: 2000,
-          availableTickets: 850,
-          image:
-            'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800'
-        }
-      }
+      // ✅ USAR API REAL
+      const response = await api.event.getById(id)
+      console.log('✅ Evento obtenido:', response)
 
-      const foundEvent = mockEvents[id]
-      if (foundEvent) {
-        setEvent(foundEvent)
-      } else {
-        showError('Evento no encontrado')
-        navigate('/')
-      }
+      setEvent(response)
     } catch (error) {
-      console.error('Error al cargar evento:', error)
+      console.error('❌ Error al cargar evento:', error)
       showError('Error al cargar el evento')
+      navigate('/')
     } finally {
       setLoading(false)
     }
   }
 
-  const handlePurchase = () => {
+  const handlePurchase = async () => {
     if (!user) {
       showError('Debes iniciar sesión para comprar boletos')
       navigate('/login')
       return
     }
 
-    // TODO: Integrar con API de compra
-    success(`¡Compra exitosa! ${quantity} boleto(s) para ${event.name}`)
+    if (!event || event.available_tickets < quantity) {
+      showError('No hay suficientes boletos disponibles')
+      return
+    }
 
-    // Simular reducción de boletos
-    setEvent(prev => ({
-      ...prev,
-      availableTickets: prev.availableTickets - quantity
-    }))
+    setPurchasing(true)
+
+    try {
+      console.log('📤 Comprando boletos:', {
+        eventId: event.id,
+        quantity,
+        paymentMethod: 'card' // Por ahora, método fijo
+      })
+
+      // ✅ INTEGRAR CON API REAL
+      const response = await api.ticket.purchase({
+        eventId: event.id,
+        quantity,
+        paymentMethod: 'card'
+      })
+
+      console.log('✅ Compra exitosa:', response)
+
+      success(`¡Compra exitosa! ${quantity} boleto(s) para ${event.name}`)
+
+      // Actualizar boletos disponibles localmente
+      setEvent(prev => ({
+        ...prev,
+        available_tickets: prev.available_tickets - quantity
+      }))
+
+      // Redirigir a mis boletos después de 2 segundos
+      setTimeout(() => {
+        navigate('/profile') // O la ruta donde se muestren los boletos
+      }, 2000)
+    } catch (error) {
+      console.error('❌ Error al comprar boletos:', error)
+      showError(error.message || 'Error al procesar la compra')
+    } finally {
+      setPurchasing(false)
+    }
   }
 
   const formatDate = dateString => {
+    if (!dateString) return ''
     const options = {
       year: 'numeric',
       month: 'long',
@@ -152,6 +122,17 @@ const EventDetail = () => {
     other: 'Otro'
   }
 
+  // Normalizar campos (pueden venir como event_date o date)
+  const eventDate = event.event_date || event.date
+  const eventTime = event.event_time || event.time
+  const availableTickets =
+    event.available_tickets || event.availableTickets || 0
+  const totalTickets = event.total_tickets || event.totalTickets || 0
+  const imageUrl =
+    event.image_url ||
+    event.image ||
+    'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800'
+
   return (
     <div className='event-detail-page'>
       <div className='event-detail-container'>
@@ -161,9 +142,9 @@ const EventDetail = () => {
 
         <div className='event-detail-content'>
           <div className='event-detail-image'>
-            <img src={event.image} alt={event.name} />
+            <img src={imageUrl} alt={event.name} />
             <Badge variant='primary' className='category-badge'>
-              {categoryLabels[event.category]}
+              {categoryLabels[event.category] || 'Evento'}
             </Badge>
           </div>
 
@@ -175,45 +156,53 @@ const EventDetail = () => {
                 <span className='meta-icon'>📅</span>
                 <div>
                   <div className='meta-label'>Fecha</div>
-                  <div className='meta-value'>{formatDate(event.date)}</div>
+                  <div className='meta-value'>{formatDate(eventDate)}</div>
                 </div>
               </div>
 
-              <div className='meta-item'>
-                <span className='meta-icon'>🕐</span>
-                <div>
-                  <div className='meta-label'>Hora</div>
-                  <div className='meta-value'>{event.time} hrs</div>
+              {eventTime && (
+                <div className='meta-item'>
+                  <span className='meta-icon'>🕐</span>
+                  <div>
+                    <div className='meta-label'>Hora</div>
+                    <div className='meta-value'>{eventTime} hrs</div>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className='meta-item'>
                 <span className='meta-icon'>📍</span>
                 <div>
                   <div className='meta-label'>Lugar</div>
-                  <div className='meta-value'>{event.venue}</div>
-                  <div className='meta-sublabel'>{event.location}</div>
+                  <div className='meta-value'>
+                    {event.venue || event.location}
+                  </div>
+                  {event.venue &&
+                    event.location &&
+                    event.venue !== event.location && (
+                      <div className='meta-sublabel'>{event.location}</div>
+                    )}
                 </div>
               </div>
             </div>
 
             <div className='event-description'>
               <h2>Descripción</h2>
-              <p>{event.description}</p>
+              <p>{event.description || 'Sin descripción disponible'}</p>
             </div>
 
             <div className='event-tickets-info'>
               <div className='tickets-available'>
                 <span className='tickets-label'>Boletos disponibles:</span>
                 <span className='tickets-count'>
-                  {event.availableTickets} de {event.totalTickets}
+                  {availableTickets} {totalTickets > 0 && `de ${totalTickets}`}
                 </span>
               </div>
 
               <div className='price-section'>
                 <span className='price-label'>Precio por boleto:</span>
                 <span className='price-amount'>
-                  ${event.price.toLocaleString('es-MX')}
+                  ${(event.price || 0).toLocaleString('es-MX')}
                 </span>
               </div>
             </div>
@@ -224,7 +213,7 @@ const EventDetail = () => {
                 <div className='quantity-controls'>
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    disabled={quantity <= 1}
+                    disabled={quantity <= 1 || purchasing}
                   >
                     -
                   </button>
@@ -238,10 +227,11 @@ const EventDetail = () => {
                     }
                     min='1'
                     max='10'
+                    disabled={purchasing}
                   />
                   <button
                     onClick={() => setQuantity(Math.min(10, quantity + 1))}
-                    disabled={quantity >= 10}
+                    disabled={quantity >= 10 || purchasing}
                   >
                     +
                   </button>
@@ -251,7 +241,7 @@ const EventDetail = () => {
               <div className='total-section'>
                 <span className='total-label'>Total:</span>
                 <span className='total-amount'>
-                  ${(event.price * quantity).toLocaleString('es-MX')}
+                  ${((event.price || 0) * quantity).toLocaleString('es-MX')}
                 </span>
               </div>
 
@@ -260,9 +250,14 @@ const EventDetail = () => {
                 size='large'
                 fullWidth
                 onClick={handlePurchase}
-                disabled={event.availableTickets === 0}
+                disabled={availableTickets === 0 || purchasing}
+                loading={purchasing}
               >
-                {event.availableTickets === 0 ? 'Agotado' : 'Comprar Boletos'}
+                {availableTickets === 0
+                  ? 'Agotado'
+                  : purchasing
+                    ? 'Procesando...'
+                    : 'Comprar Boletos'}
               </Button>
             </div>
           </div>

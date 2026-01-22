@@ -1,3 +1,5 @@
+/* Dropdown.css - Temática 2B NieR: Automata */
+
 .dropdown {
   position: relative;
   display: inline-block;
@@ -10,17 +12,28 @@
 
 .dropdown__menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  min-width: 200px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  padding: 0.5rem 0;
+  top: calc(100% + 0.75rem);
+  min-width: 220px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  border: 2px solid #2a2a2a;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.1);
+  padding: 0.75rem 0;
   z-index: 100;
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-15px);
   pointer-events: none;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  clip-path: polygon(0 0, 100% 0, 100% 98%, 98% 100%, 0 100%);
+}
+
+.dropdown__menu::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c0c0c0, #d4af37, transparent);
 }
 
 .dropdown__menu--open {
@@ -40,35 +53,59 @@
 .dropdown__item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  color: #374151;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #c0c0c0;
   font-size: 0.875rem;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.dropdown__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.2), transparent);
+  transition: width 0.3s ease;
 }
 
 .dropdown__item:hover:not(.dropdown__item--disabled) {
-  background-color: #f3f4f6;
+  background: linear-gradient(90deg, rgba(26, 26, 26, 0.6), rgba(15, 15, 15, 0.6));
+  color: #d4af37;
+  transform: translateX(6px);
+}
+
+.dropdown__item:hover:not(.dropdown__item--disabled)::before {
+  width: 100%;
 }
 
 .dropdown__item--danger {
-  color: #dc2626;
+  color: #ef4444;
 }
 
 .dropdown__item--danger:hover:not(.dropdown__item--disabled) {
-  background-color: #fee2e2;
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.15), rgba(15, 15, 15, 0.6));
+  color: #f87171;
 }
 
 .dropdown__item--disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .dropdown__item-icon {
   display: flex;
   align-items: center;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  filter: drop-shadow(0 0 6px currentColor);
 }
 
 .dropdown__item-text {
@@ -77,6 +114,35 @@
 
 .dropdown__divider {
   height: 1px;
-  background-color: #e5e7eb;
-  margin: 0.5rem 0;
+  background: linear-gradient(90deg, transparent, #2a2a2a, transparent);
+  margin: 0.75rem 0;
+  position: relative;
+}
+
+.dropdown__divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(192, 192, 192, 0.2), transparent);
+}
+
+/* Scrollbar personalizado */
+.dropdown__menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdown__menu::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.dropdown__menu::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d4af37 0%, #c0c0c0 100%);
+  border-radius: 2px;
+}
+
+.dropdown__menu::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #e6c966 0%, #d4d4d4 100%);
 }

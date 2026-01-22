@@ -128,17 +128,13 @@ async def global_exception_handler(request: Request, exc: Exception):
 # REGISTRAR TODOS LOS ROUTERS - ORDEN CORRECTO
 # ============================================
 
-print("\n" + "="*70)
-print("📦 REGISTRANDO ROUTERS")
-print("="*70 + "\n")
+print("\n📦 Registrando routers...\n")
 
 # 1. Authentication
 try:
     from routers import auth
     app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
     print("  ✅ Auth router registrado: /api/auth")
-except ImportError as e:
-    print(f"  ⚠️  Auth router no disponible: {e}")
 except Exception as e:
     print(f"  ❌ Error al cargar Auth router: {e}")
     traceback.print_exc()
@@ -148,8 +144,6 @@ try:
     from routers import events
     app.include_router(events.router, prefix="/api/events", tags=["Events"])
     print("  ✅ Events router registrado: /api/events")
-except ImportError as e:
-    print(f"  ⚠️  Events router no disponible: {e}")
 except Exception as e:
     print(f"  ❌ Error al cargar Events router: {e}")
     traceback.print_exc()
@@ -159,8 +153,6 @@ try:
     from routers import tickets
     app.include_router(tickets.router, prefix="/api/tickets", tags=["Tickets"])
     print("  ✅ Tickets router registrado: /api/tickets")
-except ImportError as e:
-    print(f"  ⚠️  Tickets router no disponible: {e}")
 except Exception as e:
     print(f"  ❌ Error al cargar Tickets router: {e}")
     traceback.print_exc()
@@ -170,8 +162,6 @@ try:
     from routers import stats
     app.include_router(stats.router, prefix="/api/stats", tags=["Statistics"])
     print("  ✅ Stats router registrado: /api/stats")
-except ImportError as e:
-    print(f"  ⚠️  Stats router no disponible: {e}")
 except Exception as e:
     print(f"  ❌ Error al cargar Stats router: {e}")
     traceback.print_exc()
@@ -181,8 +171,6 @@ try:
     from routers import config
     app.include_router(config.router, prefix="/api/config", tags=["Configuration"])
     print("  ✅ Config router registrado: /api/config")
-except ImportError as e:
-    print(f"  ⚠️  Config router no disponible: {e}")
 except Exception as e:
     print(f"  ❌ Error al cargar Config router: {e}")
     traceback.print_exc()
@@ -192,8 +180,6 @@ try:
     from routers import database
     app.include_router(database.router, prefix="/api/database", tags=["Database"])
     print("  ✅ Database router registrado: /api/database")
-except ImportError as e:
-    print(f"  ⚠️  Database router no disponible: {e}")
 except Exception as e:
     print(f"  ❌ Error al cargar Database router: {e}")
     traceback.print_exc()
@@ -221,60 +207,27 @@ except Exception as e:
     traceback.print_exc()
 
 # ============================================
-# ⭐ CRÍTICO: USERS ROUTER
+# ⭐ IMPORTANTE: USERS DEBE IR ANTES DE USER_PERMISSIONS
 # ============================================
 
-print("\n" + "-"*70)
-print("⭐ REGISTRANDO ROUTER DE USUARIOS (CRÍTICO)")
-print("-"*70)
-
+# 9. Users - REGISTRAR PRIMERO (rutas generales)
 try:
-    print("  🔄 Importando módulo users...")
     from routers import users
-
-    print("  🔄 Verificando router...")
-    if not hasattr(users, 'router'):
-        raise AttributeError("El módulo 'users' no tiene atributo 'router'")
-
-    print("  🔄 Registrando router en FastAPI...")
     app.include_router(users.router, prefix="/api/users", tags=["Users"])
+    print("  ✅ Users router registrado: /api/users")
+    print("     Endpoints disponibles:")
 
-    print("  ✅ Users router registrado exitosamente: /api/users")
-    print("\n  📋 Endpoints disponibles:")
-
-    # Listar todas las rutas del router
-    route_count = 0
+    # Listar rutas del router
     for route in users.router.routes:
-        if hasattr(route, 'methods') and hasattr(route, 'path'):
-            methods = ','.join(sorted(route.methods))
-            path = route.path if route.path else ""
-            full_path = f"/api/users{path}"
-            print(f"     {methods:12} {full_path}")
-            route_count += 1
-
-    print(f"\n  ✅ Total de rutas registradas: {route_count}")
-
-except ImportError as e:
-    print(f"  ❌ ERROR DE IMPORTACIÓN: {e}")
-    print(f"     Verifica que existe: routers/users.py")
-    print(f"     Verifica que existe: routers/__init__.py")
-    traceback.print_exc()
-
-except AttributeError as e:
-    print(f"  ❌ ERROR DE ATRIBUTO: {e}")
-    print(f"     El archivo users.py debe tener: router = APIRouter()")
-    traceback.print_exc()
+        methods = ','.join(route.methods) if hasattr(route, 'methods') else 'N/A'
+        path = route.path
+        print(f"       {methods:8} /api/users{path}")
 
 except Exception as e:
-    print(f"  ❌ ERROR INESPERADO: {e}")
+    print(f"  ❌ Error al cargar Users router: {e}")
     traceback.print_exc()
 
-print("-"*70 + "\n")
-
-# ============================================
-# USER PERMISSIONS (Después de Users)
-# ============================================
-
+# 10. User Permissions - REGISTRAR DESPUÉS (rutas específicas)
 try:
     from routers import user_permissions
     app.include_router(user_permissions.router, prefix="/api/users", tags=["User Permissions"])
@@ -285,9 +238,7 @@ except Exception as e:
     print(f"  ❌ Error al cargar User Permissions router: {e}")
     traceback.print_exc()
 
-print("\n" + "="*70)
-print("🚀 REGISTRO DE ROUTERS COMPLETADO")
-print("="*70 + "\n")
+print("\n🚀 Proceso de registro de routers completado\n")
 
 # ============================================
 # ENDPOINTS BASE
@@ -366,56 +317,30 @@ def test_endpoint():
 @app.on_event("startup")
 async def startup_event():
     """Evento al iniciar"""
-    print("\n" + "="*70)
-    print("🚀 LAIKA CLUB API - SERVIDOR INICIADO")
-    print("="*70)
+    print("\n" + "="*60)
+    print("🚀 LAIKA Club API - Iniciando servidor")
+    print("="*60)
     print(f"📅 Fecha: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"🌐 Host: 0.0.0.0:8000")
     print(f"📚 Documentación: http://localhost:8000/docs")
     print(f"🏥 Health Check: http://localhost:8000/health")
-    print("="*70)
+    print("="*60 + "\n")
 
     # Listar TODAS las rutas registradas
-    print("\n📋 TODAS LAS RUTAS REGISTRADAS:")
-    print("-"*70)
-
-    users_routes = []
-    other_routes = []
-
+    print("\n📋 RUTAS REGISTRADAS:")
+    print("="*60)
     for route in app.routes:
         if hasattr(route, 'methods') and hasattr(route, 'path'):
-            methods = ','.join(sorted(route.methods))
-            path = route.path
-            route_info = f"  {methods:15} {path}"
-
-            if '/users' in path:
-                users_routes.append(route_info)
-            else:
-                other_routes.append(route_info)
-
-    # Mostrar rutas de usuarios primero (son las importantes)
-    if users_routes:
-        print("\n🔥 RUTAS DE USUARIOS:")
-        for route in sorted(users_routes):
-            print(route)
-    else:
-        print("\n❌ NO HAY RUTAS DE USUARIOS REGISTRADAS")
-
-    # Mostrar otras rutas
-    print("\n📍 OTRAS RUTAS:")
-    for route in sorted(other_routes)[:10]:  # Solo las primeras 10
-        print(route)
-
-    print("-"*70)
-    print(f"\n✅ Total de rutas: {len(app.routes)}")
-    print("="*70 + "\n")
+            methods = ','.join(route.methods)
+            print(f"  {methods:10} {route.path}")
+    print("="*60 + "\n")
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Evento al cerrar"""
-    print("\n" + "="*70)
+    print("\n" + "="*60)
     print("👋 LAIKA Club API - Cerrando servidor")
-    print("="*70 + "\n")
+    print("="*60 + "\n")
 
     if mysql_engine:
         mysql_engine.dispose()

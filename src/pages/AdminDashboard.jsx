@@ -1,4 +1,7 @@
+// pages/AdminDashboard.jsx - VERSIÓN MEJORADA CON NAVEGACIÓN CORREGIDA
+
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Card,
   Button,
@@ -8,12 +11,17 @@ import {
   Alert,
   Spinner
 } from '../components'
+import UserPermissionsModal from '../components/UserPermissionsModal'
+import AutomaticBackupConfig from '../components/AutomaticBackupConfig'
 import api from '../services/api'
 import { useNotification } from '../context/NotificationContext'
 import './AdminDashboard.css'
 
 const AdminDashboard = () => {
   const { success, error: showError } = useNotification()
+  const navigate = useNavigate()
+
+  // Estados principales
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalEvents: 0,
@@ -21,13 +29,22 @@ const AdminDashboard = () => {
     activeUsers: 0
   })
   const [users, setUsers] = useState([])
-  const [systemConfig, setSystemConfig] = useState({})
+  const [systemConfig, setSystemConfig] = useState({
+    maintenanceMode: false,
+    registrationEnabled: true,
+    sessionTimeout: 30,
+    maxTicketsPerUser: 10
+  })
   const [loading, setLoading] = useState(true)
+  const [alert, setAlert] = useState(null)
+  const [loadingErrors, setLoadingErrors] = useState([])
+
+  // Estados para modales
   const [showBackupModal, setShowBackupModal] = useState(false)
   const [showUsersModal, setShowUsersModal] = useState(false)
-  const [showRestoreModal, setShowRestoreModal] = useState(false)
   const [showSelectiveModal, setShowSelectiveModal] = useState(false)
-  const [alert, setAlert] = useState(null)
+  const [showPermissionsModal, setShowPermissionsModal] = useState(false)
+  const [showAutoBackupModal, setShowAutoBackupModal] = useState(false)
 
   // Estados para respaldos
   const [backups, setBackups] = useState([])
@@ -35,80 +52,141 @@ const AdminDashboard = () => {
   const [selectedTables, setSelectedTables] = useState([])
   const [loadingBackups, setLoadingBackups] = useState(false)
 
+  // Estados para permisos
+  const [selectedUser, setSelectedUser] = useState(null)
+
   useEffect(() => {
     fetchDashboardData()
   }, [])
 
+  // ============================================
+  // FUNCIONES DE CARGA DE DATOS
+  // ============================================
+
   const fetchDashboardData = async () => {
     setLoading(true)
+    setLoadingErrors([])
+    const errors = []
+
     try {
-      console.log('📤 Obteniendo datos del dashboard...')
+      // 1. Cargar estadísticas
+      try {
+        console.log('📤 Obteniendo estadísticas...')
+        const statsPromise = api.stats.getAdminDashboard()
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Timeout en estadísticas')), 5000)
+        )
 
-      const statsResponse = await api.stats.getAdminDashboard()
-      console.log('✅ Estadísticas obtenidas:', statsResponse)
+        const statsResponse = await Promise.race([statsPromise, timeoutPromise])
+        console.log('✅ Estadísticas obtenidas:', statsResponse)
 
-      setStats({
-        totalUsers: statsResponse.totalUsers || statsResponse.total_users || 0,
-        totalEvents:
-          statsResponse.totalEvents || statsResponse.total_events || 0,
-        totalSales: statsResponse.totalSales || statsResponse.total_sales || 0,
-        activeUsers:
-          statsResponse.activeUsers || statsResponse.active_users || 0
-      })
+        setStats({
+          totalUsers:
+            statsResponse.totalUsers || statsResponse.total_users || 0,
+          totalEvents:
+            statsResponse.totalEvents || statsResponse.total_events || 0,
+          totalSales:
+            statsResponse.totalSales || statsResponse.total_sales || 0,
+          activeUsers:
+            statsResponse.activeUsers || statsResponse.active_users || 0
+        })
+      } catch (error) {
+        console.error('❌ Error al cargar estadísticas:', error)
+        errors.push('Estadísticas no disponibles')
+        setStats({
+          totalUsers: 0,
+          totalEvents: 0,
+          totalSales: 0,
+          activeUsers: 0
+        })
+      }
 
-      console.log('📤 Obteniendo usuarios...')
-      const usersResponse = await api.user.getAll({ limit: 100 })
-      console.log('✅ Usuarios obtenidos:', usersResponse)
+      // 2. Cargar usuarios
+      try {
+        console.log('📤 Obteniendo usuarios...')
+        const usersPromise = api.user.getAll({ limit: 100 })
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Timeout en usuarios')), 5000)
+        )
 
-      setUsers(
-        usersResponse.map(u => ({
-          id: u.id,
-          name: `${u.first_name || u.firstName || ''} ${u.last_name || u.lastName || ''}`.trim(),
-          email: u.email,
-          role: u.role,
-          status: u.status
-        }))
-      )
+        const usersResponse = await Promise.race([usersPromise, timeoutPromise])
+        console.log('✅ Usuarios obtenidos:', usersResponse)
 
-      console.log('📤 Obteniendo configuración...')
-      const configResponse = await api.config.getConfig()
-      console.log('✅ Configuración obtenida:', configResponse)
+        setUsers(
+          usersResponse.map(u => ({
+            id: u.id,
+            name: `${u.first_name || u.firstName || ''} ${u.last_name || u.lastName || ''}`.trim(),
+            email: u.email,
+            role: u.role,
+            status: u.status
+          }))
+        )
+      } catch (error) {
+        console.error('❌ Error al cargar usuarios:', error)
+        errors.push('Usuarios no disponibles')
+        setUsers([])
+      }
 
-      setSystemConfig({
-        maintenanceMode:
-          configResponse.maintenanceMode ||
-          configResponse.maintenance_mode ||
-          false,
-        registrationEnabled:
-          configResponse.registrationEnabled ||
-          configResponse.registration_enabled !== false,
-        sessionTimeout:
-          configResponse.sessionTimeout || configResponse.session_timeout || 30,
-        maxTicketsPerUser:
-          configResponse.maxTicketsPerUser ||
-          configResponse.max_tickets_per_user ||
-          10
-      })
+      // 3. Cargar configuración
+      try {
+        console.log('📤 Obteniendo configuración...')
+        const configPromise = api.config.getConfig()
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Timeout en configuración')), 5000)
+        )
+
+        const configResponse = await Promise.race([
+          configPromise,
+          timeoutPromise
+        ])
+        console.log('✅ Configuración obtenida:', configResponse)
+
+        setSystemConfig({
+          maintenanceMode:
+            configResponse.maintenanceMode ||
+            configResponse.maintenance_mode ||
+            false,
+          registrationEnabled:
+            configResponse.registrationEnabled ||
+            configResponse.registration_enabled !== false,
+          sessionTimeout:
+            configResponse.sessionTimeout ||
+            configResponse.session_timeout ||
+            30,
+          maxTicketsPerUser:
+            configResponse.maxTicketsPerUser ||
+            configResponse.max_tickets_per_user ||
+            10
+        })
+      } catch (error) {
+        console.error('❌ Error al cargar configuración:', error)
+        errors.push('Configuración no disponible')
+        setSystemConfig({
+          maintenanceMode: false,
+          registrationEnabled: true,
+          sessionTimeout: 30,
+          maxTicketsPerUser: 10
+        })
+      }
+
+      if (errors.length > 0) {
+        setLoadingErrors(errors)
+        setAlert({
+          type: 'warning',
+          message: `Algunos datos no se pudieron cargar: ${errors.join(', ')}`
+        })
+      }
     } catch (error) {
-      console.error('❌ Error al cargar datos del dashboard:', error)
-      showError('Error al cargar datos del dashboard')
-
-      setStats({ totalUsers: 0, totalEvents: 0, totalSales: 0, activeUsers: 0 })
-      setUsers([])
-      setSystemConfig({
-        maintenanceMode: false,
-        registrationEnabled: true,
-        sessionTimeout: 30,
-        maxTicketsPerUser: 10
+      console.error('❌ Error crítico al cargar dashboard:', error)
+      setAlert({
+        type: 'error',
+        message:
+          'Error crítico al cargar el dashboard. Por favor, recarga la página.'
       })
     } finally {
       setLoading(false)
     }
   }
-
-  // ============================================
-  // FUNCIONES DE RESPALDO
-  // ============================================
 
   const fetchBackupsList = async () => {
     setLoadingBackups(true)
@@ -147,16 +225,13 @@ const AdminDashboard = () => {
       setAlert({ type: 'success', message: 'Respaldo completado exitosamente' })
       success(`Respaldo ${type} creado correctamente`)
       setShowBackupModal(false)
-      fetchBackupsList() // Actualizar lista
+      fetchBackupsList()
     } catch (error) {
       console.error('❌ Error al crear respaldo:', error)
 
-      // ✅ EXTRAER MENSAJE DE ERROR CORRECTAMENTE
       let errorMsg = 'Error al realizar el respaldo'
-
       if (error.data && error.data.detail) {
         if (Array.isArray(error.data.detail)) {
-          // Errores de validación Pydantic (422)
           errorMsg = error.data.detail.map(err => err.msg).join(', ')
         } else if (typeof error.data.detail === 'string') {
           errorMsg = error.data.detail
@@ -215,7 +290,7 @@ const AdminDashboard = () => {
       console.log('✅ Restauración completada:', response)
 
       success('Base de datos restaurada exitosamente')
-      setShowRestoreModal(false)
+      setShowBackupModal(false)
       fetchDashboardData()
     } catch (error) {
       console.error('❌ Error al restaurar:', error)
@@ -257,9 +332,14 @@ const AdminDashboard = () => {
     )
   }
 
-  // ============================================
-  // OTRAS FUNCIONES
-  // ============================================
+  const handleEditPermissions = user => {
+    setSelectedUser(user)
+    setShowPermissionsModal(true)
+  }
+
+  const handlePermissionsUpdated = () => {
+    fetchDashboardData()
+  }
 
   const handleConfigChange = async (key, value) => {
     try {
@@ -329,6 +409,18 @@ const AdminDashboard = () => {
     }
   }
 
+  // ============================================
+  // NAVEGACIÓN AL MONITOR
+  // ============================================
+
+  const handleOpenDatabaseMonitor = () => {
+    navigate('/admin/database-monitor')
+  }
+
+  // ============================================
+  // COLUMNAS DE TABLAS
+  // ============================================
+
   const userColumns = [
     { key: 'name', header: 'Nombre', sortable: true },
     { key: 'email', header: 'Email' },
@@ -358,16 +450,28 @@ const AdminDashboard = () => {
       key: 'actions',
       header: 'Acciones',
       render: (value, row) => (
-        <Button
-          size='small'
-          variant='danger'
-          onClick={e => {
-            e.stopPropagation()
-            handleDeleteUser(row.id)
-          }}
-        >
-          Eliminar
-        </Button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Button
+            size='small'
+            variant='warning'
+            onClick={e => {
+              e.stopPropagation()
+              handleEditPermissions(row)
+            }}
+          >
+            ⚙️ Permisos
+          </Button>
+          <Button
+            size='small'
+            variant='danger'
+            onClick={e => {
+              e.stopPropagation()
+              handleDeleteUser(row.id)
+            }}
+          >
+            Eliminar
+          </Button>
+        </div>
       )
     }
   ]
@@ -425,14 +529,22 @@ const AdminDashboard = () => {
   ]
 
   if (loading) {
-    return <Spinner fullScreen text='Cargando dashboard...' />
+    return (
+      <div className='admin-dashboard'>
+        <Spinner fullScreen text='Cargando dashboard...' />
+        <p style={{ textAlign: 'center', color: '#9a9895', marginTop: '1rem' }}>
+          Si esto tarda mucho, verifica que el backend esté ejecutándose en el
+          puerto 8000
+        </p>
+      </div>
+    )
   }
 
   return (
     <div className='admin-dashboard'>
       <div className='dashboard-header'>
         <h1>Panel de Administración</h1>
-        <p>Control total del sistema LAIKA Club</p>
+        <p>Control Total del Sistema LAIKA Club v2.0</p>
       </div>
 
       {alert && (
@@ -444,10 +556,25 @@ const AdminDashboard = () => {
         />
       )}
 
+      {loadingErrors.length > 0 && (
+        <Alert
+          type='warning'
+          message={`Advertencia: Algunos servicios no respondieron correctamente`}
+          closable
+          onClose={() => setLoadingErrors([])}
+        />
+      )}
+
+      {/* ESTADÍSTICAS */}
       <div className='stats-grid'>
         <Card className='stat-card'>
           <div className='stat-content'>
-            <div className='stat-icon' style={{ backgroundColor: '#dbeafe' }}>
+            <div
+              className='stat-icon'
+              style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
+              }}
+            >
               👥
             </div>
             <div className='stat-info'>
@@ -461,7 +588,12 @@ const AdminDashboard = () => {
 
         <Card className='stat-card'>
           <div className='stat-content'>
-            <div className='stat-icon' style={{ backgroundColor: '#fef3c7' }}>
+            <div
+              className='stat-icon'
+              style={{
+                background: 'linear-gradient(135deg, #d4af37 0%, #b8931f 100%)'
+              }}
+            >
               🎫
             </div>
             <div className='stat-info'>
@@ -473,7 +605,12 @@ const AdminDashboard = () => {
 
         <Card className='stat-card'>
           <div className='stat-content'>
-            <div className='stat-icon' style={{ backgroundColor: '#d1fae5' }}>
+            <div
+              className='stat-icon'
+              style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+              }}
+            >
               💰
             </div>
             <div className='stat-info'>
@@ -487,7 +624,12 @@ const AdminDashboard = () => {
 
         <Card className='stat-card'>
           <div className='stat-content'>
-            <div className='stat-icon' style={{ backgroundColor: '#ddd6fe' }}>
+            <div
+              className='stat-icon'
+              style={{
+                background: 'linear-gradient(135deg, #00d9ff 0%, #0099cc 100%)'
+              }}
+            >
               🟢
             </div>
             <div className='stat-info'>
@@ -498,14 +640,16 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
+      {/* SECCIONES DE ADMINISTRACIÓN */}
       <div className='admin-sections'>
+        {/* GESTIÓN DE USUARIOS */}
         <Card title='Gestión de Usuarios'>
           <div className='section-actions'>
             <Button variant='primary' onClick={() => setShowUsersModal(true)}>
-              Ver Todos los Usuarios ({users.length})
+              👥 Ver Todos ({users.length})
             </Button>
             <Button variant='secondary' onClick={fetchDashboardData}>
-              Actualizar Lista
+              🔄 Actualizar
             </Button>
           </div>
           <Table
@@ -516,6 +660,7 @@ const AdminDashboard = () => {
           />
         </Card>
 
+        {/* CONFIGURACIÓN DEL SISTEMA */}
         <Card title='Configuración del Sistema'>
           <div className='config-options'>
             <div className='config-item'>
@@ -591,6 +736,7 @@ const AdminDashboard = () => {
           </div>
         </Card>
 
+        {/* GESTIÓN DE BASE DE DATOS */}
         <Card title='Gestión de Base de Datos'>
           <div className='section-actions'>
             <Button
@@ -600,17 +746,24 @@ const AdminDashboard = () => {
                 fetchBackupsList()
               }}
             >
-              Gestionar Respaldos
+              💾 Gestionar Respaldos
+            </Button>
+            <Button variant='info' onClick={() => setShowAutoBackupModal(true)}>
+              ⚙️ Respaldos Automáticos
+            </Button>
+            <Button variant='success' onClick={handleOpenDatabaseMonitor}>
+              📊 Monitor en Tiempo Real
             </Button>
             <Button variant='warning' onClick={handleOptimizeDB}>
-              Optimizar BD
+              ⚡ Optimizar BD
             </Button>
             <Button variant='danger' onClick={handleClearCache}>
-              Limpiar Caché
+              🗑️ Limpiar Caché
             </Button>
           </div>
         </Card>
 
+        {/* MONITOREO DEL SISTEMA */}
         <Card title='Monitoreo del Sistema'>
           <div className='monitoring-info'>
             <div className='monitor-item'>
@@ -633,14 +786,13 @@ const AdminDashboard = () => {
             </div>
           </div>
           <Button variant='secondary' fullWidth onClick={fetchDashboardData}>
-            Actualizar Información
+            🔄 Actualizar Información
           </Button>
         </Card>
       </div>
 
-      {/* ============================================ */}
-      {/* MODAL DE GESTIÓN DE RESPALDOS */}
-      {/* ============================================ */}
+      {/* MODALES */}
+      {/* Modal de Gestión de Respaldos */}
       <Modal
         isOpen={showBackupModal}
         onClose={() => setShowBackupModal(false)}
@@ -648,7 +800,6 @@ const AdminDashboard = () => {
         size='large'
       >
         <div className='backup-management'>
-          {/* Crear Respaldo */}
           <div className='backup-section'>
             <h3>Crear Nuevo Respaldo</h3>
             <div
@@ -701,7 +852,6 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* Lista de Respaldos */}
           <div className='backup-section'>
             <div
               style={{
@@ -742,9 +892,7 @@ const AdminDashboard = () => {
         </div>
       </Modal>
 
-      {/* ============================================ */}
-      {/* MODAL DE RESPALDO SELECTIVO */}
-      {/* ============================================ */}
+      {/* Modal de Respaldo Selectivo */}
       <Modal
         isOpen={showSelectiveModal}
         onClose={() => {
@@ -855,6 +1003,20 @@ const AdminDashboard = () => {
           />
         )}
       </Modal>
+
+      {/* Modal de Permisos de Usuarios */}
+      <UserPermissionsModal
+        isOpen={showPermissionsModal}
+        onClose={() => setShowPermissionsModal(false)}
+        user={selectedUser}
+        onUpdate={handlePermissionsUpdated}
+      />
+
+      {/* Modal de Respaldos Automáticos */}
+      <AutomaticBackupConfig
+        isOpen={showAutoBackupModal}
+        onClose={() => setShowAutoBackupModal(false)}
+      />
     </div>
   )
 }

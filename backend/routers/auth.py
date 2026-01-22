@@ -1,3 +1,5 @@
+# routers/auth.py - VERSIÓN MEJORADA CON MEJOR MANEJO DE ERRORES
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -8,11 +10,26 @@ import jwt
 import os
 import traceback
 
+# ============================================
+# CREAR ROUTER CON CONFIGURACIÓN EXPLÍCITA
+# ============================================
+
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# Dependencia para obtener la sesión de BD
+print("\n" + "="*70)
+print("🔐 AUTH ROUTER INICIALIZADO")
+print("="*70)
+print(f"   Router object: {router}")
+print(f"   Router type: {type(router)}")
+print("="*70 + "\n")
+
+# ============================================
+# DEPENDENCIA PARA BD
+# ============================================
+
 def get_db():
+    """Dependencia para obtener sesión de base de datos"""
     from main import SessionLocal
     db = SessionLocal()
     try:
@@ -20,7 +37,10 @@ def get_db():
     finally:
         db.close()
 
-# Modelos
+# ============================================
+# MODELOS PYDANTIC
+# ============================================
+
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
@@ -36,37 +56,112 @@ class TokenResponse(BaseModel):
     token: str
     user: dict
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    newPassword: str
+
 # ============================================
-# ENDPOINTS
+# ENDPOINTS DE AUTENTICACIÓN
 # ============================================
 
 @router.post("/login", response_model=TokenResponse)
 def login(request: LoginRequest, db: Session = Depends(get_db)):
-    """Iniciar sesión"""
-    try:
-        print(f"🔵 Login attempt: {request.email}")
+    """
+    Endpoint de inicio de sesión con manejo mejorado de errores
 
-        # Buscar usuario
+    POST /api/auth/login
+    Body: { "email": "user@example.com", "password": "password123" }
+    """
+    try:
+        print(f"\n{'='*60}")
+        print(f"🔐 LOGIN ATTEMPT")
+        print(f"{'='*60}")
+        print(f"Email: {request.email}")
+        print(f"Password length: {len(request.password)} chars")
+        print(f"Timestamp: {datetime.now().isoformat()}")
+
+        # Buscar usuario por email
         query = text("SELECT * FROM users WHERE email = :email")
         result = db.execute(query, {"email": request.email})
         user = result.fetchone()
 
         if not user:
-            print(f"❌ User not found: {request.email}")
+            print(f"❌ Usuario no encontrado: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Credenciales inválidas"
             )
 
-        # Verificar contraseña
-        if not pwd_context.verify(request.password, user.password_hash):
-            print(f"❌ Invalid password for: {request.email}")
+        print(f"✅ Usuario encontrado:")
+        print(f"   ID: {user.id}")
+        print(f"   Role: {user.role}")
+        print(f"   Status: {user.status}")
+        print(f"   Hash length: {len(user.password_hash)} chars")
+        print(f"   Hash starts with: {user.password_hash[:10]}...")
+
+        # Verificar contraseña con manejo mejorado de errores
+        try:
+            print(f"\n🔑 Verificando contraseña...")
+
+            # Bcrypt tiene un límite de 72 bytes
+            password_to_verify = request.password
+            password_bytes = password_to_verify.encode('utf-8')
+
+            if len(password_bytes) > 72:
+                print(f"⚠️  Password excede 72 bytes ({len(password_bytes)} bytes)")
+                print(f"⚠️  Truncando a 72 bytes para bcrypt")
+                password_to_verify = password_bytes[:72].decode('utf-8', errors='ignore')
+
+            # Verificar que el hash tenga el formato correcto de bcrypt
+            if not user.password_hash.startswith('$2b$') and not user.password_hash.startswith('$2a$'):
+                print(f"❌ Hash no tiene formato bcrypt válido")
+                print(f"   Hash starts with: {user.password_hash[:20]}")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Error de configuración del sistema. Contacta al administrador."
+                )
+
+            # Intentar verificación
+            is_valid = pwd_context.verify(password_to_verify, user.password_hash)
+
+            if not is_valid:
+                print(f"❌ Contraseña incorrecta para: {request.email}")
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Credenciales inválidas"
+                )
+
+            print(f"✅ Contraseña verificada correctamente!")
+
+        except HTTPException:
+            raise
+        except ValueError as ve:
+            print(f"\n❌ ERROR DE BCRYPT - ValueError")
+            print(f"   Error: {str(ve)}")
+            print(f"   Hash en BD: {user.password_hash[:50]}...")
+            print(f"   ⚠️  El hash puede estar corrupto o no ser bcrypt válido")
+
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Credenciales inválidas"
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error de autenticación. El hash de contraseña puede estar corrupto. Contacta al administrador."
+            )
+        except Exception as ve_error:
+            print(f"\n❌ ERROR INESPERADO EN VERIFICACIÓN")
+            print(f"   Error type: {type(ve_error).__name__}")
+            print(f"   Error: {str(ve_error)}")
+            traceback.print_exc()
+
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error al verificar credenciales"
             )
 
-        print(f"✅ Login successful: {request.email} (role: {user.role})")
+        print(f"✅ Login exitoso!")
+        print(f"   User ID: {user.id}")
+        print(f"   Role: {user.role}")
 
         # Crear token JWT
         token_data = {
@@ -74,23 +169,23 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
             "role": user.role,
             "exp": datetime.utcnow() + timedelta(days=7)
         }
-        token = jwt.encode(
-            token_data,
-            os.getenv('JWT_SECRET', 'tu_clave_secreta_aqui'),
-            algorithm="HS256"
-        )
+
+        secret_key = os.getenv('JWT_SECRET', 'tu_clave_secreta_aqui')
+        token = jwt.encode(token_data, secret_key, algorithm="HS256")
 
         # Actualizar último login
         try:
             update_query = text("UPDATE users SET last_login = NOW() WHERE id = :user_id")
             db.execute(update_query, {"user_id": user.id})
             db.commit()
-            print(f"✅ Last login updated for user {user.id}")
+            print(f"✅ last_login actualizado")
         except Exception as e:
-            print(f"⚠️ Warning: Could not update last_login: {e}")
+            print(f"⚠️  No se pudo actualizar last_login: {e}")
             db.rollback()
-            # No lanzar error, el login fue exitoso
 
+        print(f"{'='*60}\n")
+
+        # Preparar respuesta
         return {
             "token": token,
             "user": {
@@ -101,57 +196,92 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
                 "role": user.role
             }
         }
+
     except HTTPException:
         raise
     except Exception as e:
-        print(f"❌ Error en login: {e}")
+        print(f"\n{'='*60}")
+        print(f"❌ ERROR GENERAL EN LOGIN")
+        print(f"{'='*60}")
+        print(f"Error type: {type(e).__name__}")
+        print(f"Error: {str(e)}")
         traceback.print_exc()
+        print(f"{'='*60}\n")
+
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error al iniciar sesión"
         )
 
+
 @router.post("/register", response_model=TokenResponse)
 def register(request: RegisterRequest, db: Session = Depends(get_db)):
-    """Registrar nuevo usuario - VERSIÓN MEJORADA CON DIAGNÓSTICO"""
+    """
+    Endpoint de registro de usuario con validaciones mejoradas
+
+    POST /api/auth/register
+    Body: {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john@example.com",
+        "phone": "1234567890",
+        "password": "password123"
+    }
+    """
     try:
         print(f"\n{'='*60}")
         print(f"📝 REGISTER ATTEMPT")
         print(f"{'='*60}")
         print(f"Email: {request.email}")
         print(f"Name: {request.firstName} {request.lastName}")
-        print(f"Phone: {request.phone}")
+        print(f"Password length: {len(request.password)} chars")
 
-        # ============================================
-        # PASO 1: Verificar si email existe
-        # ============================================
-        print("\n[PASO 1] Verificando email existente...")
+        # Validar longitud de contraseña
+        if len(request.password) < 6:
+            print(f"❌ Contraseña demasiado corta")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La contraseña debe tener al menos 6 caracteres"
+            )
+
+        # Verificar si email existe
         check_query = text("SELECT id FROM users WHERE email = :email")
         result = db.execute(check_query, {"email": request.email})
         existing = result.fetchone()
 
         if existing:
-            print(f"❌ Email already exists: {request.email}")
+            print(f"❌ Email ya registrado: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="El email ya está registrado"
             )
 
-        print("✅ Email disponible")
+        # Hash de contraseña con manejo de errores
+        try:
+            # Truncar si excede 72 bytes para bcrypt
+            password_to_hash = request.password
+            password_bytes = password_to_hash.encode('utf-8')
 
-        # ============================================
-        # PASO 2: Hash de contraseña
-        # ============================================
-        print("\n[PASO 2] Generando hash de contraseña...")
-        password_hash = pwd_context.hash(request.password)
-        print(f"✅ Password hashed: {password_hash[:30]}...")
+            if len(password_bytes) > 72:
+                print(f"⚠️  Password truncado de {len(password_bytes)} a 72 bytes")
+                password_to_hash = password_bytes[:72].decode('utf-8', errors='ignore')
 
-        # ============================================
-        # PASO 3: Insertar usuario CON MANEJO EXPLÍCITO
-        # ============================================
-        print("\n[PASO 3] Insertando usuario...")
+            password_hash = pwd_context.hash(password_to_hash)
+            print(f"✅ Password hash generado: {password_hash[:20]}...")
 
-        # Preparar datos
+        except Exception as hash_error:
+            print(f"❌ Error al generar hash: {hash_error}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Error al procesar contraseña"
+            )
+
+        # Insertar usuario
+        insert_query = text("""
+            INSERT INTO users (first_name, last_name, email, phone, password_hash, role, status, created_at)
+            VALUES (:first_name, :last_name, :email, :phone, :password_hash, 'usuario', 'active', NOW())
+        """)
+
         user_data = {
             "first_name": request.firstName,
             "last_name": request.lastName,
@@ -159,89 +289,37 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
             "phone": request.phone,
             "password_hash": password_hash
         }
-        print(f"📦 Datos a insertar: {user_data}")
 
-        # Ejecutar INSERT
-        insert_query = text("""
-            INSERT INTO users (first_name, last_name, email, phone, password_hash, role, status, created_at)
-            VALUES (:first_name, :last_name, :email, :phone, :password_hash, 'usuario', 'active', NOW())
-        """)
+        db.execute(insert_query, user_data)
+        db.commit()
 
-        print("🔄 Ejecutando INSERT query...")
-        result = db.execute(insert_query, user_data)
-
-        print(f"✅ INSERT ejecutado")
-        print(f"   Rows affected: {result.rowcount}")
-        print(f"   Last inserted ID: {result.lastrowid if hasattr(result, 'lastrowid') else 'N/A'}")
-
-        # ============================================
-        # PASO 4: COMMIT EXPLÍCITO CON VERIFICACIÓN
-        # ============================================
-        print("\n[PASO 4] Realizando COMMIT...")
-        try:
-            db.commit()
-            print("✅ COMMIT exitoso")
-        except Exception as commit_error:
-            print(f"❌ ERROR EN COMMIT: {commit_error}")
-            db.rollback()
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Error al guardar usuario: {str(commit_error)}"
-            )
-
-        # ============================================
-        # PASO 5: Verificar que se guardó
-        # ============================================
-        print("\n[PASO 5] Verificando que el usuario se guardó...")
-
-        # Usar nueva consulta para asegurar que leemos de la BD
+        # Obtener usuario creado
         verify_query = text("SELECT * FROM users WHERE email = :email")
         verify_result = db.execute(verify_query, {"email": request.email})
         user = verify_result.fetchone()
 
         if not user:
-            print("❌ CRÍTICO: Usuario no encontrado después de INSERT y COMMIT")
-            print("   Esto indica un problema de permisos o configuración de MySQL")
-
-            # Intentar diagnóstico adicional
-            count_query = text("SELECT COUNT(*) as total FROM users WHERE email = :email")
-            count_result = db.execute(count_query, {"email": request.email})
-            count = count_result.fetchone()
-            print(f"   Count en BD: {count.total if count else 0}")
-
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Error al crear usuario: no se pudo verificar el registro"
+                detail="Error al crear usuario"
             )
 
-        print(f"✅ Usuario verificado en BD!")
-        print(f"   ID: {user.id}")
-        print(f"   Email: {user.email}")
-        print(f"   Role: {user.role}")
-        print(f"   Status: {user.status}")
-        print(f"   Created at: {user.created_at}")
+        print(f"✅ Usuario registrado exitosamente!")
+        print(f"   User ID: {user.id}")
+        print(f"   Hash stored: {user.password_hash[:20]}...")
 
-        # ============================================
-        # PASO 6: Crear token JWT
-        # ============================================
-        print("\n[PASO 6] Creando token JWT...")
+        # Crear token
         token_data = {
             "user_id": user.id,
             "role": user.role,
             "exp": datetime.utcnow() + timedelta(days=7)
         }
-        token = jwt.encode(
-            token_data,
-            os.getenv('JWT_SECRET', 'tu_clave_secreta_aqui'),
-            algorithm="HS256"
-        )
 
-        print(f"✅ Token creado: {token[:50]}...")
+        secret_key = os.getenv('JWT_SECRET', 'tu_clave_secreta_aqui')
+        token = jwt.encode(token_data, secret_key, algorithm="HS256")
+
         print(f"{'='*60}\n")
 
-        # ============================================
-        # RESPUESTA
-        # ============================================
         return {
             "token": token,
             "user": {
@@ -256,69 +334,161 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
+        db.rollback()
         print(f"\n{'='*60}")
-        print(f"❌ REGISTRATION ERROR")
+        print(f"❌ ERROR EN REGISTER")
         print(f"{'='*60}")
         print(f"Error type: {type(e).__name__}")
-        print(f"Error message: {str(e)}")
-        print(f"Full traceback:")
+        print(f"Error: {str(e)}")
         traceback.print_exc()
         print(f"{'='*60}\n")
 
-        db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al registrar usuario: {str(e)}"
         )
 
 
-# ============================================
-# ENDPOINT DE DIAGNÓSTICO (TEMPORAL)
-# ============================================
-@router.get("/test-db")
-def test_database_connection(db: Session = Depends(get_db)):
-    """
-    Endpoint para probar conexión y escritura a la base de datos
-    ELIMINAR EN PRODUCCIÓN
-    """
+@router.post("/logout")
+def logout():
+    """Cerrar sesión (principalmente lado cliente)"""
+    return {"success": True, "message": "Sesión cerrada exitosamente"}
+
+
+@router.get("/verify")
+def verify_token():
+    """Verificar validez del token (implementar JWT verification)"""
+    # TODO: Implementar verificación de JWT
+    return {"valid": True}
+
+
+@router.post("/refresh")
+def refresh_token():
+    """Refrescar token JWT"""
+    # TODO: Implementar refresh de token
+    return {"token": "new_token"}
+
+
+@router.post("/forgot-password")
+def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    """Solicitar recuperación de contraseña"""
     try:
-        # Test 1: SELECT
-        result = db.execute(text("SELECT COUNT(*) as total FROM users"))
-        count = result.fetchone()
+        print(f"📧 Password recovery requested for: {request.email}")
 
-        # Test 2: INSERT de prueba
-        test_email = f"test_{datetime.now().timestamp()}@test.com"
-        insert_query = text("""
-            INSERT INTO users (first_name, last_name, email, password_hash, role, status, created_at)
-            VALUES ('Test', 'User', :email, 'hash123', 'usuario', 'active', NOW())
-        """)
+        # Verificar que el usuario existe
+        query = text("SELECT id FROM users WHERE email = :email")
+        result = db.execute(query, {"email": request.email})
+        user = result.fetchone()
 
-        insert_result = db.execute(insert_query, {"email": test_email})
-        db.commit()
+        if not user:
+            # Por seguridad, no revelar si el email existe o no
+            return {
+                "success": True,
+                "message": "Si el email existe, recibirás instrucciones de recuperación"
+            }
 
-        # Test 3: Verificar INSERT
-        verify_query = text("SELECT * FROM users WHERE email = :email")
-        verify_result = db.execute(verify_query, {"email": test_email})
-        test_user = verify_result.fetchone()
-
-        # Test 4: DELETE de prueba
-        if test_user:
-            delete_query = text("DELETE FROM users WHERE email = :email")
-            db.execute(delete_query, {"email": test_email})
-            db.commit()
+        # TODO: Generar token de recuperación y enviar email
+        print(f"✅ Recovery email would be sent to: {request.email}")
 
         return {
-            "status": "success",
-            "total_users": count.total,
-            "insert_test": "passed" if test_user else "failed",
-            "test_user_id": test_user.id if test_user else None,
-            "message": "Base de datos funcionando correctamente"
+            "success": True,
+            "message": "Si el email existe, recibirás instrucciones de recuperación"
         }
 
     except Exception as e:
-        db.rollback()
+        print(f"❌ Error en forgot-password: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al procesar solicitud"
+        )
+
+
+@router.post("/reset-password")
+def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
+    """Restablecer contraseña con token"""
+    try:
+        # TODO: Verificar token de recuperación
+        # TODO: Actualizar contraseña
+
         return {
-            "status": "error",
-            "message": str(e),
-            "traceback": traceback.format_exc()
+            "success": True,
+            "message": "Contraseña actualizada exitosamente"
         }
+
+    except Exception as e:
+        print(f"❌ Error en reset-password: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al restablecer contraseña"
+        )
+
+
+# ============================================
+# ENDPOINT DE DIAGNÓSTICO
+# ============================================
+
+@router.get("/test")
+def test_auth_router():
+    """Endpoint de prueba para verificar que el router funciona"""
+    return {
+        "status": "ok",
+        "message": "Auth router funcionando correctamente",
+        "timestamp": datetime.now().isoformat(),
+        "bcrypt_info": {
+            "schemes": pwd_context.schemes(),
+            "default_scheme": pwd_context.default_scheme()
+        },
+        "endpoints": [
+            "POST /api/auth/login",
+            "POST /api/auth/register",
+            "POST /api/auth/logout",
+            "GET /api/auth/verify",
+            "POST /api/auth/refresh",
+            "POST /api/auth/forgot-password",
+            "POST /api/auth/reset-password"
+        ]
+    }
+
+
+@router.get("/debug-hash/{email}")
+def debug_hash(email: str, db: Session = Depends(get_db)):
+    """
+    Endpoint de DEBUG para inspeccionar hashes (SOLO DESARROLLO)
+    ⚠️ ELIMINAR EN PRODUCCIÓN
+    """
+    try:
+        query = text("SELECT id, email, password_hash, created_at FROM users WHERE email = :email")
+        result = db.execute(query, {"email": email})
+        user = result.fetchone()
+
+        if not user:
+            return {"error": "Usuario no encontrado"}
+
+        hash_info = {
+            "user_id": user.id,
+            "email": user.email,
+            "hash_length": len(user.password_hash),
+            "hash_prefix": user.password_hash[:30],
+            "hash_valid_bcrypt": user.password_hash.startswith('$2b$') or user.password_hash.startswith('$2a$'),
+            "created_at": str(user.created_at)
+        }
+
+        return hash_info
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ============================================
+# VERIFICACIÓN AL CARGAR EL MÓDULO
+# ============================================
+
+print("\n" + "="*70)
+print("✅ AUTH ROUTER CARGADO EXITOSAMENTE (VERSIÓN MEJORADA)")
+print("="*70)
+print("   Endpoints registrados:")
+for route in router.routes:
+    if hasattr(route, 'methods') and hasattr(route, 'path'):
+        methods = ','.join(sorted(route.methods))
+        print(f"      {methods:12} {route.path}")
+print("="*70 + "\n")

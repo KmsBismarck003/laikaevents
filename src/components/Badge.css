@@ -1,106 +1,237 @@
+/* Badge.css - Temática 2B NieR: Automata */
+
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  font-weight: 600;
-  border-radius: 6px;
+  gap: 0.5rem;
+  font-weight: 700;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: 'Rajdhani', sans-serif;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+}
+
+.badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.badge:hover::before {
+  left: 100%;
 }
 
 /* Tamaños */
 .badge--small {
-  padding: 0.25rem 0.5rem;
+  padding: 0.375rem 0.75rem;
   font-size: 0.75rem;
+  letter-spacing: 1px;
 }
 
 .badge--medium {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.813rem;
+  letter-spacing: 1.5px;
 }
 
 .badge--large {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.938rem;
+  letter-spacing: 2px;
 }
 
 /* Variantes */
 .badge--default {
-  background-color: #f3f4f6;
-  color: #374151;
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  color: #c0c0c0;
+  border-color: #3a3a3a;
+}
+
+.badge--default:hover {
+  background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+  border-color: #c0c0c0;
 }
 
 .badge--primary {
-  background-color: #ddd6fe;
-  color: #5b21b6;
+  background: linear-gradient(135deg, #d4af37 0%, #c0c0c0 100%);
+  color: #0a0a0a;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+}
+
+.badge--primary:hover {
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+  transform: translateY(-2px);
 }
 
 .badge--success {
-  background-color: #d1fae5;
-  color: #065f46;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+}
+
+.badge--success:hover {
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px);
 }
 
 .badge--danger {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+}
+
+.badge--danger:hover {
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  transform: translateY(-2px);
 }
 
 .badge--warning {
-  background-color: #fef3c7;
-  color: #92400e;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+}
+
+.badge--warning:hover {
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+  transform: translateY(-2px);
 }
 
 .badge--info {
-  background-color: #dbeafe;
-  color: #1e40af;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+}
+
+.badge--info:hover {
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
 }
 
 .badge--dark {
-  background-color: #1f2937;
-  color: white;
+  background: linear-gradient(135deg, #0a0a0a 0%, #000000 100%);
+  color: #c0c0c0;
+  border: 1px solid #2a2a2a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.badge--dark:hover {
+  border-color: #c0c0c0;
+  box-shadow: 0 4px 15px rgba(192, 192, 192, 0.2);
+  transform: translateY(-2px);
 }
 
 /* Badge redondeado (pill) */
 .badge--rounded {
+  clip-path: none;
   border-radius: 999px;
 }
 
 /* Badge con punto */
 .badge--dot {
-  padding-left: 0.5rem;
+  padding-left: 0.75rem;
 }
 
 .badge__dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.9);
+  }
 }
 
 .badge--default .badge__dot {
-  background-color: #6b7280;
+  background-color: #888888;
+  box-shadow: 0 0 8px #888888;
 }
 
 .badge--primary .badge__dot {
-  background-color: #7c3aed;
+  background-color: #0a0a0a;
+  box-shadow: 0 0 8px #0a0a0a;
 }
 
 .badge--success .badge__dot {
-  background-color: #10b981;
+  background-color: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
 }
 
 .badge--danger .badge__dot {
-  background-color: #ef4444;
+  background-color: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
 }
 
 .badge--warning .badge__dot {
-  background-color: #f59e0b;
+  background-color: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
 }
 
 .badge--info .badge__dot {
-  background-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
 }
 
 .badge--dark .badge__dot {
-  background-color: #f3f4f6;
+  background-color: #d4af37;
+  box-shadow: 0 0 8px #d4af37;
+}
+
+/* Efecto de brillo adicional */
+.badge::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .badge--small {
+    padding: 0.313rem 0.625rem;
+    font-size: 0.688rem;
+  }
+
+  .badge--medium {
+    padding: 0.438rem 0.875rem;
+    font-size: 0.75rem;
+  }
+
+  .badge--large {
+    padding: 0.563rem 1.125rem;
+    font-size: 0.875rem;
+  }
 }

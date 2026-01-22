@@ -298,7 +298,10 @@ export const userAPI = {
    */
   assignRole: (userId, role) => {
     return apiClient.patch(`/users/${userId}/role`, { role })
-  }
+  },
+  getPermissions: userId => apiClient.get(`/users/${userId}/permissions`),
+  updatePermissions: (userId, permissionsData) =>
+    apiClient.put(`/users/${userId}/permissions`, permissionsData)
 }
 
 /**
@@ -590,7 +593,17 @@ export const databaseAPI = {
    */
   optimize: () => {
     return apiClient.post('/database/optimize')
-  }
+  },
+  getAutomaticBackupConfig: () =>
+    apiClient.get('/database/automatic-backup/config'),
+  updateAutomaticBackupConfig: config =>
+    apiClient.put('/database/automatic-backup/config', config),
+  getScheduledBackups: () =>
+    apiClient.get('/database/automatic-backup/scheduled'),
+  cancelScheduledBackup: scheduleId =>
+    apiClient.delete(`/database/automatic-backup/scheduled/${scheduleId}`),
+  triggerBackupNow: () => apiClient.post('/database/automatic-backup/trigger'),
+  cleanupOldBackups: () => apiClient.post('/database/automatic-backup/cleanup')
 }
 
 /**
