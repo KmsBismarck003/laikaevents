@@ -1,21 +1,480 @@
-// pages/AdminDashboard.jsx - VERSIÓN MEJORADA CON NAVEGACIÓN CORREGIDA
+// pages/AdminDashboard.jsx - VERSIÓN MODERNA COMPLETAMENTE INDEPENDIENTE
 
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Card,
-  Button,
-  Badge,
-  Table,
-  Modal,
-  Alert,
-  Spinner
-} from '../components'
-import UserPermissionsModal from '../components/UserPermissionsModal'
-import AutomaticBackupConfig from '../components/AutomaticBackupConfig'
 import api from '../services/api'
 import { useNotification } from '../context/NotificationContext'
 import './AdminDashboard.css'
+
+// ============================================
+// COMPONENTES INTERNOS DEL DASHBOARD
+// ============================================
+
+const Alert = ({ type, message, onClose }) => (
+  <div className={`alert alert-${type}`}>
+    <span>{message}</span>
+    {onClose && (
+      <button className='alert-close' onClick={onClose}>
+        ✕
+      </button>
+    )}
+  </div>
+)
+
+const Badge = ({ variant = 'default', dot = false, children }) => (
+  <span className={`badge badge-${variant} ${dot ? 'badge-dot' : ''}`}>
+    {children}
+  </span>
+)
+
+const Spinner = ({ text = 'Cargando...', fullScreen = false }) => (
+  <div
+    className={fullScreen ? 'spinner-fullscreen' : ''}
+    style={{ textAlign: 'center', padding: '40px' }}
+  >
+    <div className='spinner'></div>
+    <p className='spinner-text'>{text}</p>
+  </div>
+)
+
+const Modal = ({ isOpen, onClose, title, children, size = 'medium' }) => {
+  if (!isOpen) return null
+
+  return (
+    <div className='modal-overlay' onClick={onClose}>
+      <div
+        className={`modal-content modal-${size}`}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className='modal-header'>
+          <h2 className='modal-title'>{title}</h2>
+          <button className='modal-close' onClick={onClose}>
+            ✕
+          </button>
+        </div>
+        <div className='modal-body'>{children}</div>
+      </div>
+    </div>
+  )
+}
+
+const Table = ({ data, columns }) => (
+  <div className='table-container'>
+    <table>
+      <thead>
+        <tr>
+          {columns.map(col => (
+            <th key={col.key}>{col.header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.length === 0 ? (
+          <tr>
+            <td
+              colSpan={columns.length}
+              style={{ textAlign: 'center', padding: '40px', color: '#888' }}
+            >
+              No hay datos disponibles
+            </td>
+          </tr>
+        ) : (
+          data.map((row, idx) => (
+            <tr key={idx}>
+              {columns.map(col => (
+                <td key={col.key}>
+                  {col.render ? col.render(row[col.key], row) : row[col.key]}
+                </td>
+              ))}
+            </tr>
+          ))
+        )}
+      </tbody>
+    </table>
+  </div>
+)
+
+const Button = ({
+  children,
+  variant = 'primary',
+  onClick,
+  disabled = false,
+  fullWidth = false,
+  size = 'normal'
+}) => (
+  <button
+    className={`btn btn-${variant} ${fullWidth ? 'btn-full' : ''}`}
+    onClick={onClick}
+    disabled={disabled}
+    style={{
+      fontSize: size === 'small' ? '0.875rem' : '0.95rem',
+      padding: size === 'small' ? '8px 16px' : '12px 24px'
+    }}
+  >
+    {children}
+  </button>
+)
+
+const Card = ({ title, children, className = '' }) => (
+  <div className={`card ${className}`}>
+    {title && <h3 className='card-title'>{title}</h3>}
+    {children}
+  </div>
+)
+
+// ============================================
+// MODAL DE PERMISOS DE USUARIO
+// ============================================
+
+const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
+  const { success, error: showError } = useNotification()
+  const [permissions, setPermissions] = useState({
+    canCreateEvents: false,
+    canEditEvents: false,
+    canDeleteEvents: false,
+    canManageUsers: false,
+    canViewReports: false,
+    canManagePayments: false
+  })
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (user && isOpen) {
+      // Cargar permisos del usuario
+      setPermissions({
+        canCreateEvents: user.canCreateEvents || false,
+        canEditEvents: user.canEditEvents || false,
+        canDeleteEvents: user.canDeleteEvents || false,
+        canManageUsers: user.canManageUsers || false,
+        canViewReports: user.canViewReports || false,
+        canManagePayments: user.canManagePayments || false
+      })
+    }
+  }, [user, isOpen])
+
+  const handleSavePermissions = async () => {
+    if (!user) return
+
+    setLoading(true)
+    try {
+      await api.user.updatePermissions(user.id, permissions)
+      success('Permisos actualizados correctamente')
+      onUpdate && onUpdate()
+      onClose()
+    } catch (error) {
+      console.error('Error al actualizar permisos:', error)
+      showError('Error al actualizar permisos')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const togglePermission = key => {
+    setPermissions(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  if (!user) return null
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`⚙️ Permisos de ${user.name}`}
+      size='medium'
+    >
+      <div className='permissions-container'>
+        <p style={{ color: '#c0c0c0', marginBottom: '24px' }}>
+          Configura los permisos específicos para este usuario
+        </p>
+
+        <div className='permissions-list'>
+          <div className='permission-item'>
+            <div className='permission-info'>
+              <strong>Crear Eventos</strong>
+              <p>Permite crear nuevos eventos</p>
+            </div>
+            <label className='toggle-switch'>
+              <input
+                type='checkbox'
+                checked={permissions.canCreateEvents}
+                onChange={() => togglePermission('canCreateEvents')}
+              />
+              <span className='toggle-slider'></span>
+            </label>
+          </div>
+
+          <div className='permission-item'>
+            <div className='permission-info'>
+              <strong>Editar Eventos</strong>
+              <p>Permite modificar eventos existentes</p>
+            </div>
+            <label className='toggle-switch'>
+              <input
+                type='checkbox'
+                checked={permissions.canEditEvents}
+                onChange={() => togglePermission('canEditEvents')}
+              />
+              <span className='toggle-slider'></span>
+            </label>
+          </div>
+
+          <div className='permission-item'>
+            <div className='permission-info'>
+              <strong>Eliminar Eventos</strong>
+              <p>Permite eliminar eventos</p>
+            </div>
+            <label className='toggle-switch'>
+              <input
+                type='checkbox'
+                checked={permissions.canDeleteEvents}
+                onChange={() => togglePermission('canDeleteEvents')}
+              />
+              <span className='toggle-slider'></span>
+            </label>
+          </div>
+
+          <div className='permission-item'>
+            <div className='permission-info'>
+              <strong>Gestionar Usuarios</strong>
+              <p>Permite administrar otros usuarios</p>
+            </div>
+            <label className='toggle-switch'>
+              <input
+                type='checkbox'
+                checked={permissions.canManageUsers}
+                onChange={() => togglePermission('canManageUsers')}
+              />
+              <span className='toggle-slider'></span>
+            </label>
+          </div>
+
+          <div className='permission-item'>
+            <div className='permission-info'>
+              <strong>Ver Reportes</strong>
+              <p>Permite acceder a reportes y estadísticas</p>
+            </div>
+            <label className='toggle-switch'>
+              <input
+                type='checkbox'
+                checked={permissions.canViewReports}
+                onChange={() => togglePermission('canViewReports')}
+              />
+              <span className='toggle-slider'></span>
+            </label>
+          </div>
+
+          <div className='permission-item'>
+            <div className='permission-info'>
+              <strong>Gestionar Pagos</strong>
+              <p>Permite administrar transacciones y pagos</p>
+            </div>
+            <label className='toggle-switch'>
+              <input
+                type='checkbox'
+                checked={permissions.canManagePayments}
+                onChange={() => togglePermission('canManagePayments')}
+              />
+              <span className='toggle-slider'></span>
+            </label>
+          </div>
+        </div>
+
+        <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
+          <Button
+            variant='primary'
+            fullWidth
+            onClick={handleSavePermissions}
+            disabled={loading}
+          >
+            {loading ? '⏳ Guardando...' : '💾 Guardar Permisos'}
+          </Button>
+          <Button variant='secondary' onClick={onClose}>
+            ❌ Cancelar
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
+// ============================================
+// MODAL DE RESPALDOS AUTOMÁTICOS
+// ============================================
+
+const AutomaticBackupConfig = ({ isOpen, onClose }) => {
+  const { success, error: showError } = useNotification()
+  const [config, setConfig] = useState({
+    enabled: false,
+    frequency: 'daily',
+    time: '02:00',
+    backupType: 'completo',
+    retentionDays: 30
+  })
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      loadConfig()
+    }
+  }, [isOpen])
+
+  const loadConfig = async () => {
+    try {
+      const response = await api.database.getAutoBackupConfig()
+      setConfig({
+        enabled: response.enabled || false,
+        frequency: response.frequency || 'daily',
+        time: response.time || '02:00',
+        backupType: response.backup_type || 'completo',
+        retentionDays: response.retention_days || 30
+      })
+    } catch (error) {
+      console.error('Error al cargar configuración:', error)
+    }
+  }
+
+  const handleSaveConfig = async () => {
+    setLoading(true)
+    try {
+      await api.database.updateAutoBackupConfig({
+        enabled: config.enabled,
+        frequency: config.frequency,
+        time: config.time,
+        backup_type: config.backupType,
+        retention_days: config.retentionDays
+      })
+      success('Configuración de respaldos automáticos actualizada')
+      onClose()
+    } catch (error) {
+      console.error('Error al guardar configuración:', error)
+      showError('Error al guardar configuración')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title='⚙️ Respaldos Automáticos'
+      size='medium'
+    >
+      <div className='auto-backup-config'>
+        <p style={{ color: '#c0c0c0', marginBottom: '24px' }}>
+          Configura los respaldos automáticos de la base de datos
+        </p>
+
+        <div className='config-options'>
+          <div className='config-item'>
+            <div className='config-info'>
+              <strong>Habilitar Respaldos Automáticos</strong>
+              <p>Activa o desactiva los respaldos programados</p>
+            </div>
+            <label className='toggle-switch'>
+              <input
+                type='checkbox'
+                checked={config.enabled}
+                onChange={e =>
+                  setConfig(prev => ({ ...prev, enabled: e.target.checked }))
+                }
+              />
+              <span className='toggle-slider'></span>
+            </label>
+          </div>
+
+          <div className='config-item'>
+            <div className='config-info'>
+              <strong>Frecuencia</strong>
+              <p>¿Cada cuánto realizar respaldos?</p>
+            </div>
+            <select
+              className='config-input'
+              value={config.frequency}
+              onChange={e =>
+                setConfig(prev => ({ ...prev, frequency: e.target.value }))
+              }
+              style={{ width: '200px' }}
+            >
+              <option value='hourly'>Cada hora</option>
+              <option value='daily'>Diario</option>
+              <option value='weekly'>Semanal</option>
+              <option value='monthly'>Mensual</option>
+            </select>
+          </div>
+
+          <div className='config-item'>
+            <div className='config-info'>
+              <strong>Hora de Ejecución</strong>
+              <p>Hora programada para el respaldo</p>
+            </div>
+            <input
+              type='time'
+              className='config-input'
+              value={config.time}
+              onChange={e =>
+                setConfig(prev => ({ ...prev, time: e.target.value }))
+              }
+              style={{ width: '140px' }}
+            />
+          </div>
+
+          <div className='config-item'>
+            <div className='config-info'>
+              <strong>Tipo de Respaldo</strong>
+              <p>Tipo de respaldo a realizar</p>
+            </div>
+            <select
+              className='config-input'
+              value={config.backupType}
+              onChange={e =>
+                setConfig(prev => ({ ...prev, backupType: e.target.value }))
+              }
+              style={{ width: '200px' }}
+            >
+              <option value='completo'>Completo</option>
+              <option value='incremental'>Incremental</option>
+            </select>
+          </div>
+
+          <div className='config-item'>
+            <div className='config-info'>
+              <strong>Retención (días)</strong>
+              <p>Días antes de eliminar respaldos antiguos</p>
+            </div>
+            <input
+              type='number'
+              className='config-input'
+              value={config.retentionDays}
+              onChange={e =>
+                setConfig(prev => ({
+                  ...prev,
+                  retentionDays: parseInt(e.target.value)
+                }))
+              }
+              min='7'
+              max='365'
+            />
+          </div>
+        </div>
+
+        <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
+          <Button
+            variant='primary'
+            fullWidth
+            onClick={handleSaveConfig}
+            disabled={loading}
+          >
+            {loading ? '⏳ Guardando...' : '💾 Guardar Configuración'}
+          </Button>
+          <Button variant='secondary' onClick={onClose}>
+            ❌ Cancelar
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  )
+}
 
 const AdminDashboard = () => {
   const { success, error: showError } = useNotification()
@@ -409,20 +868,132 @@ const AdminDashboard = () => {
     }
   }
 
-  // ============================================
-  // NAVEGACIÓN AL MONITOR
-  // ============================================
-
   const handleOpenDatabaseMonitor = () => {
     navigate('/admin/database-monitor')
   }
+
+  // ============================================
+  // COMPONENTES AUXILIARES
+  // ============================================
+
+  const Alert = ({ type, message, onClose }) => (
+    <div className={`alert alert-${type}`}>
+      <span>{message}</span>
+      {onClose && (
+        <button className='alert-close' onClick={onClose}>
+          ✕
+        </button>
+      )}
+    </div>
+  )
+
+  const Badge = ({ variant = 'default', dot = false, children }) => (
+    <span className={`badge badge-${variant} ${dot ? 'badge-dot' : ''}`}>
+      {children}
+    </span>
+  )
+
+  const Spinner = ({ text = 'Cargando...', fullScreen = false }) => (
+    <div
+      className={fullScreen ? 'spinner-fullscreen' : ''}
+      style={{ textAlign: 'center', padding: '40px' }}
+    >
+      <div className='spinner'></div>
+      <p className='spinner-text'>{text}</p>
+    </div>
+  )
+
+  const Modal = ({ isOpen, onClose, title, children, size = 'medium' }) => {
+    if (!isOpen) return null
+
+    return (
+      <div className='modal-overlay' onClick={onClose}>
+        <div
+          className={`modal-content modal-${size}`}
+          onClick={e => e.stopPropagation()}
+        >
+          <div className='modal-header'>
+            <h2 className='modal-title'>{title}</h2>
+            <button className='modal-close' onClick={onClose}>
+              ✕
+            </button>
+          </div>
+          <div className='modal-body'>{children}</div>
+        </div>
+      </div>
+    )
+  }
+
+  const Table = ({ data, columns }) => (
+    <div className='table-container'>
+      <table>
+        <thead>
+          <tr>
+            {columns.map(col => (
+              <th key={col.key}>{col.header}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.length === 0 ? (
+            <tr>
+              <td
+                colSpan={columns.length}
+                style={{ textAlign: 'center', padding: '40px', color: '#888' }}
+              >
+                No hay datos disponibles
+              </td>
+            </tr>
+          ) : (
+            data.map((row, idx) => (
+              <tr key={idx}>
+                {columns.map(col => (
+                  <td key={col.key}>
+                    {col.render ? col.render(row[col.key], row) : row[col.key]}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  )
+
+  const Button = ({
+    children,
+    variant = 'primary',
+    onClick,
+    disabled = false,
+    fullWidth = false,
+    size = 'normal'
+  }) => (
+    <button
+      className={`btn btn-${variant} ${fullWidth ? 'btn-full' : ''}`}
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        fontSize: size === 'small' ? '0.875rem' : '0.95rem',
+        padding: size === 'small' ? '8px 16px' : '12px 24px'
+      }}
+    >
+      {children}
+    </button>
+  )
+
+  const Card = ({ title, children, className = '' }) => (
+    <div className={`card ${className}`}>
+      {title && <h3 className='card-title'>{title}</h3>}
+      {children}
+    </div>
+  )
 
   // ============================================
   // COLUMNAS DE TABLAS
   // ============================================
 
   const userColumns = [
-    { key: 'name', header: 'Nombre', sortable: true },
+    { key: 'name', header: 'Nombre' },
     { key: 'email', header: 'Email' },
     {
       key: 'role',
@@ -450,7 +1021,7 @@ const AdminDashboard = () => {
       key: 'actions',
       header: 'Acciones',
       render: (value, row) => (
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <Button
             size='small'
             variant='warning'
@@ -469,7 +1040,7 @@ const AdminDashboard = () => {
               handleDeleteUser(row.id)
             }}
           >
-            Eliminar
+            🗑️ Eliminar
           </Button>
         </div>
       )
@@ -508,31 +1079,35 @@ const AdminDashboard = () => {
       key: 'actions',
       header: 'Acciones',
       render: (value, row) => (
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <Button
             size='small'
-            variant='primary'
+            variant='success'
             onClick={() => handleRestore(row.backup_id)}
           >
-            Restaurar
+            ↩️ Restaurar
           </Button>
           <Button
             size='small'
             variant='danger'
             onClick={() => handleDeleteBackup(row.backup_id)}
           >
-            Eliminar
+            🗑️ Eliminar
           </Button>
         </div>
       )
     }
   ]
 
+  // ============================================
+  // RENDER
+  // ============================================
+
   if (loading) {
     return (
       <div className='admin-dashboard'>
         <Spinner fullScreen text='Cargando dashboard...' />
-        <p style={{ textAlign: 'center', color: '#9a9895', marginTop: '1rem' }}>
+        <p className='text-center text-muted mt-2'>
           Si esto tarda mucho, verifica que el backend esté ejecutándose en el
           puerto 8000
         </p>
@@ -542,16 +1117,17 @@ const AdminDashboard = () => {
 
   return (
     <div className='admin-dashboard'>
+      {/* HEADER */}
       <div className='dashboard-header'>
         <h1>Panel de Administración</h1>
         <p>Control Total del Sistema LAIKA Club v2.0</p>
       </div>
 
+      {/* ALERTAS */}
       {alert && (
         <Alert
           type={alert.type}
           message={alert.message}
-          closable
           onClose={() => setAlert(null)}
         />
       )}
@@ -560,14 +1136,13 @@ const AdminDashboard = () => {
         <Alert
           type='warning'
           message={`Advertencia: Algunos servicios no respondieron correctamente`}
-          closable
           onClose={() => setLoadingErrors([])}
         />
       )}
 
       {/* ESTADÍSTICAS */}
       <div className='stats-grid'>
-        <Card className='stat-card'>
+        <div className='stat-card'>
           <div className='stat-content'>
             <div
               className='stat-icon'
@@ -584,9 +1159,9 @@ const AdminDashboard = () => {
               </h2>
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Card className='stat-card'>
+        <div className='stat-card'>
           <div className='stat-content'>
             <div
               className='stat-icon'
@@ -601,9 +1176,9 @@ const AdminDashboard = () => {
               <h2 className='stat-value'>{stats.totalEvents}</h2>
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Card className='stat-card'>
+        <div className='stat-card'>
           <div className='stat-content'>
             <div
               className='stat-icon'
@@ -620,9 +1195,9 @@ const AdminDashboard = () => {
               </h2>
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Card className='stat-card'>
+        <div className='stat-card'>
           <div className='stat-content'>
             <div
               className='stat-icon'
@@ -637,31 +1212,26 @@ const AdminDashboard = () => {
               <h2 className='stat-value'>{stats.activeUsers}</h2>
             </div>
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* SECCIONES DE ADMINISTRACIÓN */}
       <div className='admin-sections'>
         {/* GESTIÓN DE USUARIOS */}
-        <Card title='Gestión de Usuarios'>
+        <Card title='👥 Gestión de Usuarios'>
           <div className='section-actions'>
             <Button variant='primary' onClick={() => setShowUsersModal(true)}>
-              👥 Ver Todos ({users.length})
+              Ver Todos ({users.length})
             </Button>
             <Button variant='secondary' onClick={fetchDashboardData}>
               🔄 Actualizar
             </Button>
           </div>
-          <Table
-            columns={userColumns}
-            data={users.slice(0, 5)}
-            hoverable
-            striped
-          />
+          <Table columns={userColumns} data={users.slice(0, 5)} />
         </Card>
 
         {/* CONFIGURACIÓN DEL SISTEMA */}
-        <Card title='Configuración del Sistema'>
+        <Card title='⚙️ Configuración del Sistema'>
           <div className='config-options'>
             <div className='config-item'>
               <div className='config-info'>
@@ -737,7 +1307,7 @@ const AdminDashboard = () => {
         </Card>
 
         {/* GESTIÓN DE BASE DE DATOS */}
-        <Card title='Gestión de Base de Datos'>
+        <Card title='💾 Gestión de Base de Datos'>
           <div className='section-actions'>
             <Button
               variant='primary'
@@ -764,7 +1334,7 @@ const AdminDashboard = () => {
         </Card>
 
         {/* MONITOREO DEL SISTEMA */}
-        <Card title='Monitoreo del Sistema'>
+        <Card title='📊 Monitoreo del Sistema'>
           <div className='monitoring-info'>
             <div className='monitor-item'>
               <span className='monitor-label'>Estado del Servidor:</span>
@@ -791,27 +1361,22 @@ const AdminDashboard = () => {
         </Card>
       </div>
 
+      {/* ============================================ */}
       {/* MODALES */}
+      {/* ============================================ */}
+
       {/* Modal de Gestión de Respaldos */}
       <Modal
         isOpen={showBackupModal}
         onClose={() => setShowBackupModal(false)}
-        title='Gestión de Respaldos'
+        title='💾 Gestión de Respaldos'
         size='large'
       >
         <div className='backup-management'>
           <div className='backup-section'>
             <h3>Crear Nuevo Respaldo</h3>
-            <div
-              className='backup-options'
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '16px',
-                marginBottom: '24px'
-              }}
-            >
-              <Card className='backup-option-card'>
+            <div className='backup-options'>
+              <div className='backup-option-card'>
                 <h4>🗂️ Completo</h4>
                 <p>Todos los datos del sistema</p>
                 <Button
@@ -821,9 +1386,9 @@ const AdminDashboard = () => {
                 >
                   Crear Completo
                 </Button>
-              </Card>
+              </div>
 
-              <Card className='backup-option-card'>
+              <div className='backup-option-card'>
                 <h4>📊 Incremental</h4>
                 <p>Solo cambios recientes</p>
                 <Button
@@ -833,13 +1398,13 @@ const AdminDashboard = () => {
                 >
                   Crear Incremental
                 </Button>
-              </Card>
+              </div>
 
-              <Card className='backup-option-card'>
+              <div className='backup-option-card'>
                 <h4>🎯 Selectivo</h4>
                 <p>Tablas específicas</p>
                 <Button
-                  variant='secondary'
+                  variant='info'
                   fullWidth
                   onClick={() => {
                     setShowSelectiveModal(true)
@@ -848,7 +1413,7 @@ const AdminDashboard = () => {
                 >
                   Configurar
                 </Button>
-              </Card>
+              </div>
             </div>
           </div>
 
@@ -868,25 +1433,16 @@ const AdminDashboard = () => {
             </div>
 
             {loadingBackups ? (
-              <div style={{ textAlign: 'center', padding: '40px' }}>
-                <Spinner text='Cargando respaldos...' />
-              </div>
+              <Spinner text='Cargando respaldos...' />
             ) : backups.length === 0 ? (
-              <div
-                style={{
-                  textAlign: 'center',
-                  padding: '40px',
-                  background: '#f9fafb',
-                  borderRadius: '8px'
-                }}
-              >
-                <p>No hay respaldos disponibles</p>
+              <div className='text-center p-4'>
+                <p className='text-muted'>No hay respaldos disponibles</p>
                 <p style={{ fontSize: '14px', color: '#6b7280' }}>
                   Crea tu primer respaldo para comenzar
                 </p>
               </div>
             ) : (
-              <Table columns={backupColumns} data={backups} hoverable striped />
+              <Table columns={backupColumns} data={backups} />
             )}
           </div>
         </div>
@@ -899,11 +1455,11 @@ const AdminDashboard = () => {
           setShowSelectiveModal(false)
           setSelectedTables([])
         }}
-        title='Respaldo Selectivo - Seleccionar Tablas'
+        title='🎯 Respaldo Selectivo'
         size='medium'
       >
         <div className='selective-backup'>
-          <p style={{ marginBottom: '16px' }}>
+          <p style={{ marginBottom: '16px', color: '#c0c0c0' }}>
             Selecciona las tablas que deseas incluir en el respaldo:
           </p>
 
@@ -914,46 +1470,22 @@ const AdminDashboard = () => {
               style={{
                 maxHeight: '400px',
                 overflowY: 'auto',
-                border: '1px solid #e5e7eb',
+                border: '1px solid #2a2a2a',
                 borderRadius: '8px',
-                padding: '16px'
+                padding: '16px',
+                background: 'rgba(26, 26, 26, 0.5)'
               }}
             >
               {tables.map(table => (
-                <label
-                  key={table.name}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '12px',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #f3f4f6',
-                    transition: 'background 0.2s'
-                  }}
-                  onMouseEnter={e =>
-                    (e.currentTarget.style.background = '#f9fafb')
-                  }
-                  onMouseLeave={e =>
-                    (e.currentTarget.style.background = 'transparent')
-                  }
-                >
+                <label key={table.name}>
                   <input
                     type='checkbox'
                     checked={selectedTables.includes(table.name)}
                     onChange={() => toggleTableSelection(table.name)}
-                    style={{ marginRight: '12px' }}
                   />
                   <div style={{ flex: 1 }}>
                     <strong>{table.name}</strong>
-                    <p
-                      style={{
-                        fontSize: '12px',
-                        color: '#6b7280',
-                        margin: '4px 0 0 0'
-                      }}
-                    >
-                      {table.row_count.toLocaleString()} registros
-                    </p>
+                    <p>{table.row_count.toLocaleString()} registros</p>
                   </div>
                 </label>
               ))}
@@ -986,21 +1518,15 @@ const AdminDashboard = () => {
       <Modal
         isOpen={showUsersModal}
         onClose={() => setShowUsersModal(false)}
-        title={`Gestión de Usuarios (${users.length} total)`}
+        title={`👥 Gestión de Usuarios (${users.length} total)`}
         size='large'
       >
         {users.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
-            <p>No hay usuarios registrados</p>
+          <div className='text-center p-4'>
+            <p className='text-muted'>No hay usuarios registrados</p>
           </div>
         ) : (
-          <Table
-            columns={userColumns}
-            data={users}
-            sortable
-            hoverable
-            striped
-          />
+          <Table columns={userColumns} data={users} />
         )}
       </Modal>
 

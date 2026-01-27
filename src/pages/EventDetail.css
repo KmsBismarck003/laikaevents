@@ -1,92 +1,57 @@
-/* EventDetail.css - Temática 2B NieR: Automata */
+/* EventDetail.css - Sistema de Eventos LAIKA Club */
 
 .event-detail-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+  background: var(--bg-primary);
   padding: 2rem 0;
   position: relative;
 }
 
-.event-detail-page::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(212, 175, 55, 0.02) 2px,
-    rgba(212, 175, 55, 0.02) 4px
-  );
-  pointer-events: none;
-  z-index: 0;
-}
-
 .event-detail-container {
-  max-width: 1200px;
+  max-width: var(--max-width-content);
   margin: 0 auto;
   padding: 0 1rem;
   position: relative;
   z-index: 1;
 }
 
+/* Botón de Regreso */
 .back-button {
-  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-  border: 2px solid #2a2a2a;
-  padding: 0.75rem 1.5rem;
+  background: transparent;
+  border: 2px solid var(--border-color);
+  padding: var(--spacing-3) var(--spacing-6);
   cursor: pointer;
   margin-bottom: 2rem;
-  font-size: 0.875rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #888888;
-  font-weight: 700;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-base);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-family: 'Rajdhani', sans-serif;
-  position: relative;
-  overflow: hidden;
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
-}
-
-.back-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(212, 175, 55, 0.2),
-    transparent
-  );
-  transition: left 0.5s ease;
+  letter-spacing: 0.05em;
+  border-radius: var(--border-radius-lg);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
 }
 
 .back-button:hover {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-  border-color: #d4af37;
-  color: #d4af37;
+  background: rgba(0, 212, 255, 0.1);
+  border-color: var(--primary);
+  color: var(--primary);
   transform: translateX(-4px);
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.15);
+  box-shadow: var(--shadow-neon-blue);
 }
 
-.back-button:hover::before {
-  left: 100%;
-}
-
+/* Contenedor Principal */
 .event-detail-content {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
-  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-  padding: 2.5rem;
-  border: 2px solid #2a2a2a;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.8);
+  gap: 3rem;
+  background: var(--gradient-card);
+  padding: 3rem;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-xl);
   position: relative;
   overflow: hidden;
 }
@@ -98,74 +63,65 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    #d4af37,
-    #c0c0c0,
-    #d4af37,
-    transparent
-  );
+  background: var(--gradient-neon);
+  opacity: 0.8;
 }
 
+/* Imagen del Evento */
 .event-detail-image {
   position: relative;
   overflow: hidden;
+  border-radius: var(--border-radius-xl);
 }
 
 .event-detail-image img {
   width: 100%;
-  height: 450px;
+  height: 500px;
   object-fit: cover;
-  border: 2px solid #2a2a2a;
-  transition: all 0.4s ease;
-  clip-path: polygon(0 0, 100% 0, 100% 96%, 96% 100%, 0 100%);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-xl);
+  transition: all var(--transition-slow);
 }
 
 .event-detail-image:hover img {
   transform: scale(1.05);
-  border-color: #d4af37;
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-neon-blue);
 }
 
 .category-badge {
   position: absolute;
-  top: 1.5rem;
-  left: 1.5rem;
+  top: var(--spacing-4);
+  left: var(--spacing-4);
   z-index: 2;
-  clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
 }
 
+/* Información del Evento */
 .event-detail-info h1 {
-  font-size: 2.5rem;
+  font-size: var(--font-size-4xl);
   margin-bottom: 2rem;
-  background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+  background: var(--gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-weight: 900;
+  font-weight: var(--font-weight-black);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  line-height: 1.2;
-  font-family: 'Rajdhani', sans-serif;
+  letter-spacing: 0.01em;
+  line-height: var(--line-height-tight);
 }
 
 .event-meta {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--spacing-4);
   margin-bottom: 2rem;
-  padding: 2rem;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 26, 0.8) 0%,
-    rgba(10, 10, 10, 0.8) 100%
-  );
-  border: 1px solid #2a2a2a;
-  border-left: 4px solid #d4af37;
+  padding: var(--spacing-6);
+  background: rgba(0, 212, 255, 0.05);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--border-radius-lg);
   position: relative;
   overflow: hidden;
-  clip-path: polygon(0 0, 100% 0, 100% 97%, 98% 100%, 0 100%);
 }
 
 .event-meta::before {
@@ -173,89 +129,87 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   background: radial-gradient(
     circle,
-    rgba(212, 175, 55, 0.1) 0%,
+    rgba(0, 212, 255, 0.1) 0%,
     transparent 70%
   );
 }
 
 .meta-item {
   display: flex;
-  gap: 1.25rem;
+  gap: var(--spacing-4);
   align-items: flex-start;
   position: relative;
   z-index: 1;
 }
 
 .meta-icon {
-  font-size: 1.75rem;
-  color: #d4af37;
-  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+  font-size: var(--font-size-2xl);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.meta-content {
+  flex: 1;
 }
 
 .meta-label {
-  font-size: 0.75rem;
-  color: #888888;
-  margin-bottom: 0.5rem;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-1);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-family: 'Courier New', monospace;
-  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-weight: var(--font-weight-bold);
 }
 
 .meta-value {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.5px;
-  font-family: 'Rajdhani', sans-serif;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
 }
 
 .meta-sublabel {
-  font-size: 0.875rem;
-  color: #666666;
-  font-family: 'Courier New', monospace;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-top: var(--spacing-1);
 }
 
+/* Descripción del Evento */
 .event-description {
   margin-bottom: 2.5rem;
 }
 
 .event-description h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1.25rem;
-  background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-4);
+  background: var(--gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-weight: 800;
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-family: 'Rajdhani', sans-serif;
+  letter-spacing: 0.02em;
 }
 
 .event-description p {
-  color: #888888;
-  line-height: 1.8;
-  font-size: 0.95rem;
-  font-family: 'Courier New', monospace;
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-base);
 }
 
+/* Información de Tickets */
 .event-tickets-info {
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 26, 0.6) 0%,
-    rgba(10, 10, 10, 0.6) 100%
-  );
-  padding: 2rem;
-  border: 1px solid #2a2a2a;
+  background: rgba(0, 255, 170, 0.05);
+  padding: var(--spacing-6);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
   margin-bottom: 2rem;
   position: relative;
   overflow: hidden;
-  clip-path: polygon(0 0, 100% 0, 100% 98%, 99% 100%, 0 100%);
 }
 
 .event-tickets-info::before {
@@ -265,7 +219,8 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #d4af37, #c0c0c0);
+  background: var(--gradient-neon);
+  opacity: 0.6;
 }
 
 .tickets-available,
@@ -273,44 +228,39 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
+  margin-bottom: var(--spacing-4);
   position: relative;
   z-index: 1;
 }
 
 .tickets-label,
 .price-label {
-  color: #888888;
-  font-weight: 700;
+  color: var(--text-muted);
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.875rem;
-  font-family: 'Courier New', monospace;
+  letter-spacing: 0.05em;
+  font-size: var(--font-size-sm);
 }
 
 .tickets-count {
-  font-weight: 800;
-  background: linear-gradient(135deg, #d4af37 0%, #c0c0c0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-size: 1.3rem;
-  font-family: 'Rajdhani', monospace;
+  font-weight: var(--font-weight-black);
+  color: var(--accent);
+  font-size: var(--font-size-xl);
 }
 
 .price-amount {
-  font-size: 2rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, #d4af37 0%, #ffffff 50%, #c0c0c0 100%);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-black);
+  background: var(--gradient-neon);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-family: 'Rajdhani', monospace;
 }
 
+/* Sección de Compra */
 .purchase-section {
   padding-top: 2rem;
-  border-top: 1px solid #2a2a2a;
+  border-top: 1px solid var(--border-color);
   position: relative;
 }
 
@@ -319,9 +269,10 @@
   position: absolute;
   top: -1px;
   left: 0;
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  width: 150px;
+  height: 2px;
+  background: var(--gradient-neon);
+  opacity: 0.6;
 }
 
 .quantity-selector {
@@ -330,83 +281,84 @@
 
 .quantity-selector label {
   display: block;
-  margin-bottom: 1rem;
-  font-weight: 700;
-  color: #888888;
+  margin-bottom: var(--spacing-3);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.875rem;
-  font-family: 'Courier New', monospace;
+  letter-spacing: 0.05em;
+  font-size: var(--font-size-sm);
 }
 
 .quantity-controls {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-4);
 }
 
 .quantity-controls button {
   width: 50px;
   height: 50px;
-  border: 2px solid #2a2a2a;
-  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  border: 2px solid var(--border-color);
+  background: transparent;
   cursor: pointer;
-  font-size: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #888888;
-  font-weight: 900;
-  clip-path: polygon(0 0, 100% 0, 100% 80%, 80% 100%, 0 100%);
+  font-size: var(--font-size-xl);
+  transition: all var(--transition-base);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-black);
+  border-radius: var(--border-radius-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .quantity-controls button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-  border-color: #d4af37;
-  color: #d4af37;
+  background: rgba(0, 212, 255, 0.1);
+  border-color: var(--primary);
+  color: var(--primary);
   transform: scale(1.1);
-  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.2);
+  box-shadow: var(--shadow-neon-blue);
 }
 
 .quantity-controls button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
-  border-color: #1a1a1a;
+  border-color: var(--border-subtle);
 }
 
 .quantity-controls input {
   width: 100px;
   height: 50px;
   text-align: center;
-  border: 2px solid #2a2a2a;
-  background: #0a0a0a;
-  font-size: 1.3rem;
-  font-weight: 900;
-  color: #ffffff;
-  font-family: 'Rajdhani', monospace;
-  transition: all 0.3s ease;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-black);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-base);
+  transition: all var(--transition-base);
 }
 
 .quantity-controls input:focus {
   outline: none;
-  border-color: #d4af37;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+  border-color: var(--primary);
+  box-shadow:
+    0 0 0 4px rgba(0, 212, 255, 0.1),
+    var(--shadow-neon-blue);
 }
 
+/* Sección de Total */
 .total-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: linear-gradient(
-    135deg,
-    rgba(26, 26, 26, 0.8) 0%,
-    rgba(10, 10, 10, 0.8) 100%
-  );
-  border: 2px solid #2a2a2a;
-  border-left: 4px solid #d4af37;
+  padding: var(--spacing-5);
+  background: rgba(0, 212, 255, 0.05);
+  border: 2px solid var(--border-color);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--border-radius-lg);
   position: relative;
   overflow: hidden;
-  clip-path: polygon(0 0, 100% 0, 100% 92%, 95% 100%, 0 100%);
 }
 
 .total-section::before {
@@ -414,35 +366,32 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   background: radial-gradient(
     circle,
-    rgba(212, 175, 55, 0.15) 0%,
+    rgba(0, 212, 255, 0.15) 0%,
     transparent 70%
   );
 }
 
 .total-label {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #888888;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-family: 'Rajdhani', sans-serif;
+  letter-spacing: 0.05em;
   position: relative;
   z-index: 1;
 }
 
 .total-amount {
-  font-size: 2.5rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, #d4af37 0%, #ffffff 50%, #c0c0c0 100%);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-black);
+  background: var(--gradient-neon);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-family: 'Rajdhani', monospace;
-  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
   position: relative;
   z-index: 1;
 }
@@ -452,33 +401,34 @@
   .event-detail-content {
     grid-template-columns: 1fr;
     padding: 2rem;
+    gap: 2rem;
   }
 
   .event-detail-info h1 {
-    font-size: 2rem;
+    font-size: var(--font-size-3xl);
   }
 
   .event-detail-image img {
-    height: 300px;
+    height: 350px;
   }
 
   .event-meta {
-    padding: 1.5rem;
+    padding: var(--spacing-4);
   }
 
   .price-amount {
-    font-size: 1.75rem;
+    font-size: var(--font-size-2xl);
   }
 
   .total-amount {
-    font-size: 2rem;
+    font-size: var(--font-size-3xl);
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .back-button {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.8rem;
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: 0.7rem;
   }
 
   .event-detail-content {
@@ -486,16 +436,32 @@
   }
 
   .event-detail-info h1 {
-    font-size: 1.75rem;
+    font-size: var(--font-size-2xl);
   }
 
   .quantity-controls button {
     width: 40px;
     height: 40px;
+    font-size: var(--font-size-lg);
   }
 
   .quantity-controls input {
     width: 80px;
     height: 40px;
+    font-size: var(--font-size-lg);
+  }
+
+  .total-amount {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+@media (max-width: 480px) {
+  .event-detail-info h1 {
+    font-size: var(--font-size-xl);
+  }
+
+  .event-detail-image img {
+    height: 250px;
   }
 }
