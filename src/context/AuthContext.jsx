@@ -5,14 +5,12 @@ import React, {
   useEffect,
   useCallback
 } from 'react'
-import { useNavigate } from 'react-router-dom'
 
 const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
 
   useEffect(() => {
     checkAuth()
@@ -37,7 +35,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async credentials => {
     try {
-      // Llamar al backend REAL
       const response = await fetch('http://localhost:8000/api/auth/login', {
         method: 'POST',
         headers: {
@@ -72,7 +69,6 @@ export const AuthProvider = ({ children }) => {
 
   const register = async userData => {
     try {
-      // Llamar al backend REAL
       const response = await fetch('http://localhost:8000/api/auth/register', {
         method: 'POST',
         headers: {
@@ -90,7 +86,6 @@ export const AuthProvider = ({ children }) => {
         }
       }
 
-      // Guardar token y usuario
       localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
       setUser(data.user)
@@ -105,12 +100,13 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // ✅ CORRECCIÓN: Sin useNavigate, solo limpiar estado
   const logout = useCallback(() => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setUser(null)
-    navigate('/login')
-  }, [navigate])
+    // El componente que llame logout debe manejar la navegación
+  }, [])
 
   const updateUser = async updates => {
     try {

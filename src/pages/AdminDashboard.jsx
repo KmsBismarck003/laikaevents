@@ -157,13 +157,19 @@ const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
 
     setLoading(true)
     try {
-      await api.user.updatePermissions(user.id, permissions)
+      // ✅ CORRECCIÓN: Enviar role y permissions correctamente
+      const payload = {
+        role: user.role, // Mantener el rol actual o el nuevo
+        permissions: permissions
+      }
+
+      await api.user.updatePermissions(user.id, payload)
       success('Permisos actualizados correctamente')
       onUpdate && onUpdate()
       onClose()
     } catch (error) {
       console.error('Error al actualizar permisos:', error)
-      showError('Error al actualizar permisos')
+      showError(error.message || 'Error al actualizar permisos')
     } finally {
       setLoading(false)
     }
@@ -312,6 +318,9 @@ const AutomaticBackupConfig = ({ isOpen, onClose }) => {
   })
   const [loading, setLoading] = useState(false)
 
+  const [lastBackup, setLastBackup] = useState(null)
+  const [nextBackup, setNextBackup] = useState(null)
+
   useEffect(() => {
     if (isOpen) {
       loadConfig()
@@ -320,29 +329,20 @@ const AutomaticBackupConfig = ({ isOpen, onClose }) => {
 
   const loadConfig = async () => {
     try {
-      const response = await api.database.getAutoBackupConfig()
-      setConfig({
-        enabled: response.enabled || false,
-        frequency: response.frequency || 'daily',
-        time: response.time || '02:00',
-        backupType: response.backup_type || 'completo',
-        retentionDays: response.retention_days || 30
-      })
+      // ✅ CORRECCIÓN: Usar el nombre correcto
+      const response = await api.database.getAutomaticBackupConfig()
+      setConfig(response.config || config)
+      setLastBackup(response.lastBackup)
+      setNextBackup(response.nextBackup)
     } catch (error) {
       console.error('Error al cargar configuración:', error)
     }
   }
-
   const handleSaveConfig = async () => {
     setLoading(true)
     try {
-      await api.database.updateAutoBackupConfig({
-        enabled: config.enabled,
-        frequency: config.frequency,
-        time: config.time,
-        backup_type: config.backupType,
-        retention_days: config.retentionDays
-      })
+      // ✅ CORRECCIÓN: Usar el nombre correcto
+      await api.database.updateAutomaticBackupConfig(config)
       success('Configuración de respaldos automáticos actualizada')
       onClose()
     } catch (error) {

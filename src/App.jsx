@@ -1,107 +1,103 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
 import {
-  AuthProvider,
-  ThemeProvider,
-  NotificationProvider,
-  CartProvider
-} from './context'
-import { MainLayout, AuthLayout, DashboardLayout } from './layouts'
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate
+} from 'react-router-dom'
+import { NotificationProvider } from './context/NotificationContext'
+import { AuthProvider } from './context/AuthContext'
+
+// Páginas
 import {
   Home,
   Login,
   Register,
-  UserProfile,
   AdminDashboard,
   EventManagerDashboard,
-  StaffDashboard
+  StaffDashboard,
+  UserProfile,
+  EventDetail,
+  Maintenance
 } from './pages'
-import ProtectedRoute from './components/ProtectedRoute'
-import NotificationContainer from './components/NotificationContainer'
+
+// Componentes
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import PrivateRoute from './components/PrivateRoute'
 import DatabaseMonitor from './components/DatabaseMonitor'
-import EventDetail from './pages/EventDetail'
+import ErrorBoundary from './components/ErrorBoundary'
+
+// Estilos
 import './styles/globals.css'
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <NotificationProvider>
-          <CartProvider>
-            <div className='App'>
-              <Routes>
-                {/* Rutas de Autenticación - SIN AuthLayout anidado */}
-                <Route path='/login' element={<Login />} />
-                <Route path='/register' element={<Register />} />
-
-                {/* Rutas Públicas y de Usuario */}
-                <Route element={<MainLayout />}>
+    <ErrorBoundary>
+      <Router>
+        {/* ✅ AuthProvider DENTRO de Router */}
+        <AuthProvider>
+          <NotificationProvider>
+            <div className='app'>
+              <Navbar />
+              <main className='main-content'>
+                <Routes>
                   <Route path='/' element={<Home />} />
-                  <Route path='/event/:id' element={<EventDetail />} />
-                  <Route
-                    path='/profile'
-                    element={
-                      <ProtectedRoute>
-                        <UserProfile />
-                      </ProtectedRoute>
-                    }
-                  />
-                </Route>
+                  <Route path='/login' element={<Login />} />
+                  <Route path='/register' element={<Register />} />
+                  <Route path='/events/:id' element={<EventDetail />} />
+                  <Route path='/maintenance' element={<Maintenance />} />
 
-                {/* Rutas de Dashboard */}
-                <Route element={<DashboardLayout />}>
-                  {/* Admin - Dashboard Principal */}
                   <Route
                     path='/admin'
                     element={
-                      <ProtectedRoute allowedRoles={['admin']}>
+                      <PrivateRoute roles={['admin']}>
                         <AdminDashboard />
-                      </ProtectedRoute>
+                      </PrivateRoute>
                     }
                   />
-
-                  {/* Admin - Monitor de Base de Datos */}
                   <Route
                     path='/admin/database-monitor'
                     element={
-                      <ProtectedRoute allowedRoles={['admin']}>
+                      <PrivateRoute roles={['admin']}>
                         <DatabaseMonitor />
-                      </ProtectedRoute>
+                      </PrivateRoute>
                     }
                   />
-
-                  {/* Gestor */}
                   <Route
-                    path='/events/manage'
+                    path='/gestor'
                     element={
-                      <ProtectedRoute allowedRoles={['gestor', 'admin']}>
+                      <PrivateRoute roles={['admin', 'gestor']}>
                         <EventManagerDashboard />
-                      </ProtectedRoute>
+                      </PrivateRoute>
                     }
                   />
-
-                  {/* Operador */}
                   <Route
-                    path='/staff'
+                    path='/operador'
                     element={
-                      <ProtectedRoute allowedRoles={['operador', 'admin']}>
+                      <PrivateRoute roles={['admin', 'operador']}>
                         <StaffDashboard />
-                      </ProtectedRoute>
+                      </PrivateRoute>
                     }
                   />
-                </Route>
+                  <Route
+                    path='/profile'
+                    element={
+                      <PrivateRoute>
+                        <UserProfile />
+                      </PrivateRoute>
+                    }
+                  />
 
-                {/* Redirect */}
-                <Route path='*' element={<Navigate to='/' replace />} />
-              </Routes>
-
-              {/* Contenedor de Notificaciones */}
-              <NotificationContainer />
+                  <Route path='*' element={<Navigate to='/' replace />} />
+                </Routes>
+              </main>
+              <Footer />
             </div>
-          </CartProvider>
-        </NotificationProvider>
-      </AuthProvider>
-    </ThemeProvider>
+          </NotificationProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   )
 }
 

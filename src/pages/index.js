@@ -6,3 +6,4 @@ export { default as AdminDashboard } from './AdminDashboard'
 export { default as EventManagerDashboard } from './EventManagerDashboard'
 export { default as StaffDashboard } from './StaffDashboard'
 export { default as EventDetail } from './EventDetail' // ← AGREGAR ESTA LÍNEA
+export { default as Maintenance } from './Maintenance'

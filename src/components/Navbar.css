@@ -1,0 +1,115 @@
+.navbar {
+  background: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid #2a2a2a;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #00d4ff;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-logo:hover {
+  color: #00a3cc;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+.navbar-menu {
+  display: flex;
+  list-style: none;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.navbar-link {
+  color: #c0c0c0;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.navbar-link:hover {
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.navbar-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.navbar-btn-primary {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  color: #0a0a0a;
+  border-color: #00d4ff;
+}
+
+.navbar-btn-primary:hover {
+  background: linear-gradient(135deg, #00a3cc 0%, #007799 100%);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+}
+
+.navbar-btn-secondary {
+  background: transparent;
+  color: #00d4ff;
+  border-color: #00d4ff;
+}
+
+.navbar-btn-secondary:hover {
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.navbar-btn-logout {
+  background: transparent;
+  color: #ff4444;
+  border-color: #ff4444;
+}
+
+.navbar-btn-logout:hover {
+  background: rgba(255, 68, 68, 0.1);
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .navbar-menu {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .navbar-link,
+  .navbar-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
