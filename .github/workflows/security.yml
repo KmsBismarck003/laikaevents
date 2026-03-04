@@ -7,9 +7,6 @@ on:
     branches: ["main", "master", "develop"]
 
 jobs:
-  # ─────────────────────────────────────────
-  # SNYK — Seguridad de dependencias
-  # ─────────────────────────────────────────
   snyk:
     name: Snyk Security Scan
     runs-on: ubuntu-latest
@@ -18,7 +15,6 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
-      # ── Frontend (Node.js / React) ──
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -27,10 +23,9 @@ jobs:
       - name: Instalar dependencias frontend
         run: |
           if [ -f package.json ]; then
-            npm install
+            npm install --legacy-peer-deps
           fi
 
-      # ── Backend (Python / FastAPI) ──
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -42,14 +37,13 @@ jobs:
             pip install -r backend/requirements.txt
           fi
 
-      # ── Snyk Scan ──
       - name: Snyk — Escaneo frontend
         uses: snyk/actions/node@master
-        continue-on-error: true        # No bloquea el pipeline en inicio
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high
+          args: --severity-threshold=high --legacy-peer-deps
 
       - name: Snyk — Escaneo backend
         uses: snyk/actions/python@master
@@ -59,9 +53,6 @@ jobs:
         with:
           args: --file=backend/requirements.txt --severity-threshold=high
 
-  # ─────────────────────────────────────────
-  # SONARCLOUD — Calidad de código
-  # ─────────────────────────────────────────
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: ubuntu-latest
@@ -70,7 +61,7 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0              # Necesario para análisis completo de historial
+          fetch-depth: 0
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
