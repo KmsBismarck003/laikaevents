@@ -1,14 +1,14 @@
 import React from 'react';
 import './Badge.css';
 
-const Badge = ({ 
+const Badge = ({
   children,
   variant = 'default',
   size = 'medium',
   dot = false,
   rounded = false,
   className = '',
-  ...props 
+  ...props
 }) => {
   const classNames = [
     'badge',

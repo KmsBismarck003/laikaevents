@@ -320,3 +320,86 @@ def get_sales_report(
             "eventId": event_id,
             "timestamp": datetime.now().isoformat()
         }
+
+@router.get("/admin/sales-by-event")
+def get_sales_by_event(db: Session = Depends(get_db)):
+    """Obtener reporte de ventas desglosado por evento"""
+    try:
+        print("📤 Obteniendo reporte de ventas por evento")
+
+        # Consulta para obtener estadisticas por evento
+        query = text("""
+            SELECT
+                e.id,
+                e.name,
+                e.event_date,
+                e.total_tickets,
+                e.price,
+                COUNT(t.id) as tickets_sold
+            FROM events e
+            LEFT JOIN tickets t ON e.id = t.event_id AND t.status IN ('active', 'used')
+            WHERE e.status != 'draft'
+            GROUP BY e.id
+            ORDER BY e.event_date DESC
+        """)
+
+        # Nota: La consulta anterior es simplificada.
+        # Si queremos revenue real de transactions, necesitaríamos otro JOIN o subquery.
+        # Por simplicidad y robustez inicial, calcularemos revenue basado en tickets * precio
+        # o sumaremos transacciones si existen.
+
+        # Vamos a hacer una consulta separada para revenue real si es crítico,
+        # pero para este dashboard: tickets_sold * price es una buena aproximación
+        # si no todas las 'ventas' pasan por la tabla transactions (ej. cortesías).
+
+        # Sin embargo, intentemos hacerlo mejor:
+
+        events_result = db.execute(query).fetchall()
+
+        sales_data = []
+        for row in events_result:
+            event_data = dict(row._mapping)
+
+            # Calcular revenue real desde payments
+            revenue_query = text("""
+                SELECT COALESCE(SUM(amount), 0) as total
+                FROM payments
+                WHERE event_id = :event_id AND status = 'completed'
+            """)
+            revenue_result = db.execute(revenue_query, {"event_id": event_data['id']}).fetchone()
+            real_revenue = revenue_result[0] if revenue_result else 0
+
+            # Si no hay revenue registrado pero hay tickets vendidos, estimar
+            tickets_sold = event_data['tickets_sold']
+            price = float(event_data['price'])
+
+            # Usar el mayor entre real_revenue y (tickets * price) si real es 0?
+            # Mejor usar real si existe, sino estimado.
+            final_revenue = float(real_revenue)
+            if final_revenue == 0 and tickets_sold > 0:
+                 final_revenue = tickets_sold * price
+
+            total_tickets = event_data['total_tickets']
+            remaining = max(0, total_tickets - tickets_sold)
+
+            sales_data.append({
+                "eventId": event_data['id'],
+                "eventName": event_data['name'],
+                "eventDate": str(event_data['event_date']),
+                "totalTickets": total_tickets,
+                "ticketsSold": tickets_sold,
+                "remainingTickets": remaining,
+                "revenue": final_revenue,
+                "occupancy": round((tickets_sold / total_tickets * 100), 1) if total_tickets > 0 else 0
+            })
+
+        print(f"✅ Reporte generado para {len(sales_data)} eventos")
+        return sales_data
+
+    except Exception as e:
+        print(f"❌ Error al generar reporte de ventas por evento: {e}")
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error al generar reporte"
+        )

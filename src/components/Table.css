@@ -1,13 +1,13 @@
-/* Table.css - Temática 2B NieR: Automata */
+/* Table.css - Sistema de Eventos LAIKA Club - Diseño Moderno */
 
 .table-container {
   width: 100%;
   overflow-x: auto;
-  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-  border: 2px solid #2a2a2a;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
   position: relative;
-  clip-path: polygon(0 0, 100% 0, 100% 99%, 99.5% 100%, 0 100%);
 }
 
 .table-container::before {
@@ -17,54 +17,66 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #c0c0c0, #d4af37, transparent);
+  background: var(--gradient-neon);
   z-index: 1;
+  opacity: 0.6;
 }
 
-.table {
+.table,
+table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--font-size-sm);
 }
 
-.table thead {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-  position: relative;
+.table thead,
+table thead {
+  background: var(--bg-tertiary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.table thead::after {
+.table thead::after,
+table thead::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(192, 192, 192, 0.5), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(192, 192, 192, 0.5),
+    transparent
+  );
 }
 
-.table th {
-  padding: 1.25rem 1rem;
+.table th,
+table th {
+  padding: var(--spacing-5) var(--spacing-4);
   text-align: left;
-  font-weight: 800;
-  color: #c0c0c0;
-  border-bottom: 2px solid #2a2a2a;
+  font-weight: var(--font-weight-black);
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-color);
   white-space: nowrap;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.75rem;
-  font-family: 'Rajdhani', sans-serif;
+  letter-spacing: 0.1em;
+  font-size: var(--font-size-xs);
 }
 
 .table__th-content {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--spacing-3);
 }
 
 .table__th--sortable {
   cursor: pointer;
   user-select: none;
-  transition: all 0.3s ease;
+  transition: all var(--transition-base);
   position: relative;
 }
 
@@ -75,12 +87,12 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #d4af37, #c0c0c0);
-  transition: width 0.3s ease;
+  background: var(--gradient-neon);
+  transition: width var(--transition-base);
 }
 
 .table__th--sortable:hover {
-  color: #d4af37;
+  color: var(--primary);
 }
 
 .table__th--sortable:hover::before {
@@ -88,55 +100,59 @@
 }
 
 .table__th--sorted {
-  color: #d4af37;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  color: var(--primary);
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
 .table__sort-icon {
-  font-size: 0.875rem;
-  color: #666666;
-  transition: color 0.3s ease;
+  font-size: var(--font-size-sm);
+  color: var(--text-disabled);
+  transition: color var(--transition-base);
 }
 
 .table__th--sorted .table__sort-icon {
-  color: #d4af37;
-  filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.5));
+  color: var(--primary);
+  filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.5));
 }
 
-.table td {
-  padding: 1.25rem 1rem;
-  color: #c0c0c0;
-  border-bottom: 1px solid #2a2a2a;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.3px;
-  font-weight: 600;
+.table td,
+table td {
+  padding: var(--spacing-5) var(--spacing-4);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  font-weight: var(--font-weight-semibold);
 }
 
-.table tbody tr {
-  transition: all 0.3s ease;
+.table tbody tr,
+table tbody tr {
+  transition: all var(--transition-fast);
   position: relative;
 }
 
-.table tbody tr::before {
+.table tbody tr::before,
+table tbody tr::before {
   content: '';
   position: absolute;
   left: 0;
   top: 0;
   width: 0;
   height: 100%;
-  background: linear-gradient(90deg, rgba(212, 175, 55, 0.1), transparent);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, rgba(0, 212, 255, 0.1), transparent);
+  transition: width var(--transition-base);
 }
 
-.table tbody tr:last-child td {
+.table tbody tr:last-child td,
+table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.table--hoverable tbody tr:hover {
-  background: linear-gradient(90deg, rgba(26, 26, 26, 0.6), rgba(15, 15, 15, 0.6));
+.table--hoverable tbody tr:hover,
+table tbody tr:hover {
+  background: rgba(0, 212, 255, 0.05);
 }
 
-.table--hoverable tbody tr:hover::before {
+.table--hoverable tbody tr:hover::before,
+table tbody tr:hover::before {
   width: 100%;
 }
 
@@ -145,47 +161,46 @@
 }
 
 .table--bordered {
-  border: 2px solid #2a2a2a;
+  border: 2px solid var(--border-color);
 }
 
 .table--bordered th,
 .table--bordered td {
-  border: 1px solid #2a2a2a;
+  border: 1px solid var(--border-subtle);
 }
 
 .table__row--clickable {
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--transition-base);
 }
 
 .table__row--clickable:hover {
-  background: linear-gradient(90deg, rgba(212, 175, 55, 0.1), rgba(192, 192, 192, 0.05));
-  transform: translateX(6px);
+  background: rgba(0, 212, 255, 0.08);
+  transform: translateX(4px);
 }
 
 .table__loading,
 .table__empty {
-  padding: 4rem;
+  padding: var(--spacing-16);
   text-align: center;
-  color: #666666;
-  font-family: 'Courier New', monospace;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-weight: var(--font-weight-bold);
 }
 
 .table__spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid #2a2a2a;
-  border-top-color: #d4af37;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--primary);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 1.5rem;
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  animation: tableSpin 0.8s linear infinite;
+  margin: 0 auto var(--spacing-6);
+  box-shadow: var(--shadow-neon-blue);
 }
 
-@keyframes spin {
+@keyframes tableSpin {
   to {
     transform: rotate(360deg);
   }
@@ -197,28 +212,31 @@
 }
 
 .table-container::-webkit-scrollbar-track {
-  background: #0a0a0a;
-  border-top: 1px solid #2a2a2a;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
 }
 
 .table-container::-webkit-scrollbar-thumb {
-  background: linear-gradient(90deg, #d4af37 0%, #c0c0c0 100%);
-  border-radius: 2px;
+  background: var(--gradient-neon);
+  border-radius: var(--border-radius-sm);
 }
 
 .table-container::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(90deg, #e6c966 0%, #d4d4d4 100%);
-  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+  background: var(--gradient-primary);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .table {
-    font-size: 0.75rem;
+  .table,
+  table {
+    font-size: var(--font-size-xs);
   }
-  
+
   .table th,
-  .table td {
-    padding: 1rem 0.75rem;
+  table th,
+  .table td,
+  table td {
+    padding: var(--spacing-4) var(--spacing-3);
   }
 }

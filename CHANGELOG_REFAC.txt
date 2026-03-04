@@ -1,0 +1,49 @@
+# CHANGELOG - Proyectos & Mejoras
+## v2.1.0 - Sistema de Publicidad (Backend)
+Fecha: 2026-02-09
+
+### Backend & Base de Datos
+- **Nuevo Router**: `backend/routers/ads.py` para gestión de anuncios (CRUD).
+- **Base de Datos**: Nueva tabla `ads` con campos:
+  - `id`, `title`, `image_url`
+  - `link_url` (destino del clic)
+  - `position` (enum: 'main', 'side_left', 'side_right')
+  - `active` (boolean)
+- **API Endpoints**:
+  - `GET /api/ads/public`: Anuncios activos para el frontend
+  - `GET /api/ads/admin`: Gestión completa para administradores
+  - `POST /api/ads`: Crear anuncio
+  - `PUT /api/ads/:id`: Actualizar anuncio
+  - `DELETE /api/ads/:id`: Eliminar anuncio
+- **Integración**: Registro del router en `main.py`.
+
+---
+# CHANGELOG - Refactorización Dashboard Admin
+Fecha: 2026-02-08
+
+## Cambios Principales
+
+### 1. Estructura Modular
+Se dividió el archivo monolítico `AdminDashboard.jsx` en múltiples componentes especializados para facilitar el mantenimiento y la escalabilidad.
+- **Antes**: Un solo archivo con +1500 líneas.
+- **Ahora**: Carpeta `src/pages/admin/` con:
+  - `Dashboard.jsx`: Vista principal.
+  - `Users.jsx`: Gestión de usuarios.
+  - `Events.jsx`: Gestión de eventos.
+  - `Config.jsx`: Configuración del sistema.
+  - `Database.jsx`: Gestión de base de datos y respaldos.
+  - `Monitoring.jsx`: Estado del sistema.
+  - `Logs.jsx`: Visor de logs.
+
+### 2. Navegación
+- Se actualizaron las rutas en `src/routes.js` para apuntar a los nuevos componentes.
+- La barra lateral (Sidebar) ahora navega correctamente entre las distintas secciones sin recargar la página.
+
+### 3. Interfaz de Usuario
+- Se eliminaron todos los emojis de la interfaz de administración para un aspecto más profesional.
+- Se implementaron iconos CSS/SVG o texto plano en su lugar.
+- Se reutilizaron componentes compartidos (`Card`, `Button`, `Table`, `Badge`) para mantener la consistencia visual.
+
+### 4. Limpieza de Código
+- Se eliminaron definiciones de componentes duplicados que existían dentro de `AdminDashboard.jsx`.
+- Se centralizó la lógica.

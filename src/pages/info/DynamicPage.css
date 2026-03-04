@@ -1,0 +1,96 @@
+.dynamic-page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: 80vh;
+}
+
+.dynamic-page-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.dynamic-page-header h1 {
+  font-size: 2.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.dynamic-page-content {
+  background: var(--bg-secondary); /* Fallback */
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.cms-content {
+  line-height: 1.8;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.cms-content h1,
+.cms-content h2,
+.cms-content h3 {
+  color: var(--primary-color);
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.cms-content p {
+  margin-bottom: 1rem;
+}
+
+.cms-content ul,
+.cms-content ol {
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+}
+
+.cms-content li {
+  margin-bottom: 0.5rem;
+}
+
+.cms-content a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.dynamic-page-footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.dynamic-page-error {
+  text-align: center;
+  padding: 4rem;
+}
+
+.dynamic-page-error h1 {
+  font-size: 4rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.btn-home {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 1rem;
+  transition: opacity 0.3s;
+}
+
+.btn-home:hover {
+  opacity: 0.9;
+}

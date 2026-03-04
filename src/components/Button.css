@@ -1,151 +1,198 @@
-/* Button.css - Temática 2B NieR: Automata */
+/* ============================================
+   BUTTON.CSS - LAIKA CLUB
+   Compatible con variables.css existente
+   ============================================ */
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 0.875rem 2rem;
-  border: 2px solid transparent;
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 700;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-5);
+  border: 1px solid transparent;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  transition: all var(--transition-fast);
   outline: none;
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  font-size: var(--font-size-sm);
+  border-radius: var(--border-radius-base);
+  user-select: none;
+  position: relative;
   overflow: hidden;
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 92% 100%, 0 100%);
 }
 
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  transition: left 0.5s ease;
-}
+/* ============================================
+   VARIANTES DE COLOR
+   ============================================ */
 
-.btn:hover:not(:disabled)::before {
-  left: 100%;
-}
-
-/* Variantes */
-.btn--primary {
-  background: linear-gradient(135deg, #d4af37 0%, #c0c0c0 100%);
-  color: #0a0a0a;
-  border-color: transparent;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-}
-
-.btn--primary:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
-  background: linear-gradient(135deg, #e6c966 0%, #d4d4d4 100%);
-}
-
-.btn--primary:active:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-}
-
-.btn--secondary {
-  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-  color: #c0c0c0;
-  border: 2px solid #2a2a2a;
-}
-
-.btn--secondary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
-  border-color: #c0c0c0;
+/* Primary */
+.btn--primary,
+.btn-primary {
+  background: var(--primary);
   color: #ffffff;
+  border-color: var(--primary);
+}
+
+.btn--primary:hover:not(:disabled),
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(192, 192, 192, 0.2);
+  box-shadow: var(--shadow-lg);
 }
 
-.btn--danger {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: #ffffff;
-  border-color: transparent;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+.btn--primary:active:not(:disabled),
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-.btn--danger:hover:not(:disabled) {
-  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
-}
-
-.btn--success {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
-  border-color: transparent;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-}
-
-.btn--success:hover:not(:disabled) {
-  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-}
-
-.btn--outline {
+/* Secondary */
+.btn--secondary,
+.btn-secondary {
   background: transparent;
-  border: 2px solid #d4af37;
-  color: #d4af37;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
-.btn--outline:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d4af37 0%, #c0c0c0 100%);
-  color: #0a0a0a;
-  border-color: transparent;
+.btn--secondary:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  border-color: var(--border-emphasis);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
 }
 
-/* Tamaños */
-.btn--small {
-  padding: 0.625rem 1.25rem;
-  font-size: 0.75rem;
-  letter-spacing: 1.5px;
+/* Danger */
+.btn--danger,
+.btn-danger {
+  background: var(--error);
+  color: #ffffff;
+  border-color: var(--error);
 }
 
-.btn--medium {
-  padding: 0.875rem 2rem;
-  font-size: 0.875rem;
-  letter-spacing: 2px;
+.btn--danger:hover:not(:disabled),
+.btn-danger:hover:not(:disabled) {
+  background: var(--error-dark);
+  border-color: var(--error-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
-.btn--large {
-  padding: 1.125rem 2.5rem;
-  font-size: 1rem;
-  letter-spacing: 2.5px;
+/* Success */
+.btn--success,
+.btn-success {
+  background: var(--success);
+  color: #ffffff;
+  border-color: var(--success);
 }
 
-/* Estados */
+.btn--success:hover:not(:disabled),
+.btn-success:hover:not(:disabled) {
+  background: var(--success-dark);
+  border-color: var(--success-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Warning */
+.btn--warning,
+.btn-warning {
+  background: var(--warning);
+  color: #000000;
+  border-color: var(--warning);
+}
+
+.btn--warning:hover:not(:disabled),
+.btn-warning:hover:not(:disabled) {
+  background: var(--warning-dark);
+  border-color: var(--warning-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Info */
+.btn--info,
+.btn-info {
+  background: var(--info);
+  color: #ffffff;
+  border-color: var(--info);
+}
+
+.btn--info:hover:not(:disabled),
+.btn-info:hover:not(:disabled) {
+  background: var(--info-dark);
+  border-color: var(--info-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Outline */
+.btn--outline,
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn--outline:hover:not(:disabled),
+.btn-outline:hover:not(:disabled) {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+/* Ghost */
+.btn--ghost,
+.btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+}
+
+.btn--ghost:hover:not(:disabled),
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   TAMAÑOS
+   ============================================ */
+.btn--small,
+.btn-sm {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  border-radius: var(--border-radius-sm);
+}
+
+.btn--medium,
+.btn-base {
+  padding: var(--spacing-3) var(--spacing-5);
+  font-size: var(--font-size-sm);
+}
+
+.btn--large,
+.btn-lg {
+  padding: var(--spacing-4) var(--spacing-6);
+  font-size: var(--font-size-base);
+  border-radius: var(--border-radius-lg);
+}
+
+/* ============================================
+   ESTADOS
+   ============================================ */
+
+/* Disabled */
 .btn--disabled,
 .btn:disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;
   box-shadow: none !important;
 }
 
-.btn--disabled::before,
-.btn:disabled::before {
-  display: none;
-}
-
+/* Loading */
 .btn--loading {
   pointer-events: none;
   position: relative;
@@ -155,101 +202,93 @@
   opacity: 0.3;
 }
 
-.btn--full-width {
+/* Full Width */
+.btn--full-width,
+.btn-full {
   width: 100%;
 }
 
-/* Spinner de carga */
+/* ============================================
+   SPINNER DE CARGA
+   ============================================ */
 .btn__spinner {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #ffffff;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: currentColor;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: btnSpin 0.7s linear infinite;
 }
 
-.btn--primary .btn__spinner {
-  border-color: rgba(10, 10, 10, 0.2);
-  border-top-color: #0a0a0a;
-}
-
-.btn--secondary .btn__spinner {
-  border-color: rgba(192, 192, 192, 0.2);
-  border-top-color: #c0c0c0;
-}
-
-.btn--outline .btn__spinner {
-  border-color: rgba(212, 175, 55, 0.2);
-  border-top-color: #d4af37;
-}
-
-@keyframes spin {
+@keyframes btnSpin {
   to {
     transform: rotate(360deg);
   }
 }
 
+/* ============================================
+   ICONO Y TEXTO
+   ============================================ */
 .btn__icon {
   display: flex;
   align-items: center;
-  font-size: 1.25rem;
-  filter: drop-shadow(0 0 8px currentColor);
+  font-size: 1.1em;
 }
 
 .btn__text {
   display: inline-block;
-  transition: opacity 0.3s ease;
 }
 
-/* Efectos adicionales */
-.btn::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    45deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 60%
-  );
-  background-size: 200% 200%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+/* ============================================
+   GRUPOS DE BOTONES
+   ============================================ */
+.btn-group {
+  display: inline-flex;
+  gap: var(--spacing-2);
 }
 
-.btn:hover:not(:disabled)::after {
-  opacity: 1;
-  animation: shimmer 1.5s infinite;
+.btn-group .btn {
+  flex: 1;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -100% 0;
-  }
-  100% {
-    background-position: 100% 0;
-  }
-}
-
-/* Responsive */
+/* ============================================
+   RESPONSIVE
+   ============================================ */
 @media (max-width: 768px) {
   .btn {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.813rem;
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--font-size-xs);
   }
 
-  .btn--small {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
+  .btn--small,
+  .btn-sm {
+    padding: var(--spacing-1) var(--spacing-3);
+    font-size: 0.625rem;
   }
 
-  .btn--large {
-    padding: 1rem 2rem;
-    font-size: 0.938rem;
+  .btn--large,
+  .btn-lg {
+    padding: var(--spacing-3) var(--spacing-5);
+    font-size: var(--font-size-sm);
   }
+}
+
+/* ============================================
+   ACCESIBILIDAD
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn__spinner {
+    animation: none;
+  }
+}
+
+/* Focus visible para navegación por teclado */
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }

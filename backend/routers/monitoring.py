@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+print("Cargando modulo monitoring.py...")
+
 router = APIRouter()
 
 # Configuración MySQL
@@ -382,6 +384,63 @@ async def get_sessions():
 async def get_resources():
     """Recursos del sistema"""
     return get_system_resources()
+
+@router.get("/logs")
+async def get_logs(limit: int = 50, level: str = None):
+    """Obtener logs del sistema"""
+    try:
+        logs = []
+
+        # 1. Logs de conexiones DB recientes (simulados desde processlist)
+        sessions = get_active_sessions()
+        if "sessions" in sessions:
+            for session in sessions["sessions"]:
+                logs.append({
+                    "id": session["id"],
+                    "timestamp": datetime.now().isoformat(),
+                    "level": "INFO",
+                    "source": "Database",
+                    "message": f"Query ejecutado por {session['user']}: {session['command']}"
+                })
+
+        # 2. Logs de estado del sistema
+        sys_resources = get_system_resources()
+        if "cpu" in sys_resources:
+            cpu_level = "INFO" if sys_resources["cpu"]["percent"] < 80 else "WARN"
+            logs.append({
+                "id": "sys_cpu",
+                "timestamp": datetime.now().isoformat(),
+                "level": cpu_level,
+                "source": "System",
+                "message": f"Uso de CPU: {sys_resources['cpu']['percent']}%"
+            })
+
+            mem_level = "INFO" if sys_resources["memory"]["percent"] < 85 else "WARN"
+            logs.append({
+                "id": "sys_mem",
+                "timestamp": datetime.now().isoformat(),
+                "level": mem_level,
+                "source": "System",
+                "message": f"Uso de RAM: {sys_resources['memory']['percent']}%"
+            })
+
+        # 3. Logs simulados de aplicación (para que no esté vacío)
+        logs.append({
+            "id": "app_start",
+            "timestamp": (datetime.now() - timedelta(minutes=5)).isoformat(),
+            "level": "SUCCESS",
+            "source": "API",
+            "message": "Sistema iniciado correctamente"
+        })
+
+        # Filtrar por nivel si es necesario
+        if level and level != 'ALL':
+            logs = [l for l in logs if l['level'] == level]
+
+        return logs[:limit]
+    except Exception as e:
+        print(f"❌ Error al obtener logs: {e}")
+        return []
 
 # ============================================
 # WEBSOCKET PARA ACTUALIZACIONES EN TIEMPO REAL

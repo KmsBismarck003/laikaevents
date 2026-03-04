@@ -1,6 +1,7 @@
 # routers/auth.py - VERSIÓN MEJORADA CON MEJOR MANEJO DE ERRORES
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from pydantic import BaseModel, EmailStr
@@ -16,6 +17,7 @@ import traceback
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 print("\n" + "="*70)
 print("🔐 AUTH ROUTER INICIALIZADO")
@@ -215,7 +217,7 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/register", response_model=TokenResponse)
-def register(request: RegisterRequest, db: Session = Depends(get_db)):
+def register(request: RegisterRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """
     Endpoint de registro de usuario con validaciones mejoradas
 
@@ -308,6 +310,24 @@ def register(request: RegisterRequest, db: Session = Depends(get_db)):
         print(f"   User ID: {user.id}")
         print(f"   Hash stored: {user.password_hash[:20]}...")
 
+        # Guardar en MongoDB la analítica de registro de forma asíncrona aislada
+        try:
+            from core.mongodb import MongoAnalytics
+            background_tasks.add_task(
+                MongoAnalytics.log_user_registered,
+                user_id=user.id,
+                role=user.role,
+                email=user.email,
+                metadata={
+                    "name": f"{user.first_name} {user.last_name}",
+                    "phone": request.phone
+                }
+            )
+            print("✅ Tarea asíncrona de MongoDB (registro) encolada")
+        except Exception as mongo_err:
+            print(f"⚠️ Error al encolar analítica de MongoDB: {mongo_err}")
+
+
         # Crear token
         token_data = {
             "user_id": user.id,
@@ -356,10 +376,69 @@ def logout():
 
 
 @router.get("/verify")
-def verify_token():
-    """Verificar validez del token (implementar JWT verification)"""
-    # TODO: Implementar verificación de JWT
-    return {"valid": True}
+def verify_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """
+    Verificar validez del token JWT y estado del usuario.
+    Retorna los datos frescos del usuario si el token es válido.
+    """
+    try:
+        # 1. Decodificar y verificar firma
+        secret_key = os.getenv('JWT_SECRET', 'tu_clave_secreta_aqui')
+        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+
+        user_id = payload.get("user_id")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token inválido: falta user_id"
+            )
+
+        # 2. Verificar existencia y estado del usuario en BD
+        # Esto asegura que si el usuario fue borrado o desactivado, el token deje de servir
+        query = text("SELECT id, first_name, last_name, email, role, status FROM users WHERE id = :user_id")
+        result = db.execute(query, {"user_id": user_id})
+        user = result.fetchone()
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Usuario no encontrado"
+            )
+
+        if user.status != 'active':
+             raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cuenta inactiva o suspendida"
+            )
+
+        # 3. Retornar datos frescos
+        return {
+            "valid": True,
+            "user": {
+                "id": user.id,
+                "firstName": user.first_name,
+                "lastName": user.last_name,
+                "email": user.email,
+                "role": user.role
+            }
+        }
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token expirado"
+        )
+    except jwt.PyJWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido"
+        )
+    except Exception as e:
+        print(f"❌ Error verificando token: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Error de autenticación"
+        )
 
 
 @router.post("/refresh")

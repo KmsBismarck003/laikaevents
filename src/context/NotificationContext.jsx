@@ -6,15 +6,30 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
   const addNotification = useCallback((notification) => {
-    const id = Date.now();
+    const timestamp = Date.now();
+    const id = `${timestamp}-${Math.random().toString(36).substr(2, 9)}`;
     const newNotification = {
-      id,
       type: 'info',
       duration: 5000,
-      ...notification
+      ...notification,
+      id,
+      timestamp
     };
 
-    setNotifications(prev => [...prev, newNotification]);
+    // Evitar duplicados recientes (mismo mensaje en menos de 2s)
+    setNotifications((prev) => {
+      const isDuplicate = prev.some(
+        (n) => n.message === notification.message && timestamp - n.timestamp < 2000
+      );
+      if (isDuplicate) return prev;
+
+      // Mantener solo las últimas 5 notificaciones
+      const updated = [...prev, newNotification];
+      if (updated.length > 5) {
+        return updated.slice(updated.length - 5);
+      }
+      return updated;
+    });
 
     if (newNotification.duration > 0) {
       setTimeout(() => {

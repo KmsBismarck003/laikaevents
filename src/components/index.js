@@ -8,3 +8,5 @@ export { default as Alert } from './Alert';
 export { default as Badge } from './Badge';
 export { default as Dropdown } from './Dropdown';
 export { default as Spinner } from './Spinner';
+export { default as Footer } from './Footer';
+export { default as Icon } from './Icons';

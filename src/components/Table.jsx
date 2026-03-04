@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Table.css';
 
-const Table = ({ 
+const Table = ({
   columns = [],
   data = [],
   onRowClick,
@@ -12,13 +12,13 @@ const Table = ({
   emptyMessage = 'No hay datos disponibles',
   sortable = false,
   className = '',
-  ...props 
+  ...props
 }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
   const handleSort = (key) => {
     if (!sortable) return;
-    
+
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
       direction = 'desc';
@@ -82,7 +82,7 @@ const Table = ({
         <thead>
           <tr>
             {columns.map((column, index) => (
-              <th 
+              <th
                 key={index}
                 onClick={() => column.sortable !== false && handleSort(column.key)}
                 className={[
@@ -107,14 +107,14 @@ const Table = ({
         </thead>
         <tbody>
           {sortedData.map((row, rowIndex) => (
-            <tr 
+            <tr
               key={rowIndex}
               onClick={() => onRowClick && onRowClick(row)}
               className={onRowClick && 'table__row--clickable'}
             >
               {columns.map((column, colIndex) => (
                 <td key={colIndex}>
-                  {column.render 
+                  {column.render
                     ? column.render(row[column.key], row, rowIndex)
                     : row[column.key]
                   }

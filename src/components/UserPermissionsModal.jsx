@@ -1,293 +1,161 @@
-import React, { useState, useEffect } from 'react'
-import { Modal, Button, Badge, Alert, Spinner } from '../components'
-import api from '../services/api'
+import React, { useEffect } from 'react'
+import { Modal, Button, Badge, Spinner, Alert } from '../components'
 import { useNotification } from '../context/NotificationContext'
+import useUserPermissions from '../hooks/useUserPermissions'
 import './UserPermissionsModal.css'
 
 /**
- * Modal para gestionar permisos de usuarios
- * Permite asignar permisos individuales o masivos
+ * Modal para gestionar permisos de usuarios.
+ * Refactorizado para usar hook de lógica aislada.
  */
 const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
-  const { success, error: showError } = useNotification()
-  const [loading, setLoading] = useState(false)
-  const [permissions, setPermissions] = useState({
-    // Permisos de lectura
-    canViewEvents: false,
-    canViewUsers: false,
-    canViewStats: false,
-    canViewTickets: false,
-    
-    // Permisos de escritura
-    canCreateEvents: false,
-    canEditEvents: false,
-    canDeleteEvents: false,
-    
-    // Permisos de gestión de usuarios
-    canCreateUsers: false,
-    canEditUsers: false,
-    canDeleteUsers: false,
-    
-    // Permisos de tickets
-    canSellTickets: false,
-    canValidateTickets: false,
-    canRefundTickets: false,
-    
-    // Permisos de administración
-    canManageDatabase: false,
-    canManageConfig: false,
-    canViewLogs: false
-  })
+  const { success, error: showNotificationError } = useNotification()
 
-  const [role, setRole] = useState('usuario')
+  // Si no hay usuario, no renderizamos nada útil, pero necesitamos llamar al hook condicionalmente
+  // o simplemente devolver null antes.
+  // React Hooks rules: deben llamarse siempre en el mismo orden.
+  // Pasamos user?.id, si es undefined el hook maneja no hacer fetch.
+  const {
+    role,
+    permissions,
+    status,
+    error,
+    setRole,
+    togglePermission,
+    setAllPermissions,
+    applyRoleDefaults,
+    savePermissions,
+    reload
+  } = useUserPermissions(user?.id)
 
+  // Efecto para recargar cuando se abre el modal
   useEffect(() => {
-    if (user) {
-      setRole(user.role || 'usuario')
-      // Cargar permisos del usuario desde el backend
-      loadUserPermissions(user.id)
+    if (isOpen && user?.id) {
+      reload()
     }
-  }, [user])
+  }, [isOpen, user, reload])
 
-  const loadUserPermissions = async (userId) => {
-    setLoading(true)
-    try {
-      const response = await api.user.getPermissions(userId)
-      setPermissions(response.permissions || {})
-    } catch (error) {
-      console.error('Error al cargar permisos:', error)
-      // Si no existen permisos, usar defaults basados en el rol
-      setPermissionsByRole(user.role || 'usuario')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const setPermissionsByRole = (selectedRole) => {
-    const rolePermissions = {
-      admin: {
-        canViewEvents: true,
-        canViewUsers: true,
-        canViewStats: true,
-        canViewTickets: true,
-        canCreateEvents: true,
-        canEditEvents: true,
-        canDeleteEvents: true,
-        canCreateUsers: true,
-        canEditUsers: true,
-        canDeleteUsers: true,
-        canSellTickets: true,
-        canValidateTickets: true,
-        canRefundTickets: true,
-        canManageDatabase: true,
-        canManageConfig: true,
-        canViewLogs: true
-      },
-      gestor: {
-        canViewEvents: true,
-        canViewUsers: true,
-        canViewStats: true,
-        canViewTickets: true,
-        canCreateEvents: true,
-        canEditEvents: true,
-        canDeleteEvents: false,
-        canCreateUsers: false,
-        canEditUsers: false,
-        canDeleteUsers: false,
-        canSellTickets: true,
-        canValidateTickets: true,
-        canRefundTickets: false,
-        canManageDatabase: false,
-        canManageConfig: false,
-        canViewLogs: false
-      },
-      operador: {
-        canViewEvents: true,
-        canViewUsers: false,
-        canViewStats: false,
-        canViewTickets: true,
-        canCreateEvents: false,
-        canEditEvents: false,
-        canDeleteEvents: false,
-        canCreateUsers: false,
-        canEditUsers: false,
-        canDeleteUsers: false,
-        canSellTickets: true,
-        canValidateTickets: true,
-        canRefundTickets: false,
-        canManageDatabase: false,
-        canManageConfig: false,
-        canViewLogs: false
-      },
-      usuario: {
-        canViewEvents: true,
-        canViewUsers: false,
-        canViewStats: false,
-        canViewTickets: false,
-        canCreateEvents: false,
-        canEditEvents: false,
-        canDeleteEvents: false,
-        canCreateUsers: false,
-        canEditUsers: false,
-        canDeleteUsers: false,
-        canSellTickets: false,
-        canValidateTickets: false,
-        canRefundTickets: false,
-        canManageDatabase: false,
-        canManageConfig: false,
-        canViewLogs: false
-      }
-    }
-
-    setPermissions(rolePermissions[selectedRole] || rolePermissions.usuario)
-  }
-
-  const handleRoleChange = (newRole) => {
-    setRole(newRole)
-    setPermissionsByRole(newRole)
-  }
-
-  const handlePermissionChange = (permission) => {
-    setPermissions(prev => ({
-      ...prev,
-      [permission]: !prev[permission]
-    }))
-  }
-
-  const handleSelectAllRead = () => {
-    const allReadSelected = permissions.canViewEvents && 
-                           permissions.canViewUsers && 
-                           permissions.canViewStats && 
-                           permissions.canViewTickets
-
-    setPermissions(prev => ({
-      ...prev,
-      canViewEvents: !allReadSelected,
-      canViewUsers: !allReadSelected,
-      canViewStats: !allReadSelected,
-      canViewTickets: !allReadSelected
-    }))
-  }
-
-  const handleSelectAllWrite = () => {
-    const allWriteSelected = permissions.canCreateEvents && 
-                             permissions.canEditEvents && 
-                             permissions.canSellTickets
-
-    setPermissions(prev => ({
-      ...prev,
-      canCreateEvents: !allWriteSelected,
-      canEditEvents: !allWriteSelected,
-      canSellTickets: !allWriteSelected,
-      canValidateTickets: !allWriteSelected
-    }))
-  }
-
-  const handleSelectAllAdmin = () => {
-    const allAdminSelected = permissions.canManageDatabase && 
-                            permissions.canManageConfig && 
-                            permissions.canViewLogs
-
-    setPermissions(prev => ({
-      ...prev,
-      canDeleteEvents: !allAdminSelected,
-      canCreateUsers: !allAdminSelected,
-      canEditUsers: !allAdminSelected,
-      canDeleteUsers: !allAdminSelected,
-      canRefundTickets: !allAdminSelected,
-      canManageDatabase: !allAdminSelected,
-      canManageConfig: !allAdminSelected,
-      canViewLogs: !allAdminSelected
-    }))
-  }
-
-  const handleSavePermissions = async () => {
-    setLoading(true)
-    try {
-      await api.user.updatePermissions(user.id, {
-        role,
-        permissions
-      })
-
+  // Manejador de Guardado
+  const handleSave = async () => {
+    const ok = await savePermissions()
+    if (ok) {
       success('Permisos actualizados correctamente')
-      onUpdate?.()
+      onUpdate?.() // Notificar al padre para recargar la tabla
       onClose()
-    } catch (error) {
-      console.error('Error al guardar permisos:', error)
-      showError('Error al actualizar permisos')
-    } finally {
-      setLoading(false)
+    } else {
+      showNotificationError(error || 'Error al guardar permisos')
     }
   }
 
-  if (!user) return null
+  if (!user || !isOpen) return null
 
+  // Grupos de UI para render
   const permissionGroups = [
     {
       title: '📖 Permisos de Lectura',
-      selectAllAction: handleSelectAllRead,
-      permissions: [
-        { key: 'canViewEvents', label: 'Ver Eventos', icon: '🎫' },
-        { key: 'canViewUsers', label: 'Ver Usuarios', icon: '👥' },
-        { key: 'canViewStats', label: 'Ver Estadísticas', icon: '📊' },
-        { key: 'canViewTickets', label: 'Ver Boletos', icon: '🎟️' }
-      ]
+      keys: ['canViewEvents', 'canViewUsers', 'canViewStats', 'canViewTickets'],
+      labels: {
+        canViewEvents: 'Ver Eventos',
+        canViewUsers: 'Ver Usuarios',
+        canViewStats: 'Ver Estadísticas',
+        canViewTickets: 'Ver Boletos'
+      },
+      icons: {
+        canViewEvents: '🎫',
+        canViewUsers: '👥',
+        canViewStats: '📊',
+        canViewTickets: '🎟️'
+      }
     },
     {
       title: '✏️ Permisos de Escritura',
-      selectAllAction: handleSelectAllWrite,
-      permissions: [
-        { key: 'canCreateEvents', label: 'Crear Eventos', icon: '➕' },
-        { key: 'canEditEvents', label: 'Editar Eventos', icon: '✏️' },
-        { key: 'canSellTickets', label: 'Vender Boletos', icon: '💰' },
-        { key: 'canValidateTickets', label: 'Validar Boletos', icon: '✅' }
-      ]
+      keys: ['canCreateEvents', 'canEditEvents', 'canSellTickets', 'canValidateTickets'],
+      labels: {
+        canCreateEvents: 'Crear Eventos',
+        canEditEvents: 'Editar Eventos',
+        canSellTickets: 'Vender Boletos',
+        canValidateTickets: 'Validar Boletos'
+      },
+      icons: {
+        canCreateEvents: '➕',
+        canEditEvents: '✏️',
+        canSellTickets: '💰',
+        canValidateTickets: '✅'
+      }
     },
     {
       title: '🔐 Permisos Administrativos',
-      selectAllAction: handleSelectAllAdmin,
-      permissions: [
-        { key: 'canDeleteEvents', label: 'Eliminar Eventos', icon: '🗑️' },
-        { key: 'canCreateUsers', label: 'Crear Usuarios', icon: '👤' },
-        { key: 'canEditUsers', label: 'Editar Usuarios', icon: '👥' },
-        { key: 'canDeleteUsers', label: 'Eliminar Usuarios', icon: '❌' },
-        { key: 'canRefundTickets', label: 'Reembolsar Boletos', icon: '💸' },
-        { key: 'canManageDatabase', label: 'Gestionar BD', icon: '💾' },
-        { key: 'canManageConfig', label: 'Configuración', icon: '⚙️' },
-        { key: 'canViewLogs', label: 'Ver Logs', icon: '📝' }
-      ]
+      keys: ['canDeleteEvents', 'canCreateUsers', 'canEditUsers', 'canDeleteUsers', 'canRefundTickets', 'canManageDatabase', 'canManageConfig', 'canViewLogs'],
+      labels: {
+        canDeleteEvents: 'Eliminar Eventos',
+        canCreateUsers: 'Crear Usuarios',
+        canEditUsers: 'Editar Usuarios',
+        canDeleteUsers: 'Eliminar Usuarios',
+        canRefundTickets: 'Reembolsar Boletos',
+        canManageDatabase: 'Gestionar BD',
+        canManageConfig: 'Configuración',
+        canViewLogs: 'Ver Logs'
+      },
+      icons: {
+        canDeleteEvents: '🗑️',
+        canCreateUsers: '👤',
+        canEditUsers: '👥',
+        canDeleteUsers: '❌',
+        canRefundTickets: '💸',
+        canManageDatabase: '💾',
+        canManageConfig: '⚙️',
+        canViewLogs: '📝'
+      }
     }
   ]
+
+  const isLoading = status === 'LOADING'
+  const isSaving = status === 'SAVING'
+  const isReady = status === 'READY' || status === 'ERROR' || status === 'SAVING'
+
+  // Funciones auxiliares de UI para select all
+  const handleSelectGroup = (keys) => {
+    // Determinar si activar o desactivar: si alguno está false -> activar todos. Si todos true -> desactivar.
+    const allActive = keys.every(k => permissions[k])
+    setAllPermissions(keys, !allActive)
+  }
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Permisos de ${user.name || user.email}`}
+      title={`Permisos de ${user.first_name || user.email}`}
       size="large"
     >
       <div className="user-permissions-modal">
-        {loading && (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
+        {error && <Alert type="error" message={error} />}
+
+        {isLoading ? (
+          <div style={{ textAlign: 'center', padding: '40px' }}>
             <Spinner text="Cargando permisos..." />
           </div>
-        )}
-
-        {!loading && (
+        ) : (
           <>
             {/* Selector de Rol */}
             <div className="role-selector">
-              <h3>Rol del Usuario</h3>
-              <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '12px' }}>
-                Selecciona un rol predefinido o personaliza los permisos
-              </p>
-              
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h3>Rol del Usuario</h3>
+                <Button
+                  size="small"
+                  variant="secondary"
+                  onClick={applyRoleDefaults}
+                  title="Restablecer permisos a los valores por defecto del rol"
+                >
+                  ↺ Aplicar Defaults
+                </Button>
+              </div>
+
               <div className="role-buttons">
                 {['admin', 'gestor', 'operador', 'usuario'].map(roleOption => (
                   <button
                     key={roleOption}
                     className={`role-button ${role === roleOption ? 'active' : ''}`}
-                    onClick={() => handleRoleChange(roleOption)}
+                    onClick={() => setRole(roleOption)}
                   >
                     {roleOption === 'admin' && '👑'}
                     {roleOption === 'gestor' && '📋'}
@@ -307,22 +175,22 @@ const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
                     <h4>{group.title}</h4>
                     <button
                       className="select-all-btn"
-                      onClick={group.selectAllAction}
+                      onClick={() => handleSelectGroup(group.keys)}
                     >
-                      Seleccionar Todos
+                      Alternar Todos
                     </button>
                   </div>
 
                   <div className="permissions-list">
-                    {group.permissions.map(perm => (
-                      <label key={perm.key} className="permission-item">
+                    {group.keys.map(key => (
+                      <label key={key} className="permission-item">
                         <input
                           type="checkbox"
-                          checked={permissions[perm.key]}
-                          onChange={() => handlePermissionChange(perm.key)}
+                          checked={!!permissions[key]}
+                          onChange={() => togglePermission(key)}
                         />
-                        <span className="permission-icon">{perm.icon}</span>
-                        <span className="permission-label">{perm.label}</span>
+                        <span className="permission-icon">{group.icons[key]}</span>
+                        <span className="permission-label">{group.labels[key]}</span>
                       </label>
                     ))}
                   </div>
@@ -330,16 +198,10 @@ const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
               ))}
             </div>
 
-            {/* Resumen de Permisos */}
+            {/* Resumen */}
             <div className="permissions-summary">
               <h4>📋 Resumen</h4>
               <div className="summary-stats">
-                <div className="summary-item">
-                  <span>Permisos Activos:</span>
-                  <Badge variant="primary">
-                    {Object.values(permissions).filter(Boolean).length} / {Object.keys(permissions).length}
-                  </Badge>
-                </div>
                 <div className="summary-item">
                   <span>Rol:</span>
                   <Badge variant={
@@ -347,23 +209,23 @@ const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
                     role === 'gestor' ? 'warning' :
                     role === 'operador' ? 'info' : 'default'
                   }>
-                    {role}
+                    {role.toUpperCase()}
                   </Badge>
                 </div>
               </div>
             </div>
 
-            {/* Botones de Acción */}
+            {/* Botones */}
             <div className="modal-actions">
               <Button
                 variant="primary"
-                onClick={handleSavePermissions}
-                disabled={loading}
+                onClick={handleSave}
+                disabled={isSaving}
                 fullWidth
               >
-                {loading ? 'Guardando...' : '💾 Guardar Permisos'}
+                {isSaving ? 'Guardando...' : '💾 Guardar Permisos'}
               </Button>
-              <Button variant="secondary" onClick={onClose} fullWidth>
+              <Button variant="secondary" onClick={onClose} fullWidth disabled={isSaving}>
                 Cancelar
               </Button>
             </div>
