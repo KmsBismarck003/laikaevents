@@ -1,0 +1,14 @@
+# Snyk (https://snyk.io) policy file
+# Generado para: KmsBismarck003/laikaevents
+version: v1.25.0
+
+# Ignorar vulnerabilidades específicas (agregar según necesidad)
+# Ejemplo:
+# ignore:
+#   SNYK-JS-LODASH-567746:
+#     - '*':
+#         reason: No hay fix disponible aún
+#         expires: 2025-12-31T00:00:00.000Z
+
+ignore: {}
+patch: {}
