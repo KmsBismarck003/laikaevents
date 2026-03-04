@@ -1,0 +1,395 @@
+/* Manager Module - Centralized Styles */
+
+/* ============================================
+   Variables & Theme Overrides
+   ============================================ */
+   .manager-container {
+    --manager-bg: var(--bg-primary, #ffffff);
+    --manager-card-bg: var(--bg-secondary, #f8f9fa);
+    --manager-border: var(--border-color, #e9ecef);
+    --manager-text: var(--text-primary, #212529);
+    --manager-text-muted: var(--text-secondary, #6c757d);
+    --manager-accent: var(--primary, #000000);
+    --manager-danger: #dc3545;
+    --manager-success: #28a745;
+    --manager-warning: #ffc107;
+
+    width: 100%;
+    min-height: 100%;
+    padding: var(--spacing-6, 1.5rem);
+    background: var(--manager-bg);
+    color: var(--manager-text);
+  }
+
+  /* ============================================
+     Layout & Header
+     ============================================ */
+  .manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-8, 2rem);
+    padding-bottom: var(--spacing-4, 1rem);
+    border-bottom: 1px solid var(--manager-border);
+  }
+
+  .manager-title h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+
+  .manager-title p {
+    margin: 0.5rem 0 0;
+    color: var(--manager-text-muted);
+    font-size: 0.95rem;
+  }
+
+  .manager-actions {
+    display: flex;
+    gap: var(--spacing-3, 0.75rem);
+  }
+
+  /* ============================================
+     Stats Grid
+     ============================================ */
+  .manager-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--spacing-5, 1.25rem);
+    margin-bottom: var(--spacing-8, 2rem);
+  }
+
+  .manager-stat-card {
+    background: var(--manager-card-bg);
+    border: 1px solid var(--manager-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .manager-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-color: var(--manager-accent);
+  }
+
+  .stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--manager-accent);
+  }
+
+  .stat-info {
+    flex: 1;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--manager-text-muted);
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--manager-text);
+    line-height: 1;
+  }
+
+  /* ============================================
+     Event List (Table)
+     ============================================ */
+  .manager-table-container {
+    background: var(--manager-card-bg);
+    border: 1px solid var(--manager-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .manager-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .manager-table th {
+    background: rgba(0,0,0,0.02);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--manager-text-muted);
+    border-bottom: 1px solid var(--manager-border);
+  }
+
+  .manager-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--manager-border);
+    vertical-align: middle;
+  }
+
+  .manager-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .manager-table tr:hover td {
+    background: rgba(0,0,0,0.01);
+  }
+
+  .event-cell-name {
+    font-weight: 600;
+    color: var(--manager-text);
+  }
+
+  .event-cell-date {
+    font-size: 0.9rem;
+    color: var(--manager-text-muted);
+  }
+
+  /* Status Badges */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    /* text-transform: uppercase; */
+    letter-spacing: 0.5px;
+  }
+
+  .status-draft { background: #e2e3e5; color: #383d41; }
+  .status-published { background: #d4edda; color: #155724; }
+  .status-completed { background: #cce5ff; color: #004085; }
+  .status-cancelled { background: #f8d7da; color: #721c24; }
+  .status-sold_out { background: #fff3cd; color: #856404; }
+  .status-archived { background: #d6d8d9; color: #1b1e21; }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  /* ============================================
+     Event Detail View (Tabs)
+     ============================================ */
+  .manager-tabs {
+    display: flex;
+    gap: 2rem;
+    border-bottom: 1px solid var(--manager-border);
+    margin-bottom: 2rem;
+  }
+
+  .tab-button {
+    background: none;
+    border: none;
+    padding: 1rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--manager-text-muted);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+  }
+
+  .tab-button:hover {
+    color: var(--manager-text);
+  }
+
+  .tab-button.active {
+    color: var(--manager-accent);
+    font-weight: 600;
+  }
+
+  .tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--manager-accent);
+    border-radius: 3px 3px 0 0;
+  }
+
+  /* ============================================
+     Ticket Overview Panel
+     ============================================ */
+  .ticket-progress-container {
+    background: var(--manager-card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--manager-border);
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .progress-bar-bg {
+    height: 12px;
+    background: #e9ecef;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--manager-accent);
+    transition: width 0.5s ease;
+  }
+
+  .ticket-stats-mini-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--manager-border);
+  }
+
+  .mini-stat {
+    text-align: center;
+  }
+
+  .mini-stat-val {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .mini-stat-label {
+    font-size: 0.75rem;
+    color: var(--manager-text-muted);
+    text-transform: uppercase;
+  }
+
+  /* ============================================
+     Revenue Panel
+     ============================================ */
+  .revenue-detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+  }
+
+  .revenue-main-card {
+    background: var(--manager-card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--manager-border);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .total-revenue-display {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--manager-accent);
+    margin: 1rem 0;
+  }
+
+  .revenue-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    border: 1px solid var(--manager-border);
+  }
+
+  /* ============================================
+     Card Preview
+     ============================================ */
+  .preview-container {
+    background: #f0f0f0; /* Simulate page bg */
+    padding: 2rem;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px dashed var(--manager-border);
+    margin-bottom: 2rem;
+  }
+
+  /* ============================================
+     Forms
+     ============================================ */
+  .manager-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .form-full-width {
+    grid-column: 1 / -1;
+  }
+
+  .danger-zone {
+    border: 1px solid var(--manager-danger);
+    background: rgba(220, 53, 69, 0.05);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 3rem;
+  }
+
+  .danger-header {
+    color: var(--manager-danger);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* ============================================
+     Responsive
+     ============================================ */
+  @media (max-width: 768px) {
+    .manager-form-grid,
+    .revenue-detail-grid,
+    .manager-stats-grid,
+    .ticket-stats-mini-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .manager-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .manager-actions {
+      width: 100%;
+    }
+
+    .manager-actions button {
+      flex: 1;
+    }
+  }

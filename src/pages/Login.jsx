@@ -5,6 +5,14 @@ import { useNotification } from '../context/NotificationContext'
 import { Input, Button } from '../components'
 import './Login.css'
 
+// Mapa de redirección por rol (inline para evitar dependencia circular con routes.js)
+const roleRedirectMap = {
+  admin: '/admin',
+  gestor: '/events/manage',
+  operador: '/staff',
+  usuario: '/'
+}
+
 const Login = () => {
   const navigate = useNavigate()
   const { login } = useAuth()
@@ -60,34 +68,19 @@ const Login = () => {
     }
 
     setLoading(true)
-    console.log('🔵 Intentando login con:', formData)
 
     try {
       const result = await login(formData)
-      console.log('🟢 Resultado del login:', result)
 
       if (result?.success) {
-        success('Inicio de sesión exitoso')
-        console.log('🟢 Usuario logueado:', result.user)
-        console.log('🟢 Rol detectado:', result.user?.role)
-
-        const role = result.user?.role
-
-        if (role === 'admin') {
-          navigate('/admin')
-        } else if (role === 'gestor') {
-          navigate('/events/manage')
-        } else if (role === 'operador') {
-          navigate('/staff')
-        } else {
-          navigate('/')
-        }
+        success('Inicio de sesion exitoso')
+        navigate(roleRedirectMap[result.user.role] || '/')
       } else {
-        showError(result?.error || 'Error al iniciar sesión')
+        showError(result?.error || 'Error al iniciar sesion')
       }
     } catch (err) {
-      console.error('🔴 Error en login:', err)
-      showError('Error al iniciar sesión. Intenta nuevamente.')
+      console.error('Error en login:', err)
+      showError('Error al iniciar sesion. Intenta nuevamente.')
     } finally {
       setLoading(false)
     }

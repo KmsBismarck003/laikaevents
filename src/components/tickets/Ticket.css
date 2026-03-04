@@ -1,0 +1,563 @@
+/* ========================================
+   LAIKA CLUB - Premium Modern Ticket
+   Elegant, sophisticated design
+   ======================================== */
+
+:root {
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-800: #262626;
+  --gray-900: #171717;
+  --orange: #f97316;
+  --orange-light: #fed7aa;
+  --green: #22c55e;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --purple: #8b5cf6;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #0a0a0a;
+}
+
+/* ========================================
+   WRAPPER
+   ======================================== */
+.ticket-wrapper {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+/* ========================================
+   PREMIUM TICKET - Elegant & Modern
+   ======================================== */
+.compact-ticket {
+  display: flex;
+  background: var(--white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow:
+    0 25px 70px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  height: 280px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.compact-ticket::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.03), rgba(59, 130, 246, 0.03));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.compact-ticket:hover {
+  transform: translateY(-8px);
+  box-shadow:
+    0 35px 90px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ========================================
+   LEFT: Image (40% - Más Grande y Visible)
+   ======================================== */
+.ticket-image {
+  width: 40%;
+  overflow: hidden;
+  background: #000;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.event-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: brightness(1.05) contrast(1.1) saturate(1.15);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.compact-ticket:hover .event-img {
+  transform: scale(1.05);
+}
+
+.image-gradient {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 80px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.02));
+  pointer-events: none;
+}
+
+/* ========================================
+   CENTER: Info (42%)
+   ======================================== */
+.ticket-info {
+  flex: 1;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--white);
+  position: relative;
+  z-index: 1;
+}
+
+/* Title Block */
+.info-title {
+  margin-bottom: 12px;
+}
+
+.event-name {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--gray-900);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 5px 0;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--gray-900), var(--gray-700));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.event-type {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--gray-400);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Date/Time Badge - Premium Style */
+.info-datetime {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--orange);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.08), rgba(249, 115, 22, 0.12));
+  padding: 8px 14px;
+  border-radius: 8px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-left: 4px solid var(--orange);
+  margin: 12px 0;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.12);
+}
+
+/* Location */
+.info-location {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--gray-600);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 10px 0 14px 0;
+}
+
+/* Details Grid */
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 12px 0;
+  padding: 12px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.info-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.info-key {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--gray-400);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.info-val {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Footer */
+.info-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.footer-brand {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--gray-400);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* ========================================
+   RIGHT: QR Code (18%)
+   ======================================== */
+.ticket-qr {
+  width: 18%;
+  background: linear-gradient(to bottom, var(--gray-50), var(--gray-100));
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-left: 1px solid var(--gray-200);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* QR Box - Premium */
+.qr-box {
+  background: var(--white);
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease;
+}
+
+.qr-box:hover {
+  transform: scale(1.02);
+}
+
+.qr-img {
+  display: block;
+  width: 140px;
+  height: 140px;
+  border-radius: 8px;
+}
+
+/* QR Code Text */
+.qr-code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--gray-600);
+  letter-spacing: 0.5px;
+  text-align: center;
+  word-break: break-all;
+  padding: 6px 10px;
+  background: var(--white);
+  border-radius: 6px;
+  width: 100%;
+  max-width: 160px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Status Badge - Elegant */
+.qr-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 14px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: badgePulse 2.5s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.badge-active,
+.badge-activo,
+.badge-válido {
+  background: linear-gradient(135deg, #dcfce7, #d1fae5);
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.badge-used,
+.badge-usado {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.badge-text {
+  line-height: 1;
+}
+
+/* ========================================
+   ACTION BUTTONS - Modern
+   ======================================== */
+.ticket-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 24px;
+  justify-content: center;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 26px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.btn-pdf {
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-pdf::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-pdf:hover::before {
+  left: 100%;
+}
+
+.btn-pdf:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+}
+
+.btn-print {
+  background: var(--white);
+  color: var(--gray-700);
+  border: 2px solid var(--gray-300);
+}
+
+.btn-print:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.btn-ico {
+  font-size: 1.1rem;
+}
+
+/* ========================================
+   FOOTER NOTE
+   ======================================== */
+.ticket-note {
+  text-align: center;
+  margin-top: 20px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  color: #9ca3af;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.5;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1100px) {
+  .compact-ticket {
+    height: auto;
+  }
+
+  .event-name {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .compact-ticket {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .ticket-image {
+    width: 100%;
+    height: 240px;
+  }
+
+  .ticket-info {
+    padding: 24px;
+  }
+
+  .ticket-qr {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    border-left: none;
+    border-top: 1px solid var(--gray-200);
+    padding: 24px;
+  }
+
+  .qr-box {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .ticket-wrapper {
+    padding: 12px;
+    margin: 20px auto;
+  }
+
+  .event-name {
+    font-size: 1.15rem;
+  }
+
+  .info-datetime {
+    font-size: 0.7rem;
+    padding: 6px 12px;
+  }
+
+  .info-location {
+    font-size: 0.78rem;
+  }
+
+  .qr-img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .ticket-qr {
+    flex-direction: column;
+  }
+
+  .ticket-actions {
+    flex-direction: column;
+  }
+
+  .btn-action {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ========================================
+   PRINT / PDF
+   ======================================== */
+@media print {
+  @page {
+    size: landscape;
+    margin: 0.5cm;
+  }
+
+  body {
+    background: white;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .ticket-wrapper,
+  .ticket-wrapper * {
+    visibility: visible;
+  }
+
+  .ticket-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .compact-ticket {
+    box-shadow: none;
+    border: 1px solid var(--gray-300);
+    page-break-inside: avoid;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    height: 280px;
+  }
+
+  .compact-ticket::before {
+    display: none;
+  }
+
+  .ticket-actions,
+  .ticket-note {
+    display: none !important;
+  }
+
+  .event-img,
+  .info-datetime,
+  .qr-img,
+  .qr-badge {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

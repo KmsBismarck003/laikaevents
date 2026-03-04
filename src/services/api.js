@@ -10,7 +10,11 @@
  */
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || 'http://localhost:8000/api'
+  process.env.REACT_APP_API_URL ||
+  (window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000/api'
+    : `http://${window.location.hostname}:8000/api`)
 
 /**
  * Cliente HTTP base
@@ -64,7 +68,11 @@ class ApiClient {
    * GET request
    */
   async get(endpoint, params = {}) {
-    const queryString = new URLSearchParams(params).toString()
+    // Filtrar parámetros nulos o indefinidos
+    const cleanParams = Object.fromEntries(
+      Object.entries(params).filter(([_, v]) => v != null)
+    )
+    const queryString = new URLSearchParams(cleanParams).toString()
     const url = `${this.baseURL}${endpoint}${queryString ? `?${queryString}` : ''}`
 
     const response = await fetch(url, {
@@ -299,6 +307,22 @@ export const userAPI = {
   assignRole: (userId, role) => {
     return apiClient.patch(`/users/${userId}/role`, { role })
   },
+
+  /**
+   * Subir foto de perfil
+   * @param {File} file
+   */
+  uploadPhoto: file => {
+    return apiClient.upload('/users/me/photo', file)
+  },
+
+  /**
+   * Eliminar foto de perfil
+   */
+  deletePhoto: () => {
+    return apiClient.delete('/users/me/photo')
+  },
+
   getPermissions: userId => apiClient.get(`/users/${userId}/permissions`),
   updatePermissions: (userId, permissionsData) =>
     apiClient.put(`/users/${userId}/permissions`, permissionsData)
@@ -316,6 +340,14 @@ export const eventAPI = {
    */
   getPublic: (params = {}) => {
     return apiClient.get('/events/public', params)
+  },
+
+  /**
+   * Obtener TODOS los eventos (Admin)
+   * @param {Object} params - { limit, status_filter }
+   */
+  getAll: (params = {}) => {
+    return apiClient.get('/events/all', params)
   },
 
   /**
@@ -487,6 +519,13 @@ export const statsAPI = {
    */
   getSalesReport: (params = {}) => {
     return apiClient.get('/stats/sales/report', params)
+  },
+
+  /**
+   * Obtener ventas por evento (Admin)
+   */
+  getSalesByEvent: () => {
+    return apiClient.get('/stats/admin/sales-by-event')
   }
 }
 
@@ -621,7 +660,7 @@ export const monitoringAPI = {
 
   /**
    * Obtener logs del sistema
-   * @param {Object} params - { level, startDate, endDate, limit }
+   * @param {Object} params - { limit, level }
    */
   getLogs: (params = {}) => {
     return apiClient.get('/monitoring/logs', params)
@@ -681,6 +720,179 @@ export const notificationAPI = {
 
 /**
  * ============================================
+ * PUBLICIDAD (MySQL)
+ * ============================================
+ */
+export const adsAPI = {
+  /**
+   * Obtener anuncios públicos
+   */
+  getPublic: () => {
+    return apiClient.get('/ads/public')
+  },
+
+  /**
+   * Obtener todos los anuncios (Admin)
+   */
+  getAll: () => {
+    return apiClient.get('/ads/admin')
+  },
+
+  /**
+   * Crear anuncio
+   * @param {Object} adData - { title, image_url, link_url, position, active }
+   */
+  create: adData => {
+    return apiClient.post('/ads', adData)
+  },
+
+  /**
+   * Actualizar anuncio
+   * @param {number} id
+   * @param {Object} updates
+   */
+  update: (id, updates) => {
+    return apiClient.put(`/ads/${id}`, updates)
+  },
+
+  /**
+   * Eliminar anuncio
+   * @param {number} id
+   */
+  delete: id => {
+    return apiClient.delete(`/ads/${id}`)
+  },
+
+  /**
+   * Subir imagen de anuncio
+   * @param {File} file
+   */
+  upload: file => {
+    return apiClient.upload('/ads/upload', file)
+  }
+}
+
+/**
+ * ============================================
+ * RECINTOS (MySQL - Admin Managed)
+ * ============================================
+ */
+export const venueAPI = {
+  /**
+   * Obtener todos los recintos
+   * @param {string} status - 'active' | 'inactive' | 'all'
+   */
+  getAll: (status = 'active') => {
+    return apiClient.get('/venues', { status_filter: status })
+  },
+
+  /**
+   * Obtener recinto por ID
+   * @param {number} id
+   */
+  getById: id => {
+    return apiClient.get(`/venues/${id}`)
+  },
+
+  /**
+   * Crear recinto (Admin)
+   * @param {Object} venueData
+   */
+  create: venueData => {
+    return apiClient.post('/venues', venueData)
+  },
+
+  /**
+   * Actualizar recinto (Admin)
+   * @param {number} id
+   * @param {Object} updates
+   */
+  update: (id, updates) => {
+    return apiClient.put(`/venues/${id}`, updates)
+  },
+
+  /**
+   * Eliminar recinto (Admin)
+   * @param {number} id
+   */
+  delete: id => {
+    return apiClient.delete(`/venues/${id}`)
+  }
+}
+
+/**
+ * ============================================
+ * PÁGINAS (CMS)
+ * ============================================
+ */
+export const pagesAPI = {
+  /**
+   * Obtener página por slug (Público)
+   * @param {string} slug
+   */
+  getBySlug: slug => {
+    return apiClient.get(`/pages/${slug}`)
+  },
+
+  /**
+   * Obtener todas las páginas (Admin)
+   * @param {string} section - Opcional: filtrar por sección
+   */
+  getAll: (section = null) => {
+    return apiClient.get('/pages', { section })
+  },
+
+  /**
+   * Crear página (Admin)
+   * @param {Object} pageData
+   */
+  create: pageData => {
+    return apiClient.post('/pages', pageData)
+  },
+
+  /**
+   * Actualizar página (Admin)
+   * @param {string} slug
+   * @param {Object} pageData
+   */
+  update: (slug, pageData) => {
+    return apiClient.put(`/pages/${slug}`, pageData)
+  },
+
+  /**
+   * Eliminar página (Admin)
+   * @param {string} slug
+   */
+  delete: slug => {
+    return apiClient.delete(`/pages/${slug}`)
+  }
+}
+
+/**
+ * ============================================
+ * LOGS DEL SISTEMA (MySQL)
+ * ============================================
+ */
+export const logsAPI = {
+  /**
+   * Obtener logs de auditoría (Admin)
+   * @param {Object} params - { limit, offset, user_id, action }
+   */
+  getAuditLogs: (params = {}) => {
+    return apiClient.get('/logs/audit', params)
+  },
+
+  /**
+   * Obtener logs de peticiones (Admin)
+   * @param {Object} params - { limit, offset, status_code, method }
+   */
+  getRequestLogs: (params = {}) => {
+    return apiClient.get('/logs/requests', params)
+  }
+}
+
+/**
+ * ============================================
  * PAGOS (MySQL)
  * ============================================
  */
@@ -719,6 +931,148 @@ export const paymentAPI = {
 
 /**
  * ============================================
+ * RESTORE AUDIT API (Admin)
+ * ============================================
+ */
+const restoreAuditAPI = {
+  createEvent: data => apiClient.post('/restore-audit/events', data),
+  getEvents: (params = {}) => apiClient.get('/restore-audit/events', params),
+  getEvent: id => apiClient.get(`/restore-audit/events/${id}`),
+  updateEvent: (id, data) => apiClient.put(`/restore-audit/events/${id}`, data),
+  saveTechnicalChecks: (id, data) => apiClient.post(`/restore-audit/events/${id}/technical-checks`, data),
+  saveFunctionalChecks: (id, data) => apiClient.post(`/restore-audit/events/${id}/functional-checks`, data),
+  saveOperationalImpact: (id, data) => apiClient.post(`/restore-audit/events/${id}/operational-impact`, data),
+  confirmEvent: (id, data) => apiClient.post(`/restore-audit/events/${id}/confirm`, data),
+  getStats: () => apiClient.get('/restore-audit/stats'),
+  exportHistory: (params = {}) => apiClient.get('/restore-audit/export', params)
+}
+
+/**
+ * ============================================
+ * ADMIN USERS MANAGEMENT (MySQL)
+ * ============================================
+ */
+export const adminUsersAPI = {
+  /** Listar con filtros: search, role, status, limit, offset */
+  getAll: (params = {}) => apiClient.get('/admin/users', params),
+
+  /** Crear usuario */
+  create: userData => apiClient.post('/admin/users', userData),
+
+  /** Detalle de usuario */
+  getById: userId => apiClient.get(`/admin/users/${userId}`),
+
+  /** Reset de contraseña por admin */
+  resetPassword: (userId, newPassword) =>
+    apiClient.patch(`/admin/users/${userId}/password`, { new_password: newPassword }),
+
+  /** Cambiar estado (active / disabled) */
+  changeStatus: (userId, status) =>
+    apiClient.patch(`/admin/users/${userId}/status`, { status }),
+
+  /** Desbloquear cuenta */
+  unlock: userId => apiClient.patch(`/admin/users/${userId}/unlock`)
+}
+
+/**
+ * ============================================
+ * ACHIEVEMENTS / LOGROS (Modulo Aislado)
+ * ============================================
+ */
+export const achievementsAPI = {
+  /** Listar todos los logros con progreso del usuario */
+  getAll: () => apiClient.get('/achievements'),
+
+  /** Logros desbloqueados del usuario */
+  getMy: () => apiClient.get('/achievements/my'),
+
+  /** Cupones activos del usuario */
+  getCoupons: () => apiClient.get('/achievements/coupons'),
+
+  /** Verificar y desbloquear logros */
+  check: () => apiClient.post('/achievements/check'),
+
+  /** Validar cupon (calcula descuento sin consumir) */
+  validateCoupon: (couponCode, subtotal, feePercent = 10) =>
+    apiClient.post('/achievements/coupons/validate', {
+      coupon_code: couponCode,
+      subtotal,
+      service_fee_percent: feePercent
+    }),
+
+  /** Consumir cupon (despues de compra exitosa) */
+  consumeCoupon: (couponCode, subtotal, feePercent = 10) =>
+    apiClient.post('/achievements/coupons/consume', {
+      coupon_code: couponCode,
+      subtotal,
+      service_fee_percent: feePercent
+    }),
+
+  /** Verificar si el usuario tiene boleto premium */
+  hasPremiumTicket: () => apiClient.get('/achievements/has-premium-ticket')
+}
+
+/**
+ * ============================================
+ * MANAGER DE EVENTOS (Gestor)
+ * ============================================
+ */
+export const managerAPI = {
+  /** Listar eventos del gestor autenticado */
+  getMyEvents: () => apiClient.get('/manager/events'),
+
+  /** Obtener detalle de un evento (con revenue y tickets) */
+  getEventDetail: id => apiClient.get(`/manager/events/${id}`),
+
+  /** Obtener analytics de tickets de un evento */
+  getEventTickets: id => apiClient.get(`/manager/events/${id}/tickets`),
+
+  /** Obtener revenue de un evento */
+  getEventRevenue: id => apiClient.get(`/manager/events/${id}/revenue`),
+
+  /** Crear evento nuevo (status: draft) */
+  createEvent: eventData => apiClient.post('/manager/events', eventData),
+
+  /** Actualizar configuracion de un evento */
+  updateEvent: (id, updates) => apiClient.put(`/manager/events/${id}`, updates),
+
+  /** Publicar un evento */
+  publishEvent: id => apiClient.patch(`/manager/events/${id}/publish`),
+
+  /** Despublicar un evento */
+  unpublishEvent: id => apiClient.patch(`/manager/events/${id}/unpublish`),
+
+  /** Cancelar un evento (motivo obligatorio) */
+  cancelEvent: (id, reason) => apiClient.patch(`/manager/events/${id}/cancel`, { reason }),
+
+  /** Eliminar un evento (solo borradores) */
+  deleteEvent: id => apiClient.delete(`/manager/events/${id}`),
+
+  /** Subir imagen de evento */
+  uploadImage: (file) => {
+    return apiClient.upload('/manager/events/upload-image', file)
+  }
+}
+
+/**
+ * ============================================
+ * REEMBOLSOS
+ * ============================================
+ */
+export const refundAPI = {
+  /** Verificar politica de reembolso para un evento */
+  checkPolicy: eventId => apiClient.get(`/refunds/policy/${eventId}`),
+
+  /** Solicitar reembolso de un ticket */
+  requestRefund: (ticketId, reason) =>
+    apiClient.post('/refunds/request', { ticket_id: ticketId, reason }),
+
+  /** Obtener historial de reembolsos del usuario */
+  getMyRefunds: () => apiClient.get('/refunds/my-refunds')
+}
+
+/**
+ * ============================================
  * EXPORTAR API COMPLETA
  * ============================================
  */
@@ -732,7 +1086,15 @@ const api = {
   database: databaseAPI,
   monitoring: monitoringAPI,
   notification: notificationAPI,
-  payment: paymentAPI
+  payment: paymentAPI,
+  ads: adsAPI,
+  pages: pagesAPI,
+  restoreAudit: restoreAuditAPI,
+  adminUsers: adminUsersAPI,
+  achievements: achievementsAPI,
+  manager: managerAPI,
+  refund: refundAPI
 }
 
 export default api
+

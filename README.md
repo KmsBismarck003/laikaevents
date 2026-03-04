@@ -1,189 +1,114 @@
-# LAIKA Club - Sistema de Gestión de Eventos
+# PROYECTO LAIKA (Laika Events)
 
-Sistema completo de gestión de eventos con roles de usuario (Admin, Gestor, Operador, Usuario).
+**Sistema Integral de Gestión de Eventos y Venta de Boletos**
 
-## 🚀 Características
+---
 
-- ✅ Sistema de autenticación y roles
-- ✅ Gestión completa de eventos
-- ✅ Compra y verificación de boletos
-- ✅ Panel de administración
-- ✅ Dashboard para gestores de eventos
-- ✅ Sistema de verificación para operadores
-- ✅ Carrito de compras
-- ✅ Notificaciones en tiempo real
-- ✅ Tema claro/oscuro
-- ✅ Responsive design
+## 📖 Descripción del Proyecto
 
-## 📋 Requisitos Previos
+**Laika Events** es una plataforma moderna y completa para la administración, venta y validación de boletos para eventos masivos. Diseñada para escalar, permite a administradores y gestores controlar todo el ciclo de vida de un evento, desde su creación hasta el análisis post-evento.
 
-- Node.js 16+ y npm
-- Backend FastAPI corriendo en `http://localhost:8000`
-- MySQL y MongoDB configurados en el backend
+### Características Clave
+- **Venta de Boletos**: Sistema robusto de compra con generación de QRs únicos.
+- **Gestión de Roles**: Paneles diferenciados para Admin, Gestor, Staff y Usuarios.
+- **Logros y Gamificación**: Sistema de recompensas `Achievements` integrado para fidelizar usuarios.
+- **Validación en Puerta**: Módulo para staff con escaneo de boletos en tiempo real.
+- **Seguridad**: Autenticación JWT, Hashing Bcrypt y Middleware de protección "Winter Contingency".
 
-## 🛠️ Instalación
+---
 
-```bash
-# Clonar repositorio
-git clone <repo-url>
-cd laika-club
+## 🚀 Instalación Rápida
 
-# Instalar dependencias
-npm install
+### Prerrequisitos
+- **Python 3.10+**
+- **Node.js 18+**
+- **MySQL Server 8.0+**
 
-# Configurar variables de entorno
-cp .env.example .env
+### 1. Configuración del Backend
 
-# Iniciar en modo desarrollo
-npm start
-```
+1.  Navega a la carpeta `backend/`:
+    ```bash
+    cd backend
+    ```
+2.  Crea y activa el entorno virtual:
+    ```bash
+    python -m venv venv
+    # Windows:
+    .\venv\Scripts\activate
+    # Linux/Mac:
+    source venv/bin/activate
+    ```
+3.  Instala las dependencias:
+    ```bash
+    pip install -r requirements.txt
+    ```
+4.  Configura las variables de entorno:
+    Crea un archivo `.env` en `backend/` con:
+    ```ini
+    MYSQL_HOST=localhost
+    MYSQL_USER=tu_usuario
+    MYSQL_PASSWORD=tu_contraseña
+    MYSQL_DATABASE=laika_club
+    SECRET_KEY=tu_clave_secreta_super_segura
+    ```
+5.  Inicia el servidor (automáticamente creará las tablas):
+    ```bash
+    uvicorn main:app --reload
+    ```
+    El backend correrá en `http://localhost:8000`.
 
-## 📁 Estructura del Proyecto
+### 2. Configuración del Frontend
 
-```
-src/
-├── components/        → Componentes reutilizables (9)
-├── pages/            → Páginas completas (7)
-├── layouts/          → Layouts (Main, Auth, Dashboard)
-├── hooks/            → Hooks personalizados (10)
-├── context/          → Contexts globales (4)
-├── services/         → Conexión con API
-├── utils/            → Funciones auxiliares (60+)
-├── styles/           → Estilos globales
-├── App.jsx           → Componente principal
-├── index.js          → Punto de entrada
-└── routes.js         → Definición de rutas
-```
+1.  Navega a la raíz del proyecto (donde está `package.json`):
+    ```bash
+    cd ..
+    ```
+2.  Instala las dependencias:
+    ```bash
+    npm install
+    ```
+3.  Inicia la aplicación:
+    ```bash
+    npm start
+    ```
+    El frontend abrirá en `http://localhost:3000`.
 
-## 🎭 Roles de Usuario
+---
 
-### Admin
-- Control total del sistema
-- Gestión de usuarios y roles
-- Configuración del sistema
-- Respaldos de base de datos
-- Monitoreo y logs
+## 📚 Documentación Técnica
 
-### Gestor de Eventos
-- Crear y editar eventos
-- Configurar precios y boletos
-- Ver estadísticas de ventas
-- Publicar/despublicar eventos
+Para información detallada sobre la arquitectura, base de datos, API y módulos internos, consulta el **Manual Técnico**:
 
-### Operador/Staff
-- Verificar boletos con QR
-- Registrar entradas
-- Ver historial de verificaciones
-- Estadísticas del día
+👉 **[Leer MANUAL TÉCNICO COMPLETO (TECHNICAL_MANUAL.md)](./TECHNICAL_MANUAL.md)**
 
-### Usuario
-- Buscar y comprar boletos
-- Ver historial de compras
-- Gestionar perfil
-- Sistema de logros
+---
 
-## 🌐 Variables de Entorno
-
-```env
-REACT_APP_API_URL=http://localhost:8000/api
-REACT_APP_NAME=LAIKA Club
-REACT_APP_ENV=development
-```
-
-## 📦 Scripts Disponibles
-
-```bash
-npm start          # Desarrollo
-npm run build      # Build para producción
-npm test           # Ejecutar tests
-npm run lint       # Linter
-```
-
-## 🔗 Endpoints API
-
-Ver `src/services/api.js` para la lista completa de endpoints.
-
-### Principales:
-- `POST /api/auth/login` - Login
-- `GET /api/events/public` - Eventos públicos
-- `POST /api/tickets/purchase` - Comprar boletos
-- `POST /api/tickets/verify` - Verificar boleto (Operador)
-- `GET /api/stats/admin/dashboard` - Dashboard Admin
-
-## 🗄️ Bases de Datos
-
-### MySQL (Datos relacionales)
-- users
-- events
-- tickets
-- payments
-- user_achievements
-
-### MongoDB (Logs y configuración)
-- system_logs
-- system_config
-- event_statistics
-- user_notifications
-- active_sessions
-
-## 🎨 Componentes Disponibles
-
-- Button, Card, Input, Modal
-- Table, Alert, Badge
-- Dropdown, Spinner
-
-## 🪝 Hooks Personalizados
-
-- useAuth, useFetch, useForm
-- useLocalStorage, useDebounce
-- useModal, useToggle
-- usePagination, useClickOutside
-- useMediaQuery
-
-## 🛣️ Rutas Principales
+## 📂 Estructura del Proyecto
 
 ```
-/                    → Home (público)
-/login               → Login
-/register            → Registro
-/profile             → Perfil de usuario
-/admin               → Dashboard Admin
-/events/manage       → Gestión de Eventos (Gestor)
-/staff               → Verificación (Operador)
+proyectolaika/
+├── backend/                # API FastAPI y Lógica de Negocio
+│   ├── routers/            # Endpoints (Auth, Events, Manager, etc.)
+│   ├── database/           # Modelos y Esquemas SQL
+│   ├── middleware/         # Logs, Seguridad y Mantenimiento
+│   └── main.py             # Punto de entrada
+├── src/                    # Frontend React
+│   ├── pages/              # Vistas (Home, Dashboard, Login)
+│   ├── components/         # Componentes UI Reutilizables
+│   ├── context/            # Estado Global (Auth, Cart)
+│   └── App.js              # Enrutamiento Principal
+├── public/                 # Assets Estáticos
+└── TECHNICAL_MANUAL.md     # Documentación Técnica Detallada
 ```
 
-## 🔐 Protección de Rutas
+---
 
-Las rutas están protegidas mediante el componente `ProtectedRoute`:
+## 🛠 Estado del Proyecto
 
-```jsx
-<ProtectedRoute allowedRoles={['admin']}>
-  <AdminDashboard />
-</ProtectedRoute>
-```
+- **Versión Actual**: 2.0.0 (Winter Update)
+- **Estado**: En Desarrollo Activo / Mantenimiento
+- **Última Actualización**: Febrero 2026
 
-## 🎯 Próximos Pasos
+---
 
-1. Configurar backend FastAPI
-2. Conectar con MySQL y MongoDB
-3. Implementar endpoints en FastAPI
-4. Reemplazar datos mock por API real
-5. Agregar pruebas unitarias
-6. Deploy a producción
-
-## 👥 Contribuir
-
-1. Fork el proyecto
-2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit cambios (`git commit -m 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT.
-
-## 📧 Contacto
-
-- Email: contacto@laikaclub.com
-- Teléfono: 55 1234 5678
+**Desarrollado por el equipo de Laika Club**

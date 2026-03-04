@@ -82,10 +82,10 @@ const Register = () => {
     setLoading(true)
     setAlert(null)
 
-    console.log('📤 Enviando datos de registro:', formData)
+    console.log('Enviando datos de registro:', formData)
 
     try {
-      // ✅ USAR LA API REAL
+      // Usar la API real
       const response = await api.auth.register({
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -94,7 +94,7 @@ const Register = () => {
         password: formData.password
       })
 
-      console.log('✅ Respuesta del servidor:', response)
+      console.log('Respuesta del servidor:', response)
 
       // Verificar si la respuesta tiene token y user
       if (response.token && response.user) {
@@ -115,7 +115,7 @@ const Register = () => {
         throw new Error('Respuesta del servidor incompleta')
       }
     } catch (error) {
-      console.error('❌ Error en registro:', error)
+      console.error('Error en registro:', error)
 
       // Manejar diferentes tipos de errores
       let errorMessage = 'Error al registrar usuario. Intenta nuevamente.'
@@ -165,7 +165,7 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder='Juan'
                 error={errors.firstName}
-                icon={<span>👤</span>}
+                icon={<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><path d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2' /><circle cx='12' cy='7' r='4' /></svg>}
                 fullWidth
                 required
               />
@@ -191,7 +191,7 @@ const Register = () => {
               onChange={handleChange}
               placeholder='tu@email.com'
               error={errors.email}
-              icon={<span>📧</span>}
+              icon={<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><rect x='2' y='4' width='20' height='16' rx='2' /><path d='M22 7l-10 7L2 7' /></svg>}
               fullWidth
               required
             />
@@ -204,7 +204,7 @@ const Register = () => {
               onChange={handleChange}
               placeholder='55 1234 5678'
               error={errors.phone}
-              icon={<span>📱</span>}
+              icon={<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><rect x='5' y='2' width='14' height='20' rx='2' ry='2' /><line x1='12' y1='18' x2='12.01' y2='18' /></svg>}
               fullWidth
               required
             />
@@ -217,7 +217,7 @@ const Register = () => {
               onChange={handleChange}
               placeholder='••••••••'
               error={errors.password}
-              icon={<span>🔒</span>}
+              icon={<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><rect x='3' y='11' width='18' height='11' rx='2' ry='2' /><path d='M7 11V7a5 5 0 0 1 10 0v4' /></svg>}
               helperText='Mínimo 8 caracteres, mayúsculas, minúsculas y números'
               fullWidth
               required
@@ -231,7 +231,7 @@ const Register = () => {
               onChange={handleChange}
               placeholder='••••••••'
               error={errors.confirmPassword}
-              icon={<span>🔒</span>}
+              icon={<svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round'><rect x='3' y='11' width='18' height='11' rx='2' ry='2' /><path d='M7 11V7a5 5 0 0 1 10 0v4' /></svg>}
               fullWidth
               required
             />

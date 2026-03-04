@@ -8,10 +8,35 @@ import {
   Login,
   Register,
   UserProfile,
-  AdminDashboard,
   EventManagerDashboard,
-  StaffDashboard
+  StaffDashboard,
+  UnifiedPage,
+  Nosotros,
+  Ayuda,
+  PreguntasFrecuentes,
+  Contacto,
+  Soporte,
+  Devoluciones,
+  Terminos,
+  Privacidad,
+  Cookies,
+  Seguridad,
+  MapaDelSitio,
+  Accesibilidad
 } from './pages'
+
+import AdminDashboard from './pages/admin/Dashboard'
+import Users from './pages/admin/Users'
+import Events from './pages/admin/Events'
+import Config from './pages/admin/Config'
+import Database from './pages/admin/Database'
+import Monitoring from './pages/admin/Monitoring'
+import Logs from './pages/admin/Logs'
+import Ads from './pages/admin/Ads'
+import CMS from './pages/admin/CMS'
+import SalesReports from './pages/admin/SalesReports'
+import RestoreAudit from './pages/admin/RestoreAudit'
+import Venues from './pages/admin/Venues'
 
 /**
  * Rutas públicas (sin autenticación requerida)
@@ -34,6 +59,118 @@ export const publicRoutes = [
     element: Register,
     layout: 'auth',
     title: 'Registrarse'
+  },
+  // Info Pages
+  {
+    path: '/info/nosotros',
+    element: Nosotros,
+    layout: 'main',
+    title: 'Sobre Nosotros'
+  },
+  {
+    path: '/info/contacto',
+    element: Contacto,
+    layout: 'main',
+    title: 'Contacto'
+  },
+  {
+    path: '/info/soporte',
+    element: Soporte,
+    layout: 'main',
+    title: 'Soporte Técnico'
+  },
+  {
+    path: '/info/devoluciones',
+    element: Devoluciones,
+    layout: 'main',
+    title: 'Devoluciones'
+  },
+  {
+    path: '/info/mapa-del-sitio',
+    element: MapaDelSitio,
+    layout: 'main',
+    title: 'Mapa del Sitio'
+  },
+  {
+    path: '/info/accesibilidad',
+    element: Accesibilidad,
+    layout: 'main',
+    title: 'Accesibilidad'
+  },
+  {
+    path: '/info/faq',
+    element: PreguntasFrecuentes,
+    layout: 'main',
+    title: 'Preguntas Frecuentes'
+  },
+  // Legal Pages
+  {
+    path: '/legal/terminos',
+    element: Terminos,
+    layout: 'main',
+    title: 'Términos y Condiciones'
+  },
+  {
+    path: '/legal/privacidad',
+    element: Privacidad,
+    layout: 'main',
+    title: 'Política de Privacidad'
+  },
+  {
+    path: '/legal/cookies',
+    element: Cookies,
+    layout: 'main',
+    title: 'Política de Cookies'
+  },
+  {
+    path: '/legal/seguridad',
+    element: Seguridad,
+    layout: 'main',
+    title: 'Seguridad'
+  },
+  // Fallback for dynamic info pages (if any)
+  {
+    path: '/info/:slug',
+    element: UnifiedPage,
+    layout: 'main',
+    title: 'Información'
+  },
+  {
+    path: '/ayuda',
+    element: Ayuda,
+    layout: 'main',
+    title: 'Ayuda'
+  },
+  // Categorías (Landing Pages - Por ahora usan UnifiedPage, luego pueden tener uno propio si requieren diseño especial)
+  {
+    path: '/conciertos',
+    element: UnifiedPage,
+    layout: 'main',
+    title: 'Conciertos'
+  },
+  {
+    path: '/deportes',
+    element: UnifiedPage,
+    layout: 'main',
+    title: 'Deportes'
+  },
+  {
+    path: '/teatro',
+    element: UnifiedPage,
+    layout: 'main',
+    title: 'Teatro'
+  },
+  {
+    path: '/festivales',
+    element: UnifiedPage,
+    layout: 'main',
+    title: 'Festivales'
+  },
+  {
+    path: '/cultural',
+    element: UnifiedPage,
+    layout: 'main',
+    title: 'Cultural'
   }
 ]
 
@@ -63,31 +200,80 @@ export const adminRoutes = [
   },
   {
     path: '/admin/users',
-    element: null, // Crear componente UserManagement
+    element: Users,
     layout: 'dashboard',
     allowedRoles: ['admin'],
     title: 'Gestión de Usuarios'
   },
   {
+    path: '/admin/events',
+    element: Events,
+    layout: 'dashboard',
+    allowedRoles: ['admin'],
+    title: 'Gestión de Eventos'
+  },
+  {
     path: '/admin/config',
-    element: null, // Crear componente SystemConfig
+    element: Config,
     layout: 'dashboard',
     allowedRoles: ['admin'],
     title: 'Configuración del Sistema'
   },
   {
     path: '/admin/database',
-    element: null, // Crear componente DatabaseManagement
+    element: Database,
     layout: 'dashboard',
     allowedRoles: ['admin'],
     title: 'Gestión de Base de Datos'
   },
   {
     path: '/admin/monitoring',
-    element: null, // Crear componente SystemMonitoring
+    element: Monitoring,
     layout: 'dashboard',
     allowedRoles: ['admin'],
     title: 'Monitoreo del Sistema'
+  },
+  {
+    path: '/admin/logs', // Added route
+    element: Logs,
+    layout: 'dashboard',
+    allowedRoles: ['admin'],
+    title: 'Logs del Sistema'
+  },
+  {
+    path: '/admin/venues',
+    element: Venues,
+    layout: 'dashboard',
+    allowedRoles: ['admin'],
+    title: 'Gestión de Recintos'
+  },
+  {
+    path: '/admin/ads',
+    element: Ads,
+    layout: 'dashboard',
+    allowedRoles: ['admin'],
+    title: 'Gestión de Publicidad'
+  },
+  {
+    path: '/admin/cms',
+    element: CMS,
+    layout: 'dashboard',
+    allowedRoles: ['admin'],
+    title: 'Gestor de Contenidos'
+  },
+  {
+    path: '/admin/sales',
+    element: SalesReports,
+    layout: 'dashboard',
+    allowedRoles: ['admin'],
+    title: 'Reporte de Ventas'
+  },
+  {
+    path: '/admin/restore-audit',
+    element: RestoreAudit,
+    layout: 'dashboard',
+    allowedRoles: ['admin'],
+    title: 'Auditoría de Restauraciones'
   }
 ]
 

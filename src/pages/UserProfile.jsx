@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Card,
   Button,
@@ -6,12 +6,15 @@ import {
   Badge,
   Table,
   Alert,
-  Spinner
+  Spinner,
+  Icon
 } from '../components'
-import api from '../services/api' // ← IMPORTAR API
+import api from '../services/api'
 import { useNotification } from '../context/NotificationContext'
 import { useAuth } from '../context/AuthContext'
 import './UserProfile.css'
+
+const API_HOST = process.env.REACT_APP_API_HOST || 'http://localhost:8000'
 
 const UserProfile = () => {
   const { success, error: showError } = useNotification()
@@ -19,12 +22,15 @@ const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('profile')
   const [alert, setAlert] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const fileInputRef = useRef(null)
   const [profileData, setProfileData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    birthDate: ''
+    birthDate: '',
+    profilePhoto: ''
   })
   const [purchases, setPurchases] = useState([])
   const [achievements] = useState([
@@ -32,28 +38,28 @@ const UserProfile = () => {
       id: 1,
       name: 'Primer Evento',
       description: 'Asististe a tu primer evento',
-      icon: '🎉',
+      icon: 'sparkles',
       unlocked: true
     },
     {
       id: 2,
-      name: 'Fan de la Música',
+      name: 'Fan de la Musica',
       description: 'Asiste a 5 conciertos',
-      icon: '🎵',
+      icon: 'music',
       unlocked: false
     },
     {
       id: 3,
       name: 'Explorador',
-      description: 'Visita eventos de 3 categorías diferentes',
-      icon: '🗺️',
+      description: 'Visita eventos de 3 categorias diferentes',
+      icon: 'map',
       unlocked: false
     },
     {
       id: 4,
       name: 'VIP',
       description: 'Compra 10 boletos en total',
-      icon: '⭐',
+      icon: 'star',
       unlocked: false
     }
   ])
@@ -65,10 +71,7 @@ const UserProfile = () => {
   const fetchUserData = async () => {
     setLoading(true)
     try {
-      // ✅ OBTENER PERFIL DEL USUARIO
-      console.log('📤 Obteniendo perfil del usuario...')
       const profileResponse = await api.user.getProfile()
-      console.log('✅ Perfil obtenido:', profileResponse)
 
       setProfileData({
         firstName:
@@ -76,39 +79,40 @@ const UserProfile = () => {
         lastName: profileResponse.lastName || profileResponse.last_name || '',
         email: profileResponse.email || '',
         phone: profileResponse.phone || '',
-        birthDate: profileResponse.birthDate || profileResponse.birth_date || ''
+        birthDate: profileResponse.birthDate || profileResponse.birth_date || '',
+        profilePhoto: profileResponse.profile_photo || profileResponse.profilePhoto || ''
       })
 
-      // ✅ OBTENER BOLETOS/COMPRAS DEL USUARIO
-      console.log('📤 Obteniendo boletos del usuario...')
-      const ticketsResponse = await api.ticket.getMyTickets()
-      console.log('✅ Boletos obtenidos:', ticketsResponse)
+      try {
+        const ticketsResponse = await api.ticket.getMyTickets()
 
-      // Transformar boletos a formato de compras
-      const purchasesData = ticketsResponse.map(ticket => ({
-        id: ticket.id,
-        eventName: ticket.event?.name || ticket.eventName || 'Evento',
-        date: ticket.event?.date || ticket.event?.event_date || ticket.date,
-        tickets: 1, // Cada ticket es una compra
-        total: ticket.price || 0,
-        status: ticket.status === 'active' ? 'confirmed' : ticket.status,
-        ticketCode:
-          ticket.ticket_code || ticket.ticketCode || `TKT-${ticket.id}`
-      }))
+        const purchasesData = ticketsResponse.map(ticket => ({
+          id: ticket.id,
+          eventName: ticket.event?.name || ticket.eventName || 'Evento',
+          date: ticket.event?.date || ticket.event?.event_date || ticket.date,
+          tickets: 1,
+          total: ticket.price || 0,
+          status: ticket.status === 'active' ? 'confirmed' : ticket.status,
+          ticketCode:
+            ticket.ticket_code || ticket.ticketCode || `TKT-${ticket.id}`
+        }))
 
-      setPurchases(purchasesData)
+        setPurchases(purchasesData)
+      } catch {
+        setPurchases([])
+      }
     } catch (error) {
-      console.error('❌ Error al cargar datos del usuario:', error)
-      showError('Error al cargar información del perfil')
+      console.error('Error al cargar datos del usuario:', error)
+      showError('Error al cargar informacion del perfil')
 
-      // Si hay usuario en el contexto, usar esos datos como fallback
       if (currentUser) {
         setProfileData({
           firstName: currentUser.firstName || '',
           lastName: currentUser.lastName || '',
           email: currentUser.email || '',
           phone: currentUser.phone || '',
-          birthDate: ''
+          birthDate: '',
+          profilePhoto: ''
         })
       }
     } finally {
@@ -123,9 +127,6 @@ const UserProfile = () => {
 
   const handleSaveProfile = async () => {
     try {
-      console.log('📤 Actualizando perfil:', profileData)
-
-      // ✅ ACTUALIZAR PERFIL CON API REAL
       const response = await api.user.updateProfile({
         first_name: profileData.firstName,
         last_name: profileData.lastName,
@@ -134,21 +135,73 @@ const UserProfile = () => {
         birth_date: profileData.birthDate
       })
 
-      console.log('✅ Perfil actualizado:', response)
-
       setAlert({ type: 'success', message: 'Perfil actualizado exitosamente' })
       success('Perfil actualizado')
     } catch (error) {
-      console.error('❌ Error al actualizar perfil:', error)
       const errorMsg = error.message || 'Error al actualizar el perfil'
       setAlert({ type: 'error', message: errorMsg })
       showError(errorMsg)
     }
   }
 
+  const handlePhotoClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    // Validar en frontend
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!validTypes.includes(file.type)) {
+      showError('Formato no permitido. Usa JPG, PNG o WebP')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showError('La imagen no debe superar 5MB')
+      return
+    }
+
+    setUploadingPhoto(true)
+    try {
+      const response = await api.user.uploadPhoto(file)
+      setProfileData(prev => ({ ...prev, profilePhoto: response.photo_url }))
+      success('Foto de perfil actualizada')
+    } catch (error) {
+      const errorMsg = error.message || 'Error al subir la foto'
+      showError(errorMsg)
+    } finally {
+      setUploadingPhoto(false)
+      // Reset file input
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const handleDeletePhoto = async () => {
+    try {
+      await api.user.deletePhoto()
+      setProfileData(prev => ({ ...prev, profilePhoto: '' }))
+      success('Foto de perfil eliminada')
+    } catch (error) {
+      showError('Error al eliminar la foto')
+    }
+  }
+
   const handleChangePassword = async () => {
-    // TODO: Implementar modal de cambio de contraseña
-    showError('Función de cambio de contraseña no implementada aún')
+    showError('Funcion de cambio de contrasena no implementada aun')
+  }
+
+  const getInitials = () => {
+    const f = profileData.firstName?.[0] || ''
+    const l = profileData.lastName?.[0] || ''
+    return (f + l).toUpperCase() || 'U'
+  }
+
+  const getPhotoUrl = () => {
+    if (!profileData.profilePhoto) return null
+    if (profileData.profilePhoto.startsWith('http')) return profileData.profilePhoto
+    return `${API_HOST}${profileData.profilePhoto}`
   }
 
   const purchaseColumns = [
@@ -159,7 +212,7 @@ const UserProfile = () => {
       render: value =>
         value ? new Date(value).toLocaleDateString('es-MX') : '-'
     },
-    { key: 'ticketCode', header: 'Código' },
+    { key: 'ticketCode', header: 'Codigo' },
     {
       key: 'total',
       header: 'Total',
@@ -198,11 +251,40 @@ const UserProfile = () => {
     return <Spinner fullScreen text='Cargando perfil...' />
   }
 
+  const photoUrl = getPhotoUrl()
+
   return (
     <div className='user-profile'>
       <div className='profile-header'>
-        <div className='profile-avatar'>
-          <span className='avatar-icon'>👤</span>
+        <div className='profile-avatar-container'>
+          <div className='profile-avatar' onClick={handlePhotoClick} title='Cambiar foto de perfil'>
+            {uploadingPhoto ? (
+              <div className='avatar-loading'>
+                <svg width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' className='spin-icon'>
+                  <path d='M21 12a9 9 0 1 1-6.219-8.56' />
+                </svg>
+              </div>
+            ) : photoUrl ? (
+              <img src={photoUrl} alt='Foto de perfil' className='avatar-image' />
+            ) : (
+              <span className='avatar-initials'>{getInitials()}</span>
+            )}
+            <div className='avatar-overlay'>
+              <Icon name="camera" size={20} className="text-white" />
+            </div>
+          </div>
+          <input
+            type='file'
+            ref={fileInputRef}
+            onChange={handlePhotoChange}
+            accept='image/jpeg,image/png,image/webp'
+            style={{ display: 'none' }}
+          />
+          {profileData.profilePhoto && (
+            <button className='remove-photo-btn' onClick={handleDeletePhoto} title='Eliminar foto'>
+              <Icon name="trash" size={14} />
+            </button>
+          )}
         </div>
         <div className='profile-info'>
           <h1>
@@ -245,7 +327,7 @@ const UserProfile = () => {
 
       <div className='profile-content'>
         {activeTab === 'profile' && (
-          <Card title='Información Personal'>
+          <Card title='Informacion Personal'>
             <div className='profile-form'>
               <div className='form-row'>
                 <Input
@@ -276,7 +358,7 @@ const UserProfile = () => {
               />
 
               <Input
-                label='Teléfono'
+                label='Telefono'
                 type='tel'
                 name='phone'
                 value={profileData.phone}
@@ -298,7 +380,7 @@ const UserProfile = () => {
                   Guardar Cambios
                 </Button>
                 <Button variant='secondary' onClick={handleChangePassword}>
-                  Cambiar Contraseña
+                  Cambiar Contrasena
                 </Button>
               </div>
             </div>
@@ -309,14 +391,18 @@ const UserProfile = () => {
           <Card title='Historial de Compras'>
             <div className='purchases-stats'>
               <div className='stat-box'>
-                <span className='stat-icon'>🎫</span>
+                <span className='stat-icon'>
+                  <Icon name="ticket" size={24} />
+                </span>
                 <div>
                   <p className='stat-label'>Total de Boletos</p>
                   <h3 className='stat-value'>{purchases.length}</h3>
                 </div>
               </div>
               <div className='stat-box'>
-                <span className='stat-icon'>💰</span>
+                <span className='stat-icon'>
+                  <Icon name="dollarSign" size={24} />
+                </span>
                 <div>
                   <p className='stat-label'>Gastado Total</p>
                   <h3 className='stat-value'>
@@ -355,10 +441,8 @@ const UserProfile = () => {
           <Card title='Mis Logros'>
             <div className='achievements-grid'>
               {achievements.map(achievement => {
-                // Calcular si el logro debe estar desbloqueado basado en datos reales
                 let isUnlocked = achievement.unlocked
 
-                // Lógica simple de desbloqueo basada en compras
                 if (achievement.id === 1 && purchases.length > 0) {
                   isUnlocked = true
                 } else if (achievement.id === 4 && purchases.length >= 10) {
@@ -370,7 +454,9 @@ const UserProfile = () => {
                     key={achievement.id}
                     className={`achievement-card ${isUnlocked ? 'unlocked' : 'locked'}`}
                   >
-                    <div className='achievement-icon'>{achievement.icon}</div>
+                    <div className='achievement-icon'>
+                      <Icon name={achievement.icon} size={24} />
+                    </div>
                     <h4 className='achievement-name'>{achievement.name}</h4>
                     <p className='achievement-description'>
                       {achievement.description}

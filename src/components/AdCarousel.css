@@ -1,0 +1,223 @@
+.ad-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: var(--bg-secondary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ad-carousel:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   AD SLIDE
+   ======================================== */
+.ad-slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.ad-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ad-slide:hover img {
+  transform: scale(1.05);
+}
+
+/* Overlay sutil al hover */
+.ad-slide::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 70%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.ad-slide:hover::after {
+  opacity: 1;
+}
+
+/* ========================================
+   SIZE VARIANTS
+   ======================================== */
+
+/* Horizontal (Main Banner) */
+.ad-carousel.horizontal {
+  width: 100%;
+  aspect-ratio: 1098 / 342;
+  max-height: 342px;
+  margin-bottom: 2rem;
+}
+
+.ad-carousel.main {
+  border-radius: 16px;
+}
+
+/* Vertical (Side Banners) */
+.ad-carousel.vertical {
+  width: 160px;
+  height: 600px;
+  position: sticky;
+  top: 100px;
+  border-radius: 12px;
+}
+
+.ad-carousel.side_left,
+.ad-carousel.side_right {
+  animation: fadeInSlide 0.6s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========================================
+   INDICATORS
+   ======================================== */
+.ad-indicators {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.8);
+  transform: scale(1.2);
+}
+
+.indicator.active {
+  background: white;
+  transform: scale(1.3);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* Ocultar indicadores en banners laterales si hay poco espacio */
+.ad-carousel.vertical .ad-indicators {
+  bottom: 12px;
+  padding: 6px 8px;
+}
+
+.ad-carousel.vertical .indicator {
+  width: 6px;
+  height: 6px;
+}
+
+/* ========================================
+   LOADING STATE
+   ======================================== */
+.ad-carousel.loading {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1199px) {
+  .ad-carousel.vertical {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .ad-carousel.horizontal {
+    aspect-ratio: 16 / 9;
+    max-height: 250px;
+    margin-bottom: 1.5rem;
+  }
+
+  .ad-carousel.main {
+    border-radius: 12px;
+  }
+
+  .ad-indicators {
+    bottom: 12px;
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  .indicator {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ad-carousel.horizontal {
+    max-height: 200px;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+  }
+
+  .ad-indicators {
+    bottom: 8px;
+    padding: 4px 8px;
+    gap: 5px;
+  }
+
+  .indicator {
+    width: 5px;
+    height: 5px;
+  }
+}

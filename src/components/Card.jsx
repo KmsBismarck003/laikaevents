@@ -1,17 +1,18 @@
-import React from 'react';
-import './Card.css';
+import React from 'react'
+import './Card.css'
 
-const Card = ({ 
-  children, 
-  title, 
+const Card = ({
+  children,
+  title,
   subtitle,
   footer,
   image,
+  imageAlt, // Destructure to avoid spreading to DOM
   hoverable = false,
   variant = 'default',
   onClick,
   className = '',
-  ...props 
+  ...props
 }) => {
   const classNames = [
     'card',
@@ -19,36 +20,47 @@ const Card = ({
     hoverable && 'card--hoverable',
     onClick && 'card--clickable',
     className
-  ].filter(Boolean).join(' ');
+  ]
+    .filter(Boolean)
+    .join(' ')
+
+  const [imgSrc, setImgSrc] = React.useState(image)
+
+  React.useEffect(() => {
+    setImgSrc(image)
+  }, [image])
+
+  const handleImageError = () => {
+    setImgSrc('https://placehold.co/400x200?text=No+Image')
+  }
 
   return (
     <div className={classNames} onClick={onClick} {...props}>
       {image && (
-        <div className="card__image">
-          <img src={image} alt={title || 'Card image'} />
+        <div className='card__image'>
+          <img
+            src={imgSrc}
+            alt={imageAlt || title || 'Card image'}
+            loading='lazy'
+            onError={handleImageError}
+          />
         </div>
       )}
-      
-      <div className="card__content">
+
+      <div className='card__content'>
         {(title || subtitle) && (
-          <div className="card__header">
-            {title && <h3 className="card__title">{title}</h3>}
-            {subtitle && <p className="card__subtitle">{subtitle}</p>}
+          <div className='card__header'>
+            {title && <h3 className='card__title'>{title}</h3>}
+            {subtitle && <p className='card__subtitle'>{subtitle}</p>}
           </div>
         )}
-        
-        <div className="card__body">
-          {children}
-        </div>
+
+        <div className='card__body'>{children}</div>
       </div>
 
-      {footer && (
-        <div className="card__footer">
-          {footer}
-        </div>
-      )}
+      {footer && <div className='card__footer'>{footer}</div>}
     </div>
-  );
-};
+  )
+}
 
-export default Card;
+export default Card

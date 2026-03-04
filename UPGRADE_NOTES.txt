@@ -1,0 +1,31 @@
+# NOTAS DE ACTUALIZACIÓN - Dashboard Avanzado
+Fecha: 2026-02-08
+
+## Respaldo de Seguridad
+Se ha creado la carpeta `_BACKUP_BEFORE_UPGRADE_2026_02_08` conteniendo los archivos en su estado funcional actual antes de aplicar las mejoras visuales y de monitoreo.
+
+### Archivos Respaldados:
+1.  `src/pages/admin/Monitoring.jsx`
+2.  `src/pages/admin/Logs.jsx`
+3.  `src/pages/admin/Events.jsx`
+4.  `src/pages/admin/admin.css`
+5.  `backend/main.py`
+
+## Objetivos de la Actualización
+1.  Implementar diseño "Glassmorphism" con modos Claro/Oscuro.
+2.  Conectar monitoreo en tiempo real (CPU, RAM, DB).
+3.  Habilitar logs reales del sistema.
+4.  Asegurar funcionalidad total (CRUD Eventos).
+
+## Registro de Cambios (Visual Overhaul & Verification) - 2026-02-08
+1.  **Diseño Global**:
+    - Se actualizó `src/styles/theme.css` con una paleta de colores "Premium" y variables para Glassmorphism.
+    - Se limpió `src/styles/globals.css` para eliminar estilos "Neon" antiguos y soportar correctamente el modo Claro/Oscuro.
+2.  **Layout**:
+    - Se modificó `DashboardLayout.jsx` para incluir el botón de cambio de tema (🌙/☀️) en el header.
+    - Se reescribió `DashboardLayout.css` para usar variables CSS y eliminar colores hardcodeados.
+3.  **Permisos de Usuario**:
+    - Se actualizó `UserPermissionsModal.css` para coincidir con el nuevo diseño.
+    - **Verificación**: Se confirmó que el frontend llama correctamente a los endpoints `/api/users/{id}/permissions` (GET/PUT), y que estos existen y son funcionales en el backend (`backend/routers/user_permissions.py`).
+
+Si algo falla, restaurar los archivos desde la carpeta de respaldo.

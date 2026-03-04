@@ -1,76 +1,246 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useNotification } from './NotificationContext';
+import { useAuth } from './AuthContext';
 
-const CartContext = createContext(null);
-
-export const CartProvider = ({ children }) => {
-  const [items, setItems] = useState(() => {
-    const saved = localStorage.getItem('cart');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(items));
-  }, [items]);
-
-  const addItem = useCallback((item) => {
-    setItems(prev => {
-      const exists = prev.find(i => i.id === item.id);
-      if (exists) {
-        return prev.map(i => 
-          i.id === item.id 
-            ? { ...i, quantity: i.quantity + (item.quantity || 1) }
-            : i
-        );
-      }
-      return [...prev, { ...item, quantity: item.quantity || 1 }];
-    });
-  }, []);
-
-  const removeItem = useCallback((id) => {
-    setItems(prev => prev.filter(i => i.id !== id));
-  }, []);
-
-  const updateQuantity = useCallback((id, quantity) => {
-    if (quantity <= 0) {
-      removeItem(id);
-      return;
-    }
-    setItems(prev => prev.map(i => 
-      i.id === id ? { ...i, quantity } : i
-    ));
-  }, [removeItem]);
-
-  const clearCart = useCallback(() => {
-    setItems([]);
-  }, []);
-
-  const getTotal = useCallback(() => {
-    return items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  }, [items]);
-
-  const getItemCount = useCallback(() => {
-    return items.reduce((sum, item) => sum + item.quantity, 0);
-  }, [items]);
-
-  const value = {
-    items,
-    addItem,
-    removeItem,
-    updateQuantity,
-    clearCart,
-    getTotal,
-    getItemCount
-  };
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-};
+const CartContext = createContext();
 
 export const useCart = () => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart debe usarse dentro de CartProvider');
-  }
-  return context;
+    return useContext(CartContext);
 };
 
-export default CartContext;
+// Service fee percentage (configurable)
+const SERVICE_FEE_PERCENT = 10;
+
+// Helper functions for user-scoped localStorage keys
+const getCartKey = (user) => user ? `cart_${user.id}` : 'cart_guest';
+const getCardsKey = (user) => user ? `savedCards_${user.id}` : 'savedCards_guest';
+
+export const CartProvider = ({ children }) => {
+    const [cart, setCart] = useState([]);
+    const [total, setTotal] = useState(0);
+    const [savedCards, setSavedCards] = useState([]);
+    const { success, info } = useNotification();
+    const { user } = useAuth();
+
+    // Coupon state
+    const [availableCoupons, setAvailableCoupons] = useState([]);
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [discount, setDiscount] = useState(0);
+    const [serviceFee, setServiceFee] = useState(0);
+
+    // Cargar carrito y tarjetas guardadas desde LocalStorage cuando el usuario cambia
+    useEffect(() => {
+        const cartKey = getCartKey(user);
+        const cardsKey = getCardsKey(user);
+
+        const storedCart = localStorage.getItem(cartKey);
+        const storedCards = localStorage.getItem(cardsKey);
+
+        if (storedCart) {
+            try {
+                setCart(JSON.parse(storedCart));
+            } catch (e) {
+                console.error("Error cargando carrito", e);
+                setCart([]);
+            }
+        } else {
+            setCart([]);
+        }
+
+        if (storedCards) {
+            try {
+                setSavedCards(JSON.parse(storedCards));
+            } catch (e) {
+                console.error("Error cargando tarjetas guardadas", e);
+                setSavedCards([]);
+            }
+        } else {
+            setSavedCards([]);
+        }
+
+        // Limpiar cupón al cambiar de usuario
+        setAppliedCoupon(null);
+        setDiscount(0);
+    }, [user]);
+
+    // Guardar carrito en LocalStorage cuando cambia y recalcular total
+    useEffect(() => {
+        const cartKey = getCartKey(user);
+        localStorage.setItem(cartKey, JSON.stringify(cart));
+
+        // Recalcular subtotal
+        const newTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+        setTotal(newTotal);
+
+        // Recalcular service fee
+        const fee = Math.round(newTotal * (SERVICE_FEE_PERCENT / 100) * 100) / 100;
+        setServiceFee(fee);
+    }, [cart, user]);
+
+    // Guardar tarjetas en LocalStorage cuando cambien
+    useEffect(() => {
+        const cardsKey = getCardsKey(user);
+        localStorage.setItem(cardsKey, JSON.stringify(savedCards));
+    }, [savedCards, user]);
+
+    // Load available coupons when user logs in
+    useEffect(() => {
+        if (user) {
+            loadCoupons();
+        } else {
+            setAvailableCoupons([]);
+            setAppliedCoupon(null);
+            setDiscount(0);
+        }
+    }, [user]);
+
+    const loadCoupons = useCallback(async () => {
+        try {
+            const { achievementsAPI } = await import('../services/api');
+            const coupons = await achievementsAPI.getCoupons();
+            setAvailableCoupons(Array.isArray(coupons) ? coupons : []);
+        } catch (e) {
+            // Fail silently - achievements module might not be available
+            setAvailableCoupons([]);
+        }
+    }, []);
+
+    const applyCoupon = useCallback(async (couponCode) => {
+        if (total <= 0) return;
+
+        try {
+            const { achievementsAPI } = await import('../services/api');
+            const result = await achievementsAPI.validateCoupon(couponCode, total, SERVICE_FEE_PERCENT);
+
+            if (result.valid) {
+                setAppliedCoupon({
+                    code: couponCode,
+                    ...result
+                });
+                setDiscount(result.discount);
+                success('Cupon aplicado exitosamente');
+            }
+        } catch (e) {
+            console.error('Error applying coupon:', e);
+            setAppliedCoupon(null);
+            setDiscount(0);
+        }
+    }, [total, success]);
+
+    const removeCoupon = useCallback(() => {
+        setAppliedCoupon(null);
+        setDiscount(0);
+    }, []);
+
+    const consumeAppliedCoupon = useCallback(async () => {
+        if (!appliedCoupon) return;
+        try {
+            const { achievementsAPI } = await import('../services/api');
+            await achievementsAPI.consumeCoupon(appliedCoupon.code, total, SERVICE_FEE_PERCENT);
+        } catch (e) {
+            // Non-critical, log and continue
+            console.error('Error consuming coupon:', e);
+        }
+    }, [appliedCoupon, total]);
+
+    const addToCart = (event, quantity = 1, functionData = null) => {
+        setCart(prevCart => {
+            const functionId = functionData ? functionData.id : null;
+            const existingItem = prevCart.find(item =>
+                item.eventId === event.id && item.functionId === functionId
+            );
+
+            if (existingItem) {
+                info(`Se actualizo la cantidad de boletos para ${event.name}`);
+                return prevCart.map(item =>
+                    (item.eventId === event.id && item.functionId === functionId)
+                        ? { ...item, quantity: item.quantity + quantity }
+                        : item
+                );
+            } else {
+                success(`Boletos para ${event.name} agregados al carrito`);
+                return [...prevCart, {
+                    eventId: event.id,
+                    functionId: functionId,
+                    eventName: event.name,
+                    functionDate: functionData ? functionData.date : null,
+                    functionTime: functionData ? functionData.time : null,
+                    venueName: functionData ? functionData.venue_name : null, // Store venue for display
+                    price: parseFloat(event.price),
+                    quantity,
+                    image: event.image_url || event.image
+                }];
+            }
+        });
+        // Clear coupon when cart changes
+        removeCoupon();
+    };
+
+    const removeFromCart = (eventId, functionId = null) => {
+        setCart(prevCart => prevCart.filter(item => !(item.eventId === eventId && item.functionId === functionId)));
+        removeCoupon();
+    };
+
+    const updateQuantity = (eventId, newQuantity, functionId = null) => {
+        if (newQuantity < 1) return;
+        setCart(prevCart =>
+            prevCart.map(item =>
+                (item.eventId === eventId && item.functionId === functionId)
+                    ? { ...item, quantity: newQuantity }
+                    : item
+            )
+        );
+        removeCoupon();
+    };
+
+    const clearCart = () => {
+        setCart([]);
+        removeCoupon();
+    };
+
+    const addCard = (card) => {
+        const newCard = {
+            id: Date.now(),
+            number: `**** **** **** ${card.number.slice(-4)}`,
+            holder: card.holder,
+            expiry: card.expiry,
+            type: 'visa'
+        };
+        setSavedCards(prev => [...prev, newCard]);
+    };
+
+    const removeCard = (cardId) => {
+        setSavedCards(prev => prev.filter(c => c.id !== cardId));
+    };
+
+    const finalTotal = Math.max(0, total + serviceFee - discount);
+
+    return (
+        <CartContext.Provider value={{
+            cart,
+            total,
+            savedCards,
+            addToCart,
+            removeFromCart,
+            updateQuantity,
+            clearCart,
+            addCard,
+            removeCard,
+            cartCount: cart.reduce((acc, item) => acc + item.quantity, 0),
+
+            // Coupon & fee state
+            serviceFee,
+            serviceFeePercent: SERVICE_FEE_PERCENT,
+            availableCoupons,
+            appliedCoupon,
+            discount,
+            finalTotal,
+            applyCoupon,
+            removeCoupon,
+            consumeAppliedCoupon,
+            loadCoupons
+        }}>
+            {children}
+        </CartContext.Provider>
+    );
+};
