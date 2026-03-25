@@ -7,16 +7,19 @@ __pycache__/
 
 # Virtual environments
 venv/
+.venv/
 backend/venv/
 
 # Environment variables
 .env
 .env.*
 
-# Database backups
-backend/backups/
+# Database and local data
+backups/
+diagnosticos/
 *.sql
 *.sql.json
+laika_club_transfer.zip
 
 # Node
 node_modules/

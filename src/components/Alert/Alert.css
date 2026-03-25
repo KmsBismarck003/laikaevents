@@ -1,0 +1,317 @@
+/* Alert.css - Sistema de Eventos LAIKA Club - Diseño Moderno */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5) var(--spacing-6);
+  margin-bottom: var(--spacing-5);
+  border-radius: var(--border-radius-lg);
+  animation: none;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+}
+
+.alert:hover::before {
+  display: none;
+}
+
+/* alertSlideIn removed */
+
+/* Variantes */
+.alert--success,
+.alert-success {
+  background: var(--success-light);
+  border-left: 4px solid var(--success);
+  border-color: rgba(0, 255, 136, 0.3);
+  box-shadow: var(--success-glow);
+}
+
+.alert--success::after,
+.alert-success::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--success), transparent);
+}
+
+.alert--error,
+.alert-error {
+  background: var(--error-light);
+  border-left: 4px solid var(--error);
+  border-color: rgba(255, 51, 102, 0.3);
+  box-shadow: var(--error-glow);
+}
+
+.alert--error::after,
+.alert-error::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--error), transparent);
+}
+
+.alert--warning,
+.alert-warning {
+  background: var(--warning-light);
+  border-left: 4px solid var(--warning);
+  border-color: rgba(255, 170, 0, 0.3);
+  box-shadow: var(--warning-glow);
+}
+
+.alert--warning::after,
+.alert-warning::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--warning), transparent);
+}
+
+.alert--info,
+.alert-info {
+  background: var(--info-light);
+  border-left: 4px solid var(--info);
+  border-color: rgba(6, 182, 212, 0.3);
+  box-shadow: var(--info-glow);
+}
+
+.alert--info::after,
+.alert-info::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--info), transparent);
+}
+
+/* Icono */
+.alert__icon {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+}
+
+.alert--success .alert__icon,
+.alert-success .alert__icon {
+  color: var(--success);
+  background: rgba(0, 255, 136, 0.15);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+.alert--error .alert__icon,
+.alert-error .alert__icon {
+  color: var(--error);
+  background: rgba(255, 51, 102, 0.15);
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.4);
+}
+
+.alert--warning .alert__icon,
+.alert-warning .alert__icon {
+  color: var(--warning);
+  background: rgba(255, 170, 0, 0.15);
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.4);
+}
+
+.alert--info .alert__icon,
+.alert-info .alert__icon {
+  color: var(--info);
+  background: rgba(6, 182, 212, 0.15);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+}
+
+/* iconPulse removed */
+
+/* Contenido */
+.alert__content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.alert__title {
+  font-weight: var(--font-weight-black);
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.alert--success .alert__title,
+.alert-success .alert__title {
+  color: var(--success);
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.alert--error .alert__title,
+.alert-error .alert__title {
+  color: var(--error);
+  text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+.alert--warning .alert__title,
+.alert-warning .alert__title {
+  color: var(--warning);
+  text-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+}
+
+.alert--info .alert__title,
+.alert-info .alert__title {
+  color: var(--info);
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+}
+
+.alert__message {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-secondary);
+}
+
+.alert__children {
+  margin-top: var(--spacing-3);
+}
+
+/* Botón de cierre */
+.alert__close,
+.alert-close {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  color: var(--text-muted);
+}
+
+.alert__close::before,
+.alert-close::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent);
+  transition: left 0.5s ease;
+}
+
+.alert__close:hover,
+.alert-close:hover {
+  transform: rotate(90deg) scale(1.1);
+}
+
+.alert__close:hover::before,
+.alert-close:hover::before {
+  left: 100%;
+}
+
+.alert--success .alert__close,
+.alert-success .alert-close {
+  color: var(--success);
+}
+
+.alert--success .alert__close:hover,
+.alert-success .alert-close:hover {
+  border-color: var(--success);
+  box-shadow: var(--success-glow);
+}
+
+.alert--error .alert__close,
+.alert-error .alert-close {
+  color: var(--error);
+}
+
+.alert--error .alert__close:hover,
+.alert-error .alert-close:hover {
+  border-color: var(--error);
+  box-shadow: var(--error-glow);
+}
+
+.alert--warning .alert__close,
+.alert-warning .alert-close {
+  color: var(--warning);
+}
+
+.alert--warning .alert__close:hover,
+.alert-warning .alert-close:hover {
+  border-color: var(--warning);
+  box-shadow: var(--warning-glow);
+}
+
+.alert--info .alert__close,
+.alert-info .alert-close {
+  color: var(--info);
+}
+
+.alert--info .alert__close:hover,
+.alert-info .alert-close:hover {
+  border-color: var(--info);
+  box-shadow: var(--info-glow);
+}
+
+/* Animación de salida */
+.alert--removing {
+  display: none;
+}
+
+/* alertSlideOut removed */
+
+/* Responsive */
+@media (max-width: 768px) {
+  .alert {
+    padding: var(--spacing-4) var(--spacing-5);
+    gap: var(--spacing-3);
+  }
+
+  .alert__icon {
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-size-xl);
+  }
+
+  .alert__title {
+    font-size: var(--font-size-sm);
+  }
+
+  .alert__message {
+    font-size: var(--font-size-xs);
+  }
+
+  .alert__close,
+  .alert-close {
+    width: 28px;
+    height: 28px;
+    font-size: var(--font-size-lg);
+  }
+}

@@ -1,0 +1,222 @@
+/* Table.css - Sistema de Eventos LAIKA Club - Diseño Moderno */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.table-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--black);
+  z-index: 1;
+  opacity: 1;
+}
+
+.table,
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: var(--font-size-sm);
+  display: table !important;
+}
+
+.table thead,
+table thead {
+  display: table-header-group !important;
+  background: var(--bg-tertiary) !important;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.table thead tr,
+table thead tr {
+  display: table-row !important;
+  background: var(--bg-tertiary) !important;
+}
+
+/* Removing pseudo-elements that break table layout */
+.table thead::after,
+table thead::after {
+  display: none;
+}
+
+.table th,
+table th {
+  padding: 0.6rem 1rem;
+  /* Reduced from spacing-3/4 */
+  text-align: left;
+  font-weight: var(--font-weight-black);
+  color: var(--text-primary);
+  background: var(--bg-tertiary) !important;
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: var(--font-size-xs);
+  display: table-cell !important;
+}
+
+.table__th-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.table__th--sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.table__th--sortable::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--black);
+  transition: width var(--transition-base);
+}
+
+.table__th--sortable:hover {
+  color: var(--primary);
+}
+
+.table__th--sortable:hover::before {
+  width: 100%;
+}
+
+.table__th--sorted {
+  color: var(--primary);
+  text-shadow: none;
+}
+
+.table__sort-icon {
+  font-size: var(--font-size-sm);
+  color: var(--text-disabled);
+  transition: color var(--transition-base);
+}
+
+.table__th--sorted .table__sort-icon {
+  color: var(--primary);
+  filter: none;
+}
+
+.table td,
+table td {
+  padding: 0.6rem 1rem;
+  /* Reduced from spacing-3/4 */
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  font-weight: var(--font-weight-semibold);
+  display: table-cell !important;
+}
+
+.table tbody tr,
+table tbody tr {
+  display: table-row !important;
+  transition: all var(--transition-fast);
+}
+
+.table tbody tr::before,
+table tbody tr::before {
+  display: none;
+}
+
+.table tbody tr:last-child td,
+table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table--hoverable tbody tr:hover,
+table tbody tr:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.table--hoverable tbody tr:hover::before,
+table tbody tr:hover::before {
+  display: none !important;
+}
+
+.table--striped tbody tr:nth-child(even) {
+  background: rgba(26, 26, 26, 0.3);
+}
+
+.table--bordered {
+  border: 2px solid var(--border-color);
+}
+
+.table--bordered th,
+.table--bordered td {
+  border: 1px solid var(--border-subtle);
+}
+
+.table__row--clickable {
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.table__row--clickable:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.table__loading,
+.table__empty {
+  padding: var(--spacing-16);
+  text-align: center;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: var(--font-weight-bold);
+}
+
+
+/* Scrollbar personalizado */
+.table-container::-webkit-scrollbar {
+  height: 10px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: var(--border-radius-sm);
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: var(--black);
+  box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+  .table,
+  table {
+    font-size: var(--font-size-xs);
+  }
+
+  .table th,
+  table th,
+  .table td,
+  table td {
+    padding: var(--spacing-4) var(--spacing-3);
+  }
+}

@@ -1,0 +1,144 @@
+/* Email Manager - Premium Industrial Style */
+.email-manager-container {
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 80px);
+}
+
+.admin-header {
+    margin-bottom: 40px;
+    border-left: 4px solid #000;
+    padding-left: 20px;
+}
+
+.admin-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: #000;
+}
+
+.title-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.admin-subtitle {
+    color: #666;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-top: 5px;
+}
+
+.email-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.email-editor-card,
+.email-test-card,
+.email-preview-card {
+    background: #fff;
+    border: 1px solid #000;
+    padding: 30px;
+    position: relative;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+.card-header h2 {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+}
+
+.card-icon {
+    width: 18px;
+    height: 18px;
+    color: #000;
+}
+
+.editor-group label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.industrial-textarea {
+    width: 100%;
+    min-height: 400px;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    padding: 20px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    resize: vertical;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.industrial-textarea:focus {
+    border-color: #000;
+    background: #fff;
+    box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.05);
+}
+
+.editor-actions {
+    margin-top: 25px;
+}
+
+.email-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.card-description {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.test-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.live-preview {
+    background: #fff;
+    border: 1px dashed #ccc;
+    min-height: 300px;
+    padding: 20px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+    .email-grid {
+        grid-template-columns: 1fr;
+    }
+}

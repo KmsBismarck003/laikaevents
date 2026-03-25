@@ -1,0 +1,240 @@
+/* UserWallet.css - Estilos Industriales Premium */
+
+.user-wallet,
+.refund-tracker {
+    animation: fadeIn 0.4s ease-out;
+}
+
+.tickets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.ticket-card-premium {
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+    overflow: hidden;
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ticket-card-premium:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.ticket-visual {
+    background: #fff;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.ticket-qr {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    padding: 10px;
+    background: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-qr img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.qr-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    cursor: pointer;
+}
+
+.ticket-qr:hover .qr-overlay {
+    opacity: 1;
+}
+
+.ticket-decor {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -15px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+}
+
+.cut-circle {
+    width: 30px;
+    height: 30px;
+    background: var(--bg-primary);
+    border-radius: 50%;
+    position: absolute;
+}
+
+.cut-circle.top {
+    left: -15px;
+}
+
+.cut-circle.bottom {
+    right: -15px;
+}
+
+.dotted-line {
+    width: 100%;
+    border-top: 2px dashed var(--bg-primary);
+    margin: 0 15px;
+}
+
+.ticket-details {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.ticket-details h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.ticket-info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.ticket-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 1rem;
+}
+
+/* Refund Tracker Styles */
+.refund-card {
+    margin-bottom: 2rem;
+}
+
+.refund-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.refund-summary .label {
+    display: block;
+    font-size: 0.7rem;
+    opacity: 0.5;
+    text-transform: uppercase;
+}
+
+.tracker-timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding: 1rem 0;
+}
+
+.timeline-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-marker {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s;
+}
+
+.timeline-step.completed .step-marker {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #000;
+}
+
+.step-label {
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.step-date {
+    font-size: 0.7rem;
+    opacity: 0.5;
+}
+
+.step-connector {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: var(--border-color);
+    z-index: 1;
+}
+
+.timeline-step.completed .step-connector {
+    background: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .tracker-timeline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+
+    .step-connector {
+        left: 12px;
+        top: 24px;
+        width: 2px;
+        height: 100%;
+    }
+
+    .timeline-step {
+        flex-direction: row;
+        gap: 1rem;
+        width: 100%;
+    }
+}

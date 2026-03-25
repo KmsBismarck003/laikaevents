@@ -130,22 +130,10 @@ const StaffDashboard = () => {
     }
   }
 
-  const handleQuickScan = () => {
-    // Simular escaneo de QR (generar código random para pruebas)
-    const mockCode = `TKT-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
-    setTicketCode(mockCode)
-
-    showError(
-      'Función de escaneo QR no implementada. Usa el código generado para probar la verificación manual.'
-    )
-  }
 
   return (
     <div className='staff-dashboard'>
-      <div className='dashboard-header'>
-        <h1>Verificación de Boletos</h1>
-        <p>Escanea o ingresa el código del boleto</p>
-      </div>
+      {/* Header removed */}
 
       {alert && (
         <Alert
@@ -161,10 +149,7 @@ const StaffDashboard = () => {
           <div className='scanner-container'>
             <div className='qr-scanner-placeholder'>
               <span className='scanner-icon'>📷</span>
-              <p>Coloca el código QR frente a la cámara</p>
-              <Button variant='secondary' onClick={handleQuickScan}>
-                Generar Código de Prueba
-              </Button>
+              <p>Escaneo de Cámara (Próximamente)</p>
             </div>
 
             <div className='scanner-divider'>

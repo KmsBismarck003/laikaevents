@@ -1,0 +1,61 @@
+/* Achievement Cards - THE PREMIUM VIBE */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.achievement-card {
+  position: relative;
+  background: #ffffff;
+  padding: 1.25rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); /* Subtle blurred black shadow */
+}
+
+.achievement-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon specific alignment - PERFECTLY CENTERED */
+.ach-card-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.achievement-card:hover .ach-card-icon {
+  transform: scale(1.1);
+}
+
+/* Phase Specific Glows - SOFT & VIBRANT */
+.achievement-card.phase-gancho {
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.12), 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+.achievement-card.phase-retencion {
+  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.12), 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+.achievement-card.phase-fidelizacion {
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.12), 0 5px 15px rgba(0, 0, 0, 0.03);
+}
+
+.achievement-card.phase-leyenda {
+  box-shadow: 0 15px 40px rgba(234, 179, 8, 0.15), 0 5px 15px rgba(0, 0, 0, 0.03);
+}

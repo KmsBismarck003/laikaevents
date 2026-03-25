@@ -1,0 +1,94 @@
+/* LoginSocial.css — Botones de autenticación con proveedores externos */
+
+/* ── Divisor "O continúa con" ── */
+.social-login-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.5rem 0 1.25rem;
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.social-login-divider::before,
+.social-login-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+/* ── Grid de botones ── */
+.social-login-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    /* Full width as requested */
+    gap: 1rem;
+}
+
+/* ── Botón base ── */
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    white-space: nowrap;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+    /* Diffused default shadow for premium feel */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.social-btn:hover {
+    border-color: #000000;
+    background: #ffffff;
+    /* Soft, diffused "floating" shadow */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+}
+
+.social-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    background: #fafafa;
+}
+
+/* ── Ícono SVG ── */
+.social-btn .social-svg {
+    flex-shrink: 0;
+    display: block;
+}
+
+/* ── Variante Google ── */
+.social-btn.google:hover {
+    border-color: #4285F4;
+    box-shadow: 0 12px 30px rgba(66, 133, 244, 0.15), 0 4px 10px rgba(66, 133, 244, 0.08);
+}
+
+/* ── Variante Apple ── */
+.social-btn.apple:hover {
+    border-color: #000000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Responsive: stack vertical en pantallas muy pequeñas ── */
+@media (max-width: 400px) {
+    .social-login-grid {
+        grid-template-columns: 1fr;
+    }
+}

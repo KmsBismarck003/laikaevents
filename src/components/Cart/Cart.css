@@ -1,0 +1,502 @@
+/* Cart.css — Elite Dark Theme */
+
+.cart-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    color: #fff;
+    background: #000;
+}
+
+.is-modal {
+    padding: 0;
+    gap: 0;
+}
+
+/* 🎫 REAL TICKET ITEM STYLE */
+.cart-item-ticket {
+    display: flex;
+    background: #080808;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.ticket-left-media {
+    width: 80px;
+    height: 100%;
+    position: relative;
+    border-right: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+.ticket-left-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.7);
+}
+
+.ticket-center-info {
+    flex: 1;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.ticket-title {
+    font-size: 1.1rem;
+    font-weight: 950;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ticket-meta-row {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #fff;
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+
+.ticket-right-status {
+    width: 120px;
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 1px dashed rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+}
+
+.ticket-qr-icon {
+    width: 45px;
+    height: 45px;
+    background: #fff;
+    padding: 2px;
+    border-radius: 4px;
+}
+
+.status-badge-blue {
+    background: #2563eb;
+    color: #fff;
+    font-size: 0.5rem;
+    font-weight: 950;
+    padding: 0.35rem 0.75rem;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cart-items-section {
+    padding: 1.5rem;
+}
+
+.secti.modal-elite .modal__title {
+    color: #fff !important;
+    font-weight: 950 !important;
+    font-size: 1.8rem !important;
+    letter-spacing: 0.3em !important;
+    text-shadow: 0 0 20px rgba(202, 138, 4, 0.3);
+}
+
+.section-small-title {
+    font-size: 11px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #1a1a1b;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.cart-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: #eee; /* Divider effect */
+}
+
+.cart-item-mini {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 0;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.item-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.item-name {
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #000;
+}
+
+.item-details {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #71717a;
+    text-transform: uppercase;
+}
+
+.item-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.qty-stepper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #000;
+    border-radius: 0; /* Industrial sharp */
+    padding: 0;
+}
+
+.qty-stepper button {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.qty-stepper button:hover {
+    opacity: 0.8;
+}
+
+.qty {
+    padding: 0 12px;
+    font-size: 0.85rem;
+    font-weight: 950;
+    color: #000;
+}
+
+.item-price .price-total {
+    font-size: 1rem;
+    font-weight: 950;
+    color: #000;
+}
+
+.remove-btn {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 6px;
+}
+
+.remove-btn:hover {
+    color: #000;
+}
+
+/* Summary Section */
+.cart-summary-section {
+    background: #f8f8f8;
+    padding: 2rem;
+    border-top: 2px solid #000;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+}
+
+.summary-row.fee {
+    color: #026cdf; /* Ticketmaster Blue */
+}
+
+.summary-row.discount {
+    color: #059669;
+    font-weight: 900;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid #000;
+}
+
+.total-label {
+    font-size: 10px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.total-value {
+    font-size: 2rem;
+    font-weight: 950;
+}
+
+/* Actions */
+.cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.coupon-trigger {
+    background: transparent;
+    border: 1px solid #000;
+    color: #000;
+    padding: 12px;
+    font-size: 10px;
+    font-weight: 950;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.coupon-trigger:hover {
+    background: #000;
+    color: #fff;
+}
+
+.checkout-cta {
+    background: #026cdf; /* Ticketmaster Blue */
+    color: #fff;
+    border: none;
+    padding: 1.25rem;
+    font-size: 12px;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.checkout-cta:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+}
+
+.checkout-cta.is-loading {
+    opacity: 0.6;
+    background: #ccc;
+    pointer-events: none;
+}
+
+/* Empty State Enhancement */
+.cart-empty-state {
+    padding: 6rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #fff;
+    position: relative;
+}
+
+.cart-empty-state::before {
+    content: 'LAIKA ELITE';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10rem;
+    font-weight: 950;
+    color: rgba(0,0,0,0.03);
+    white-space: nowrap;
+    z-index: 0;
+    pointer-events: none;
+    letter-spacing: -0.05em;
+}
+
+.empty-icon-box {
+    width: 100px;
+    height: 100px;
+    background: #f8f8f8;
+    border: 2px dashed #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.empty-title-elite {
+    font-size: 1.5rem;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    color: #000;
+}
+
+.empty-subtitle-elite {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 0.05em;
+    max-width: 240px;
+    line-height: 1.4;
+    margin-bottom: 2.5rem;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PAYMENT FORM — Elite Dark
+════════════════════════════════════════════════════════════ */
+.cart-payment-section {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.card-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+.card-field { display: flex; flex-direction: column; gap: 0.3rem; }
+.card-field.full { grid-column: span 2; }
+.card-field.half { grid-column: span 1; }
+
+.card-field label {
+    font-size: 0.62rem;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #fff !important;
+    opacity: 1;
+    margin-bottom: 0.4rem;
+}
+
+.cc-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 0.6rem 0.85rem;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    width: 100%;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+}
+.cc-input:focus {
+    border-color: rgba(0,112,243,0.5);
+    background: rgba(0,112,243,0.06);
+}
+.cc-input::placeholder { color: rgba(255,255,255,0.2) !important; }
+
+/* Saved cards */
+.saved-cards-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+.saved-card-opt {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 99px;
+    color: #666;
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.saved-card-opt.active {
+    border-color: rgba(0,112,243,0.5);
+    background: rgba(0,112,243,0.12);
+    color: #0070F3;
+}
+.saved-card-opt span { letter-spacing: 1px; }
+
+/* Save card checkbox */
+.save-card-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    font-weight: inherit;
+}
+.save-card-label input[type="checkbox"] {
+    width: 14px; height: 14px;
+    accent-color: #0070F3;
+    cursor: pointer;
+}
+.save-card-label span {
+    font-size: 0.62rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #fff !important;
+    transition: color 0.2s;
+}
+.save-card-label:hover span { color: #fff; }
+
+/* Coupon pill */
+.coupon-mini-list { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.coupon-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 99px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.58rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.coupon-pill:hover { background: #fff; color: #000; }
+
+/* Dark overrides for summary/total - NO GREY */
+.cart-summary-section { background: rgba(255,255,255,0.02); }
+.summary-row { color: #fff !important; opacity: 1 !important; font-weight: 800; }
+.summary-row.fee { color: #3b82f6 !important; opacity: 1 !important; } 
+.summary-row.discount { color: #22C55E !important; opacity: 1 !important; }
+.total-label { color: #fff !important; opacity: 0.8 !important; }
+.total-value { color: #fff !important; text-shadow: 0 0 15px rgba(255,255,255,0.4); }
+.section-small-title { color: #fff !important; border-bottom: 2px solid #fff !important; opacity: 1 !important; }
+.item-name { color: #fff !important; opacity: 1; }
+.item-details { color: #fff !important; opacity: 1; }
+.price-total { color: #fff !important; opacity: 1; }
+.cart-trigger-btn { color: #fff !important; }
+.coupon-trigger { color: #fff !important; border-color: #fff !important; opacity: 1; }
+.coupon-trigger:hover { background: #fff; color: #000; }
+.item-name { color: #fff; }
+.item-details { color: #555; }
+.price-total { color: #fff; }
+.cart-trigger-btn { color: #fff; }
+.coupon-trigger { color: #444; }
+.coupon-trigger:hover { color: #fff; }

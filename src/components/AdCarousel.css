@@ -1,0 +1,308 @@
+.ad-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: 13px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: var(--bg-secondary);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.ad-carousel:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   AD TRACK & SLIDE
+   ======================================== */
+.ad-track {
+  display: flex !important;
+  /* Force flex */
+  flex-direction: row !important;
+  /* Always horizontal */
+  width: 100%;
+  height: 100%;
+  gap: 0 !important; /* CRITICAL: No gaps between slides */
+  margin: 0 !important;
+  padding: 0 !important;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  transform-style: preserve-3d; /* Advanced sub-pixel fix */
+  backface-visibility: hidden;
+}
+
+
+.ad-slide {
+  flex: 0 0 100% !important; /* Each slide takes exactly the container width */
+  width: 100% !important;
+  height: 100% !important;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden; /* Local clip */
+  margin: 0 !important;
+  isolation: isolate; /* Stacking context protection */
+}
+
+.ad-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center; /* Center focus */
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Reducción de escala para evitar saltos visuales pero sin zoom */
+.ad-slide:hover img {
+  transform: scale(1.03); /* Subtle zoom */
+}
+
+/* Overlay sutil base */
+.ad-slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Cleaned up Ticker Styles - DELETED */
+
+/* Full-Width Info Bar (Top) */
+.ad-bottom-bar {
+    position: absolute;
+    top: 15px; /* Slight offset from top for more elegance */
+    left: 15px;
+    right: 15px; /* Side padded for a floating feel */
+    background: transparent; 
+    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 5;
+    border: none;
+    border-radius: 0px; 
+    transform: translateY(0);
+    transition: all 0.3s ease;
+}
+
+/* Cristal flotante difuminado proporcionalmente en 4 direcciones */
+.ad-bottom-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25); 
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    z-index: -1;
+    transition: background 0.3s ease;
+    
+    mask-image: 
+        linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+}
+
+.ad-slide:hover .ad-bottom-bar::before {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.ad-slide:hover .ad-bottom-bar {
+    transform: translateY(-2px);
+}
+
+.ad-info-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ad-label-alt {
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.ad-title-alt {
+    font-size: 15px;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-shadow: none;
+}
+
+.ad-action-btn {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.12); 
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    color: white; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    transition: all 0.3s ease;
+}
+
+.ad-slide:hover .ad-action-btn {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 170, 0, 0.3);
+}
+
+/* Vertical specific adjustments */
+.ad-carousel.vertical .ad-bottom-bar {
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    padding: 10px 12px;
+}
+
+.ad-carousel.vertical .ad-indicators {
+    bottom: 20px; /* Clean bottom space */
+}
+
+/* ========================================
+   SIZE VARIANTS
+   ======================================== */
+
+.ad-carousel.horizontal {
+  width: 100%;
+  aspect-ratio: 16 / 3.5;
+  /* More compact, less height */
+  max-height: 240px;
+  /* Reduced from 342px */
+  margin-bottom: 2rem;
+}
+
+
+.ad-carousel.main {
+  border-radius: 13px;
+}
+
+.ad-carousel.vertical {
+  width: 100%;
+  aspect-ratio: 160 / 600;
+  height: auto;
+  min-height: 580px; /* Reduced by ~20% from 730px */
+  max-height: 58vh;  /* Reduced by ~20% from 73vh */
+  position: relative;
+  border-radius: 0px; 
+  overflow: hidden !important; 
+  contain: paint; /* GPU-level clipping */
+  isolation: isolate;
+}
+
+.ad-carousel.vertical .ad-slide {
+  width: 100%;
+  height: 100%;
+}
+
+.ad-carousel.vertical .ad-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  border-radius: 0px;
+}
+
+
+.ad-carousel.side_right {
+  opacity: 1;
+  /* Instant appearance */
+  transform: none;
+  /* No entry animation */
+}
+
+
+/* ========================================
+   INDICATORS
+   ======================================== */
+.ad-indicators {
+  position: absolute;
+  bottom: 20px; /* Clean bottom space now that ticker is gone */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  border-radius: 20px;
+}
+
+.indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.indicator.active {
+  background: white;
+  width: 18px;
+  border-radius: 4px;
+}
+
+/* Side Banners Indicators */
+.ad-carousel.vertical .ad-indicators {
+  bottom: 12px;
+  padding: 5px 8px;
+}
+
+/* ========================================
+   LOADING STATE (Simplified)
+   ======================================== */
+.ad-carousel.loading {
+  background: #f2f2f7;
+  position: relative;
+}
+
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1199px) {
+  .ad-carousel.vertical {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .ad-carousel.horizontal {
+    aspect-ratio: 16 / 9;
+    max-height: 250px;
+    margin-bottom: 1.5rem;
+  }
+
+  .ad-carousel.main {
+    border-radius: 13px;
+  }
+
+  .ad-indicators {
+    bottom: 10px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ad-carousel.horizontal {
+    max-height: 180px;
+    margin-bottom: 1rem;
+  }
+}

@@ -1,0 +1,125 @@
+:root {
+  /* =========================================
+     PALETA DE COLORES PREMIUM (Light Mode)
+     ========================================= */
+  --bg-primary: #f0f2f5;
+  /* Gris muy suave */
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f8f9fa;
+
+  --text-primary: #1a1a1a;
+  --text-secondary: #5a5a5a;
+  --text-muted: #8d8d8d;
+
+  /* Brand Colors - Industrial Black & White */
+  --primary: #000000;
+  --primary-hover: #1a1a1a;
+  --primary-light: #f5f5f5;
+
+  --secondary: #000000;
+
+  /* Estados Monocromáticos */
+  --success: #000000;
+  --warning: #404040;
+  --error: #000000;
+  --info: #737373;
+
+  /* Glassmorphism Light */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+
+  /* Sombra Suave */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* Layout */
+  --backdrop-blur: blur(16px);
+  --border-radius-lg: 16px;
+  --border-radius-base: 8px;
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-invert: 0;
+}
+
+[data-theme='dark'] {
+  /* =========================================
+     PALETA DE COLORES PREMIUM (Dark Mode)
+     ========================================= */
+  --bg-primary: #000000;
+  /* Pure Black from Slate 900 */
+  --bg-secondary: #09090b;
+  /* Zinc 950 from Slate 800 */
+  --bg-tertiary: #18181b;
+  /* Zinc 900 from Slate 700 */
+
+  --text-primary: #ffffff;
+  /* Pure Solid White */
+  --text-secondary: #f4f4f5;
+  /* Zinc 100 for better visibility */
+  --text-muted: #a1a1aa;
+  /* Zinc 400 */
+
+  --primary: #ffffff;
+  --primary-hover: #f4f4f5;
+  --primary-light: rgba(255, 255, 255, 0.05);
+
+  --border-color: #27272a;
+  /* Zinc 800 */
+  --card-glow: none;
+
+  /* Semantic Vivid Accents (Industrial High-Viz) */
+  --success: #00ff00;
+  /* Electric Green */
+  --error: #ff0000;
+  /* Pure Red */
+  --warning: #fbbf24;
+  /* Amber 400 */
+  --info: #ffffff;
+  /* Pure White (Industrial labels) */
+
+  /* Glassmorphism Dark */
+  --glass-bg: rgba(9, 9, 11, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+
+  /* Card Gradients */
+  --gradient-card: linear-gradient(145deg, #09090b 0%, #18181b 100%);
+  --theme-invert: 1;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Tipografía global */
+body,
+button,
+input,
+select,
+textarea {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar moderno */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 4px;
+  opacity: 0.5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

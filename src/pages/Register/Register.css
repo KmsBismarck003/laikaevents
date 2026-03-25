@@ -1,0 +1,225 @@
+/* Register.css - Sistema de Eventos LAIKA Club */
+
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  padding: 2rem 2rem;
+  /* Reduced from 4rem for better fit on all screens */
+  position: relative;
+  overflow: hidden;
+  /* Avoid scroll */
+}
+
+.register-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  max-width: 880px;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.08);
+  position: relative;
+  height: fit-content;
+  z-index: 1;
+}
+
+.register-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #000000;
+  opacity: 1;
+}
+
+.register-card {
+  padding: 1.5rem 3.5rem;
+  /* Aggressively reduced padding to remove scroll */
+  position: relative;
+  background: #ffffff;
+}
+
+/* Ilustración lateral */
+.register-illustration {
+  background: #f4f4f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  /* Reduced padding */
+  color: #000000;
+  position: relative;
+  border-left: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.register-illustration::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(#d4d4d8 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.5;
+}
+
+.register-header {
+  margin-bottom: 1rem;
+  /* Compact header */
+  text-align: center;
+}
+
+.register-title {
+  font-size: 2rem;
+  /* Slightly smaller */
+  font-weight: 950;
+  color: #000000;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+}
+
+.register-subtitle {
+  color: var(--text-muted);
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  /* Reduced from spacing-4 */
+}
+
+.register-footer {
+  margin-top: 1rem;
+  /* Minimal gap */
+  text-align: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+  position: relative;
+}
+
+.register-footer p {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.login-link {
+  color: #000000;
+  text-decoration: none;
+  font-weight: var(--font-weight-bold);
+  transition: all var(--transition-base);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: var(--font-size-sm);
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+/* Password Strength Indicator - ULTRA COMPACT */
+.password-field-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.password-strength {
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+}
+
+.strength-bar {
+  height: 3px;
+  /* Thinner */
+  background-color: #e5e7eb;
+  border-radius: 2px;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+.strength-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-requirements {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  /* Very small but readable */
+  margin-top: 0.1rem;
+}
+
+.strength-requirements span {
+  color: #9ca3af;
+  transition: color 0.3s ease;
+}
+
+.strength-requirements span.valid {
+  color: #10b981;
+  font-weight: 600;
+}
+
+/* Social Login - Optimized for space */
+.social-login-divider {
+  margin: 1rem 0;
+  /* Reduced margin */
+}
+
+.social-login-grid {
+  margin-bottom: 0.5rem;
+}
+
+/* Illustration spacing */
+.illustration-content h2 {
+  font-size: 2.5rem;
+  /* Thinner for vertical space */
+  font-weight: var(--font-weight-black);
+  margin: 0 0 1rem 0;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .register-container {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+
+  .register-illustration {
+    display: none;
+  }
+
+  .register-card {
+    padding: 2.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .register-page {
+    padding: 1rem;
+    overflow: auto;
+    /* Allow scroll on small mobile */
+  }
+}

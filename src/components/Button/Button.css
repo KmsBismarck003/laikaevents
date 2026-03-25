@@ -1,0 +1,283 @@
+/* ============================================
+   BUTTON.CSS - LAIKA CLUB
+   Compatible con variables.css existente
+   ============================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-3) var(--spacing-5);
+  border: 1px solid transparent;
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: var(--font-size-sm);
+  border-radius: 0px;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================
+   VARIANTES DE COLOR
+   ============================================ */
+
+/* Primary */
+.btn--primary,
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+[data-theme='dark'] .btn--primary,
+[data-theme='dark'] .btn-primary {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+  border-color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  font-weight: 800 !important;
+}
+
+.btn--primary:hover:not(:disabled),
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn--primary:active:not(:disabled),
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Secondary */
+.btn--secondary,
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn--secondary:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  border-color: var(--border-emphasis);
+  transform: translateY(-2px);
+}
+
+/* Danger */
+.btn--danger,
+.btn-danger {
+  background: var(--error);
+  color: #ffffff;
+  border-color: var(--error);
+}
+
+.btn--danger:hover:not(:disabled),
+.btn-danger:hover:not(:disabled) {
+  background: var(--error-dark);
+  border-color: var(--error-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Success */
+.btn--success,
+.btn-success {
+  background: var(--success);
+  color: #ffffff;
+  border-color: var(--success);
+}
+
+.btn--success:hover:not(:disabled),
+.btn-success:hover:not(:disabled) {
+  background: var(--success-dark);
+  border-color: var(--success-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Warning */
+.btn--warning,
+.btn-warning {
+  background: var(--warning);
+  color: #000000;
+  border-color: var(--warning);
+}
+
+.btn--warning:hover:not(:disabled),
+.btn-warning:hover:not(:disabled) {
+  background: var(--warning-dark);
+  border-color: var(--warning-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Info */
+.btn--info,
+.btn-info {
+  background: var(--info);
+  color: #ffffff;
+  border-color: var(--info);
+}
+
+.btn--info:hover:not(:disabled),
+.btn-info:hover:not(:disabled) {
+  background: var(--info-dark);
+  border-color: var(--info-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Outline */
+.btn--outline,
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn--outline:hover:not(:disabled),
+.btn-outline:hover:not(:disabled) {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+/* Ghost */
+.btn--ghost,
+.btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+}
+
+.btn--ghost:hover:not(:disabled),
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* ============================================
+   TAMAÑOS
+   ============================================ */
+.btn--small,
+.btn-sm {
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  border-radius: 0px;
+}
+
+.btn--medium,
+.btn-base {
+  padding: var(--spacing-3) var(--spacing-5);
+  font-size: var(--font-size-sm);
+}
+
+.btn--large,
+.btn-lg {
+  padding: var(--spacing-4) var(--spacing-6);
+  font-size: var(--font-size-base);
+  border-radius: 0px;
+}
+
+/* ============================================
+   ESTADOS
+   ============================================ */
+
+/* Disabled */
+.btn--disabled,
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Loading */
+.btn--loading {
+  pointer-events: none;
+  position: relative;
+}
+
+.btn--loading .btn__text {
+  opacity: 0.3;
+}
+
+/* Full Width */
+.btn--full-width,
+.btn-full {
+  width: 100%;
+}
+
+
+/* ============================================
+   ICONO Y TEXTO
+   ============================================ */
+.btn__icon {
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+}
+
+.btn__text {
+  display: inline-block;
+}
+
+/* ============================================
+   GRUPOS DE BOTONES
+   ============================================ */
+.btn-group {
+  display: inline-flex;
+  gap: var(--spacing-2);
+}
+
+.btn-group .btn {
+  flex: 1;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .btn {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--font-size-xs);
+  }
+
+  .btn--small,
+  .btn-sm {
+    padding: var(--spacing-1) var(--spacing-3);
+    font-size: 0.625rem;
+  }
+
+  .btn--large,
+  .btn-lg {
+    padding: var(--spacing-3) var(--spacing-5);
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* ============================================
+   ACCESIBILIDAD
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+}
+
+/* Focus visible para navegación por teclado */
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

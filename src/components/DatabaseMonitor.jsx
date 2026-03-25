@@ -1,6 +1,6 @@
 // components/DatabaseMonitor.jsx
 import React, { useState, useEffect, useRef } from 'react'
-import { Card, Badge, Spinner, Alert } from '../components'
+import { Card, Badge, Alert } from '../components'
 import './DatabaseMonitor.css'
 
 const DatabaseMonitor = () => {
@@ -81,13 +81,7 @@ const DatabaseMonitor = () => {
   }
 
   if (!monitoringData) {
-    return (
-      <div className='database-monitor'>
-        <Card>
-          <Spinner text='Conectando al sistema de monitoreo...' />
-        </Card>
-      </div>
-    )
+    return null
   }
 
   const { database, performance, sessions, system } = monitoringData

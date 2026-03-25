@@ -1,0 +1,422 @@
+.preview-monitor.simple {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    height: auto; /* Changed from 100% to fit content better */
+    min-height: 400px; /* Reduced from 500px */
+}
+
+.monitor-screen {
+    flex: 1;
+    position: relative;
+    background: #f8f9fa;
+    overflow: auto;
+    /* Allow scrolling if preview is very large */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.monitor-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-card-wrapper {
+    filter: drop-shadow(0 40px 80px rgba(0, 0, 0, 0.2));
+}
+
+.preview-ad-layout {
+    width: 850px;
+    max-width: 95%;
+}
+
+/* Mock Ad Layout Styles */
+.mock-home-layout {
+    width: 100%;
+    height: 320px; /* Reduced from 400px */
+    background: #f0f0f0;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 4px;
+}
+
+.mock-navbar {
+    height: 20px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.mock-nav-menu {
+    color: #fff;
+    opacity: 0.5;
+}
+
+.mock-content-grid {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px; /* Three slots: Left, Center, Right */
+    gap: 8px; /* Slightly tighter for 3 cols */
+    flex: 1;
+}
+
+.mock-slot.side-left, .mock-slot.side-right {
+    height: 100%;
+}
+
+.mock-slot {
+    background: #ddd;
+    border: 1px dashed #bbb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Mock Ad Info Card (Scaled down for monitor) */
+.mock-ad-info {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 4px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 10;
+}
+
+.mock-ad-info.side {
+    top: 8px;
+    padding: 3px 4px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.mock-ad-title {
+    font-size: 7px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80%;
+}
+
+.mock-ad-info.side .mock-ad-title {
+    white-space: normal;
+    line-height: 1.1;
+    max-width: 100%;
+}
+
+.mock-ad-btn {
+    width: 14px;
+    height: 14px;
+    background: var(--accent-color, #ffaa00);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+}
+
+.mock-ad-info.side .mock-ad-btn {
+    align-self: flex-end;
+    margin-top: 2px;
+    width: 12px;
+    height: 12px;
+}
+
+.mock-slot .ad-mini-menu {
+    display: none; /* Hide old menu icons */
+}
+
+.ad-mini-menu {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+}
+
+.mock-slot.highlight {
+    background: #fff;
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 0 15px rgba(var(--accent-rgb), 0.3);
+}
+
+.mock-slot.drop-active {
+    background: rgba(var(--accent-rgb), 0.1);
+    border: 2px dashed var(--accent-color);
+    transform: scale(1.02);
+    z-index: 10;
+}
+
+.drop-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--accent-color);
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    100% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.mock-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mock-center {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.main-banner {
+    height: 70px; /* Reduced from 100px */
+}
+
+.mock-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    flex: 1;
+}
+
+.mock-card {
+    background: #e0e0e0;
+    height: 60px; /* Reduced from 80px */
+}
+
+/* --- NEW GLASSMORPHISM PREVIEW STYLES --- */
+.preview-event-glass {
+    position: relative;
+    width: 100%;
+    min-height: 550px;
+    background-image: var(--event-preview-bg);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-glass-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1;
+}
+
+.preview-glass-content {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 10px;
+    padding: 15px;
+    max-width: 100%; 
+    margin: 0;
+    width: 100%;
+}
+
+.preview-left-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.preview-right-pane {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-poster {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.preview-poster-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(to top, rgba(8, 8, 8, 0.95) 0%, transparent 100%);
+}
+
+.preview-glass-panel {
+    background: rgba(8, 8, 8, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 16px;
+    color: #fff !important;
+}
+
+.preview-glass-panel.meta-header {
+    border-top: 1px solid rgba(255, 255, 255, 0.08); /* Restore border now that it's at top */
+    margin-bottom: 1rem; /* Add space between header and poster */
+}
+
+.preview-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+    color: #fff !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.preview-meta-row {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7) !important;
+    margin-bottom: 4px;
+}
+
+.preview-meta-row.location {
+    color: #fff !important;
+    font-weight: 600;
+}
+
+.preview-glass-panel.description {
+    font-size: 1.1rem; /* Larger */
+    font-weight: 600; /* Bolder */
+    line-height: 1.6;
+    padding: 30px;
+}
+
+.preview-glass-panel.description h4.label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4) !important;
+    margin-bottom: 15px;
+    letter-spacing: 0.15em;
+    font-weight: 900;
+}
+
+.preview-glass-panel.purchase {
+    position: sticky;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.preview-tabs {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+}
+
+.preview-tabs .active {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #2563eb !important;
+}
+
+.preview-price-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-price-display .label {
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.preview-price-display .amount {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.preview-btn-blue {
+    background: #2563eb;
+    color: #fff !important;
+    border: none;
+    padding: 10px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: default;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+/* Cleanup old styles */
+.preview-card-wrapper, .event-primary-card.preview-mode {
+    display: none;
+}
+
+/* Inherit scrollbars */
+.monitor-screen::-webkit-scrollbar {
+    width: 6px;
+}
+.monitor-screen::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+}
+.monitor-screen::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+}

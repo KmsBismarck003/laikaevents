@@ -1,0 +1,628 @@
+.notification-bell-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border-radius: 0;
+    transition: all 0.2s ease;
+    color: #FFFFFF;
+}
+
+.notification-bell-container:hover {
+    background: #1a1a1a;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--primary);
+    color: var(--bg-primary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid #000000;
+    z-index: 2;
+    animation: badge-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badge-pop {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* badge-pop removed */
+
+.notification-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: -10px;
+    width: 320px;
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px -10px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: var(--z-dropdown);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: top right;
+    animation: none;
+}
+
+/* panel-pop removed */
+
+.panel-header {
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-tertiary);
+}
+
+.panel-header h4 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.panel-actions {
+    display: flex;
+    gap: var(--spacing-2);
+}
+
+.panel-btn {
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #000000;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: color 0.2s;
+}
+
+.panel-btn:hover {
+    color: var(--text-primary);
+}
+
+.panel-filters {
+    padding: var(--spacing-3) var(--spacing-4);
+    display: flex;
+    gap: var(--spacing-4);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+}
+
+.filter-btn {
+    background: none;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 0;
+    position: relative;
+    transition: all 0.2s;
+}
+
+.filter-btn.active {
+    color: #FFFFFF;
+}
+
+.filter-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+}
+
+.panel-footer {
+    padding: var(--spacing-3) var(--spacing-4);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-4);
+    background: var(--bg-tertiary);
+}
+
+.notification-list {
+    max-height: 400px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.notification-list::-webkit-scrollbar {
+    display: none;
+}
+
+.notification-group-header {
+    padding: var(--spacing-4) var(--spacing-4) var(--spacing-2);
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ver-todo-link {
+    color: var(--primary);
+    font-size: 0.65rem;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.notification-item {
+    padding: var(--spacing-4);
+    display: flex;
+    gap: var(--spacing-3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: background-color 0.2s;
+    cursor: pointer;
+    position: relative;
+    align-items: flex-start;
+}
+
+.notification-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.notification-item.unread {
+    background: rgba(34, 197, 94, 0.02);
+    border-left: 3px solid #22c55e;
+    padding-left: calc(var(--spacing-4) - 3px);
+}
+
+[data-theme='dark'] .notification-item.unread {
+    background: rgba(34, 197, 94, 0.04);
+}
+
+.notification-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.25rem;
+}
+
+.icon-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.icon-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.icon-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.icon-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.notification-item-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.notification-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--spacing-2);
+}
+
+.notification-item-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification-item-time {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.notification-item-message {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+.notification-delete {
+    background: transparent;
+    border: none;
+    padding: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s;
+    border-radius: 0;
+}
+
+.notification-item:hover .notification-delete {
+    opacity: 1;
+}
+
+.notification-delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.empty-state {
+    padding: var(--spacing-10);
+    text-align: center;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4);
+}
+
+/* ============================================
+   NOTIFICATION MODAL
+   ============================================ */
+.notification-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    animation: fade-in 0.3s ease;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.notification-modal-content {
+    width: 100%;
+    max-width: 500px;
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: none;
+    animation: modal-pop-up 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes modal-pop-up {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.notification-modal-header {
+    padding: 25px 30px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.notification-modal-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.notification-modal-title-wrapper h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.notification-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+}
+
+.notification-modal-close:hover {
+    background: var(--bg-tertiary);
+    color: #FFFFFF;
+    transform: rotate(90deg);
+}
+
+.notification-modal-body {
+    padding: 30px;
+}
+
+.notification-modal-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.type-badge {
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.type-badge.success {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.type-badge.error {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.type-badge.warning {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.type-badge.info {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.time-stamp {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.notification-modal-message {
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.7;
+    margin-bottom: 30px;
+    color: var(--text-primary);
+}
+
+.notification-modal-extra {
+    background: #000000;
+    border: 1px solid #333333;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.notification-modal-extra h4 {
+    margin: 0 0 12px 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #888888;
+    letter-spacing: 2px;
+}
+
+.detail-box {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.95rem;
+    color: #CCCCCC;
+    white-space: pre-wrap;
+}
+
+.notification-modal-footer {
+    padding: 25px 30px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.notification-modal-footer .btn-primary {
+    padding: 12px 35px;
+}
+
+/* ============================================
+   SKELETON LOADING
+   ============================================ */
+.skeleton-notification {
+    padding: var(--spacing-4);
+    display: flex;
+    gap: var(--spacing-3);
+    border-bottom: 1px solid var(--border-subtle);
+    background: transparent;
+}
+
+.skeleton-avatar {
+    width: 36px;
+    height: 36px;
+    background: #1c1c1e;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-text-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-line {
+    height: 10px;
+    background: #1c1c1e;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* skeleton-silver-slide removed */
+
+.skeleton-line.title {
+    width: 40%;
+    height: 12px;
+}
+
+.skeleton-line.msg-1 {
+    width: 90%;
+}
+
+.skeleton-line.msg-2 {
+    width: 70%;
+}
+
+/* ============================================
+   SWIPE TO ACTION
+   ============================================ */
+.swipe-container {
+    position: relative;
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+}
+
+.swipe-action-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s;
+}
+
+.swipe-action-bg.visible {
+    opacity: 1;
+}
+
+.swipe-action-bg.delete {
+    justify-content: flex-end;
+    padding-right: 25px;
+    background: #ef4444;
+    /* Rojo */
+    color: white;
+}
+
+.swipe-action-bg.archive {
+    justify-content: flex-start;
+    padding-left: 25px;
+    background: #4f46e5;
+    /* Indigo/Azul */
+    color: white;
+}
+
+.swipe-content {
+    position: relative;
+    z-index: 2;
+    background: inherit;
+    transition: transform 0.1s ease-out;
+}
+
+.swipe-content.resetting {
+    transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.swipe-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.swipe-icon span {
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* Shimmer child removed as background gradient handles it now in Notifications.css */
+.shimmer {
+    display: none;
+}
+
+@keyframes shimmer-swipe {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}

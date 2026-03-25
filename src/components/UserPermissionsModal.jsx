@@ -1,328 +1,235 @@
-import React, { useState, useEffect } from 'react'
-import { Modal, Button, Badge, Alert, Spinner } from '../components'
-import api from '../services/api'
+import React, { useEffect } from 'react'
+import { Modal, Button, Badge } from '../components'
+import Alert from './Alert/Alert'
+import Icon from './Icons'
+import Skeleton, { SkeletonRow } from './Skeleton/Skeleton'
 import { useNotification } from '../context/NotificationContext'
+import useUserPermissions from '../hooks/useUserPermissions'
+import { getImageUrl } from '../utils/imageUtils'
 import './UserPermissionsModal.css'
 
-/**
- * Modal para gestionar permisos de usuarios
- * Permite asignar permisos individuales o masivos
- */
-const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
-  const { success, error: showError } = useNotification()
-  const [loading, setLoading] = useState(false)
-  const [permissions, setPermissions] = useState({
-    // Permisos de lectura
-    canViewEvents: false,
-    canViewUsers: false,
-    canViewStats: false,
-    canViewTickets: false,
-    
-    // Permisos de escritura
-    canCreateEvents: false,
-    canEditEvents: false,
-    canDeleteEvents: false,
-    
-    // Permisos de gestión de usuarios
-    canCreateUsers: false,
-    canEditUsers: false,
-    canDeleteUsers: false,
-    
-    // Permisos de tickets
-    canSellTickets: false,
-    canValidateTickets: false,
-    canRefundTickets: false,
-    
-    // Permisos de administración
-    canManageDatabase: false,
-    canManageConfig: false,
-    canViewLogs: false
-  })
+const ROLE_VARIANTS = { admin: 'danger', gestor: 'warning', operador: 'info', usuario: 'default' }
 
-  const [role, setRole] = useState('usuario')
+const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
+  const { success, error: showNotificationError } = useNotification()
+  const [isChangingRole, setIsChangingRole] = React.useState(false)
+
+  const {
+    role,
+    permissions,
+    status,
+    error,
+    setRole,
+    togglePermission,
+    setAllPermissions,
+    savePermissions,
+    reload
+  } = useUserPermissions(user?.id, user?.role || 'usuario')
 
   useEffect(() => {
-    if (user) {
-      setRole(user.role || 'usuario')
-      // Cargar permisos del usuario desde el backend
-      loadUserPermissions(user.id)
+    if (isOpen && user?.id) {
+      reload()
     }
-  }, [user])
+  }, [isOpen, user, reload])
 
-  const loadUserPermissions = async (userId) => {
-    setLoading(true)
-    try {
-      const response = await api.user.getPermissions(userId)
-      setPermissions(response.permissions || {})
-    } catch (error) {
-      console.error('Error al cargar permisos:', error)
-      // Si no existen permisos, usar defaults basados en el rol
-      setPermissionsByRole(user.role || 'usuario')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const setPermissionsByRole = (selectedRole) => {
-    const rolePermissions = {
-      admin: {
-        canViewEvents: true,
-        canViewUsers: true,
-        canViewStats: true,
-        canViewTickets: true,
-        canCreateEvents: true,
-        canEditEvents: true,
-        canDeleteEvents: true,
-        canCreateUsers: true,
-        canEditUsers: true,
-        canDeleteUsers: true,
-        canSellTickets: true,
-        canValidateTickets: true,
-        canRefundTickets: true,
-        canManageDatabase: true,
-        canManageConfig: true,
-        canViewLogs: true
-      },
-      gestor: {
-        canViewEvents: true,
-        canViewUsers: true,
-        canViewStats: true,
-        canViewTickets: true,
-        canCreateEvents: true,
-        canEditEvents: true,
-        canDeleteEvents: false,
-        canCreateUsers: false,
-        canEditUsers: false,
-        canDeleteUsers: false,
-        canSellTickets: true,
-        canValidateTickets: true,
-        canRefundTickets: false,
-        canManageDatabase: false,
-        canManageConfig: false,
-        canViewLogs: false
-      },
-      operador: {
-        canViewEvents: true,
-        canViewUsers: false,
-        canViewStats: false,
-        canViewTickets: true,
-        canCreateEvents: false,
-        canEditEvents: false,
-        canDeleteEvents: false,
-        canCreateUsers: false,
-        canEditUsers: false,
-        canDeleteUsers: false,
-        canSellTickets: true,
-        canValidateTickets: true,
-        canRefundTickets: false,
-        canManageDatabase: false,
-        canManageConfig: false,
-        canViewLogs: false
-      },
-      usuario: {
-        canViewEvents: true,
-        canViewUsers: false,
-        canViewStats: false,
-        canViewTickets: false,
-        canCreateEvents: false,
-        canEditEvents: false,
-        canDeleteEvents: false,
-        canCreateUsers: false,
-        canEditUsers: false,
-        canDeleteUsers: false,
-        canSellTickets: false,
-        canValidateTickets: false,
-        canRefundTickets: false,
-        canManageDatabase: false,
-        canManageConfig: false,
-        canViewLogs: false
-      }
-    }
-
-    setPermissions(rolePermissions[selectedRole] || rolePermissions.usuario)
-  }
-
-  const handleRoleChange = (newRole) => {
-    setRole(newRole)
-    setPermissionsByRole(newRole)
-  }
-
-  const handlePermissionChange = (permission) => {
-    setPermissions(prev => ({
-      ...prev,
-      [permission]: !prev[permission]
-    }))
-  }
-
-  const handleSelectAllRead = () => {
-    const allReadSelected = permissions.canViewEvents && 
-                           permissions.canViewUsers && 
-                           permissions.canViewStats && 
-                           permissions.canViewTickets
-
-    setPermissions(prev => ({
-      ...prev,
-      canViewEvents: !allReadSelected,
-      canViewUsers: !allReadSelected,
-      canViewStats: !allReadSelected,
-      canViewTickets: !allReadSelected
-    }))
-  }
-
-  const handleSelectAllWrite = () => {
-    const allWriteSelected = permissions.canCreateEvents && 
-                             permissions.canEditEvents && 
-                             permissions.canSellTickets
-
-    setPermissions(prev => ({
-      ...prev,
-      canCreateEvents: !allWriteSelected,
-      canEditEvents: !allWriteSelected,
-      canSellTickets: !allWriteSelected,
-      canValidateTickets: !allWriteSelected
-    }))
-  }
-
-  const handleSelectAllAdmin = () => {
-    const allAdminSelected = permissions.canManageDatabase && 
-                            permissions.canManageConfig && 
-                            permissions.canViewLogs
-
-    setPermissions(prev => ({
-      ...prev,
-      canDeleteEvents: !allAdminSelected,
-      canCreateUsers: !allAdminSelected,
-      canEditUsers: !allAdminSelected,
-      canDeleteUsers: !allAdminSelected,
-      canRefundTickets: !allAdminSelected,
-      canManageDatabase: !allAdminSelected,
-      canManageConfig: !allAdminSelected,
-      canViewLogs: !allAdminSelected
-    }))
-  }
-
-  const handleSavePermissions = async () => {
-    setLoading(true)
-    try {
-      await api.user.updatePermissions(user.id, {
-        role,
-        permissions
-      })
-
+  const handleSave = async () => {
+    const ok = await savePermissions()
+    if (ok) {
       success('Permisos actualizados correctamente')
       onUpdate?.()
       onClose()
-    } catch (error) {
-      console.error('Error al guardar permisos:', error)
-      showError('Error al actualizar permisos')
-    } finally {
-      setLoading(false)
+    } else {
+      showNotificationError(error || 'Error al guardar permisos')
     }
   }
 
-  if (!user) return null
+  if (!user || !isOpen) return null
 
   const permissionGroups = [
     {
-      title: '📖 Permisos de Lectura',
-      selectAllAction: handleSelectAllRead,
-      permissions: [
-        { key: 'canViewEvents', label: 'Ver Eventos', icon: '🎫' },
-        { key: 'canViewUsers', label: 'Ver Usuarios', icon: '👥' },
-        { key: 'canViewStats', label: 'Ver Estadísticas', icon: '📊' },
-        { key: 'canViewTickets', label: 'Ver Boletos', icon: '🎟️' }
-      ]
+      roleScope: ['admin', 'gestor', 'operador', 'usuario'],
+      title: 'Seguridad y Perfil',
+      icon: 'shield',
+      keys: ['canLogin', 'canManageMyProfile'],
+      labels: { canLogin: 'Iniciar Sesión', canManageMyProfile: 'Editar Perfil' }
     },
     {
-      title: '✏️ Permisos de Escritura',
-      selectAllAction: handleSelectAllWrite,
-      permissions: [
-        { key: 'canCreateEvents', label: 'Crear Eventos', icon: '➕' },
-        { key: 'canEditEvents', label: 'Editar Eventos', icon: '✏️' },
-        { key: 'canSellTickets', label: 'Vender Boletos', icon: '💰' },
-        { key: 'canValidateTickets', label: 'Validar Boletos', icon: '✅' }
-      ]
+      roleScope: ['usuario'],
+      title: 'Experiencia Fan',
+      icon: 'heart',
+      keys: ['canPurchaseTickets', 'canViewMyTickets', 'canViewMyHistory', 'canViewAchievements', 'canTransferTickets', 'canAccessCart'],
+      labels: {
+        canPurchaseTickets: 'Comprar Boletos',
+        canViewMyTickets: 'Mis Entradas',
+        canViewMyHistory: 'Historial',
+        canViewAchievements: 'Logros',
+        canTransferTickets: 'Enviar Tickets',
+        canAccessCart: 'Carrito'
+      }
     },
     {
-      title: '🔐 Permisos Administrativos',
-      selectAllAction: handleSelectAllAdmin,
-      permissions: [
-        { key: 'canDeleteEvents', label: 'Eliminar Eventos', icon: '🗑️' },
-        { key: 'canCreateUsers', label: 'Crear Usuarios', icon: '👤' },
-        { key: 'canEditUsers', label: 'Editar Usuarios', icon: '👥' },
-        { key: 'canDeleteUsers', label: 'Eliminar Usuarios', icon: '❌' },
-        { key: 'canRefundTickets', label: 'Reembolsar Boletos', icon: '💸' },
-        { key: 'canManageDatabase', label: 'Gestionar BD', icon: '💾' },
-        { key: 'canManageConfig', label: 'Configuración', icon: '⚙️' },
-        { key: 'canViewLogs', label: 'Ver Logs', icon: '📝' }
-      ]
+      roleScope: ['admin', 'gestor'],
+      title: 'Gestión de Negocio',
+      icon: 'grid',
+      keys: ['canCreateEvents', 'canEditEvents', 'canDeleteEvents', 'canManageAds', 'canViewStats', 'canViewEventAnalytics'],
+      labels: {
+        canCreateEvents: 'Crear Eventos',
+        canEditEvents: 'Editar',
+        canDeleteEvents: 'Eliminar',
+        canManageAds: 'Publicidad',
+        canViewStats: 'Métricas',
+        canViewEventAnalytics: 'Estadísticas'
+      }
+    },
+    {
+      roleScope: ['admin', 'operador'],
+      title: 'Operaciones de Campo',
+      icon: 'ticket',
+      keys: ['canSellTickets', 'canValidateTickets', 'canOverrideValidation', 'canScanMultipleEvents', 'canViewRealTimeAttendance'],
+      labels: {
+        canSellTickets: 'Venta Directa',
+        canValidateTickets: 'Validar QR',
+        canOverrideValidation: 'Forzar Entrada',
+        canScanMultipleEvents: 'Scan Masivo',
+        canViewRealTimeAttendance: 'Aforo en Vivo'
+      }
+    },
+    {
+      roleScope: ['admin'],
+      title: 'Control del Sistema',
+      icon: 'sparkles',
+      keys: ['canCreateUsers', 'canEditUsers', 'canDeleteUsers', 'canRefundTickets', 'canManageDatabase', 'canViewLogs'],
+      labels: {
+        canCreateUsers: 'Crear Usuarios',
+        canEditUsers: 'Editar Usuarios',
+        canDeleteUsers: 'Eliminar Usuarios',
+        canRefundTickets: 'Reembolsar',
+        canManageDatabase: 'Base de Datos',
+        canViewLogs: 'Logs del Sistema'
+      }
     }
-  ]
+  ].filter(group => {
+    if (group.title === 'Experiencia Fan' && role !== 'usuario') return false
+    return group.roleScope.includes(role)
+  })
+
+  const isLoading = status === 'LOADING'
+  const isSaving = status === 'SAVING'
+
+  const handleSelectGroup = (keys) => {
+    const allActive = keys.every(k => permissions[k])
+    setAllPermissions(keys, !allActive)
+  }
+
+  const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.email || 'Usuario'
+  const initials = (user.first_name?.[0] || '') + (user.last_name?.[0] || '') || user.email?.[0]?.toUpperCase() || 'U'
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Permisos de ${user.name || user.email}`}
-      size="large"
+      title={
+        <div className="perm-modal-header-title">
+          <div className="perm-modal-avatar">
+            {user.avatar_url
+              ? <img src={getImageUrl(user.avatar_url)} alt={fullName} className="perm-modal-avatar-img" onError={e => e.target.style.display='none'} />
+              : <span className="perm-modal-avatar-initials">{initials}</span>
+            }
+          </div>
+          <div className="perm-modal-header-info">
+            <span className="perm-modal-name">{fullName}</span>
+            <Badge variant={ROLE_VARIANTS[role] || 'default'} className="perm-modal-role-badge">
+              {role?.toUpperCase()}
+            </Badge>
+          </div>
+        </div>
+      }
+      size="medium"
     >
       <div className="user-permissions-modal">
-        {loading && (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
-            <Spinner text="Cargando permisos..." />
-          </div>
-        )}
+        {error && <Alert type="error" message="ERROR DE CONEXIÓN — MOSTRANDO PERMISOS TEMPORALES" compact />}
 
-        {!loading && (
+        {isLoading ? (
+          <div className="perm-skeleton-wrapper">
+            {/* Role selector skeleton */}
+            <div className="perm-skeleton-role">
+              <Skeleton width="180px" height="36px" borderRadius="8px" />
+              <Skeleton width="80px" height="14px" />
+            </div>
+            {/* Groups skeleton */}
+            {[1, 2].map(i => (
+              <div key={i} className="perm-skeleton-group">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <Skeleton type="circle" width="20px" height="20px" />
+                  <Skeleton width="120px" height="14px" />
+                </div>
+                <div className="perm-skeleton-items">
+                  {[1, 2, 3, 4].map(j => (
+                    <Skeleton key={j} height="36px" borderRadius="8px" />
+                  ))}
+                </div>
+              </div>
+            ))}
+            <Skeleton height="44px" borderRadius="10px" style={{ marginTop: '8px' }} />
+          </div>
+        ) : (
           <>
-            {/* Selector de Rol */}
+            {/* Role selector */}
             <div className="role-selector">
-              <h3>Rol del Usuario</h3>
-              <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '12px' }}>
-                Selecciona un rol predefinido o personaliza los permisos
-              </p>
-              
-              <div className="role-buttons">
-                {['admin', 'gestor', 'operador', 'usuario'].map(roleOption => (
-                  <button
-                    key={roleOption}
-                    className={`role-button ${role === roleOption ? 'active' : ''}`}
-                    onClick={() => handleRoleChange(roleOption)}
-                  >
-                    {roleOption === 'admin' && '👑'}
-                    {roleOption === 'gestor' && '📋'}
-                    {roleOption === 'operador' && '🎫'}
-                    {roleOption === 'usuario' && '👤'}
-                    <span>{roleOption.charAt(0).toUpperCase() + roleOption.slice(1)}</span>
-                  </button>
-                ))}
+              <div className={`role-display ${isChangingRole ? 'changing' : 'single'}`}>
+                {['admin', 'gestor', 'operador', 'usuario'].map(roleOption => {
+                  if (!isChangingRole && role !== roleOption) return null
+                  return (
+                    <button
+                      key={roleOption}
+                      className={`role-button ${role === roleOption ? 'active' : ''}`}
+                      onClick={() => { setRole(roleOption); if (isChangingRole) setIsChangingRole(false) }}
+                    >
+                      <div className="role-icon-wrapper">
+                        {roleOption === 'admin' && <Icon name="star" size={14} />}
+                        {roleOption === 'gestor' && <Icon name="grid" size={14} />}
+                        {roleOption === 'operador' && <Icon name="ticket" size={14} />}
+                        {roleOption === 'usuario' && <Icon name="user" size={14} />}
+                      </div>
+                      <div className="role-info"><span>{roleOption.toUpperCase()}</span></div>
+                    </button>
+                  )
+                })}
+                <div className="role-change-btn-wrap">
+                  {!isChangingRole ? (
+                    <button className="role-change-btn" onClick={() => setIsChangingRole(true)}>
+                      <Icon name="edit" size={11} /> Cambiar rol
+                    </button>
+                  ) : (
+                    <button className="role-change-btn role-change-btn--cancel" onClick={() => setIsChangingRole(false)}>
+                      Cerrar
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Grupos de Permisos */}
+            {/* Permission Groups */}
             <div className="permissions-groups">
               {permissionGroups.map((group, index) => (
                 <div key={index} className="permission-group">
                   <div className="group-header">
-                    <h4>{group.title}</h4>
-                    <button
-                      className="select-all-btn"
-                      onClick={group.selectAllAction}
-                    >
-                      Seleccionar Todos
+                    <div className="group-header-left">
+                      <Icon name={group.icon || 'shield'} size={14} />
+                      <h4>{group.title}</h4>
+                    </div>
+                    <button className="select-all-btn" onClick={() => handleSelectGroup(group.keys)}>
+                      Todo
                     </button>
                   </div>
-
                   <div className="permissions-list">
-                    {group.permissions.map(perm => (
-                      <label key={perm.key} className="permission-item">
-                        <input
-                          type="checkbox"
-                          checked={permissions[perm.key]}
-                          onChange={() => handlePermissionChange(perm.key)}
-                        />
-                        <span className="permission-icon">{perm.icon}</span>
-                        <span className="permission-label">{perm.label}</span>
+                    {group.keys.map(key => (
+                      <label key={key} className={`permission-item ${permissions[key] ? 'permission-item--on' : ''}`}>
+                        <span className="permission-label">{group.labels[key]}</span>
+                        <div className={`perm-switch ${permissions[key] ? 'perm-switch--on' : ''}`}
+                          onClick={() => togglePermission(key)}>
+                          <div className="perm-switch-thumb" />
+                        </div>
                       </label>
                     ))}
                   </div>
@@ -330,41 +237,9 @@ const UserPermissionsModal = ({ isOpen, onClose, user, onUpdate }) => {
               ))}
             </div>
 
-            {/* Resumen de Permisos */}
-            <div className="permissions-summary">
-              <h4>📋 Resumen</h4>
-              <div className="summary-stats">
-                <div className="summary-item">
-                  <span>Permisos Activos:</span>
-                  <Badge variant="primary">
-                    {Object.values(permissions).filter(Boolean).length} / {Object.keys(permissions).length}
-                  </Badge>
-                </div>
-                <div className="summary-item">
-                  <span>Rol:</span>
-                  <Badge variant={
-                    role === 'admin' ? 'danger' :
-                    role === 'gestor' ? 'warning' :
-                    role === 'operador' ? 'info' : 'default'
-                  }>
-                    {role}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-
-            {/* Botones de Acción */}
             <div className="modal-actions">
-              <Button
-                variant="primary"
-                onClick={handleSavePermissions}
-                disabled={loading}
-                fullWidth
-              >
-                {loading ? 'Guardando...' : '💾 Guardar Permisos'}
-              </Button>
-              <Button variant="secondary" onClick={onClose} fullWidth>
-                Cancelar
+              <Button variant="primary" onClick={handleSave} disabled={isSaving} fullWidth>
+                {isSaving ? 'Guardando...' : 'Guardar Permisos'}
               </Button>
             </div>
           </>

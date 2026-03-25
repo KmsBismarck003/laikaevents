@@ -1,0 +1,437 @@
+/* UserProfile.css — Premium Dark Elite Theme */
+
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-height: 100%;
+}
+
+/* ── Header / Avatar Banner ─────────────────────────────────── */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(0,20,60,0.6) 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+}
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,112,243,0.15) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.profile-avatar-container {
+    position: relative;
+    flex-shrink: 0;
+}
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid rgba(0,112,243,0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+}
+.profile-avatar:hover { border-color: rgba(0,112,243,0.6); transform: scale(1.04); }
+.avatar-initials {
+    font-size: 1.75rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #0070F3, #7928CA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.avatar-image { width: 100%; height: 100%; object-fit: cover; }
+.avatar-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: inherit;
+}
+.profile-avatar:hover .avatar-overlay { opacity: 1; }
+.avatar-loading {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.8);
+}
+
+.remove-photo-btn {
+    position: absolute;
+    bottom: -6px; right: -6px;
+    width: 24px; height: 24px;
+    background: #ef4444;
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.remove-photo-btn:hover { background: #dc2626; }
+
+.profile-info h1 {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 0.25rem;
+    line-height: 1.1;
+}
+.profile-info p {
+    font-size: 0.75rem;
+    color: #555;
+    font-weight: 600;
+    margin: 0 0 0.6rem;
+    letter-spacing: 0.5px;
+}
+
+/* ── Role Badge ─────────────────────────────────────────────── */
+.profile-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(0,112,243,0.12);
+    border: 1px solid rgba(0,112,243,0.25);
+    color: #0070F3;
+    font-size: 0.58rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: 99px;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────── */
+.profile-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.profile-tabs::-webkit-scrollbar { display: none; }
+
+.profile-tabs .tab {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #444;
+    font-size: 0.62rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.profile-tabs .tab:hover { color: #888; }
+.profile-tabs .tab.active {
+    color: #fff;
+    border-bottom-color: #0070F3;
+}
+
+/* ── Content Cards ─────────────────────────────────────────── */
+.profile-content {
+    flex: 1;
+}
+
+.profile-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 1.75rem;
+}
+
+.profile-card-title {
+    font-size: 0.62rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #444;
+    margin: 0 0 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ── Form ────────────────────────────────────────────────────── */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+.pf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.pf-field label {
+    font-size: 0.58rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #444;
+}
+.pf-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    width: 100%;
+    transition: border-color 0.2s, background 0.2s;
+    outline: none;
+}
+.pf-input:focus {
+    border-color: rgba(0,112,243,0.5);
+    background: rgba(0,112,243,0.06);
+}
+.pf-input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.pf-input::placeholder { color: #333; }
+.pf-helper {
+    font-size: 0.55rem;
+    color: #333;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    margin-top: 0.5rem;
+}
+
+.pf-btn-primary {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 0.7rem 2rem;
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.pf-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255,255,255,0.12);
+}
+
+.pf-btn-secondary {
+    background: rgba(255,255,255,0.05);
+    color: #888;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 0.7rem 1.5rem;
+    font-size: 0.65rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.pf-btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: #fff; }
+
+/* ── Purchases ──────────────────────────────────────────────── */
+.purchases-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.stat-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.stat-box .stat-icon { color: #0070F3; opacity: 0.8; }
+.stat-box .stat-label {
+    font-size: 0.58rem;
+    color: #555;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0;
+}
+.stat-box .stat-value {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #fff;
+    margin: 0;
+    line-height: 1;
+}
+
+/* ── Achievements ────────────────────────────────────────────── */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+.achievement-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    filter: grayscale(1) opacity(0.4);
+    transition: all 0.3s;
+}
+.achievement-card.unlocked {
+    filter: none;
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.12);
+    box-shadow: 0 4px 20px rgba(255,255,255,0.04);
+}
+.achievement-icon {
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: #666;
+}
+.achievement-card.unlocked .achievement-icon { color: #fff; }
+.achievement-name {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+.achievement-description {
+    font-size: 0.65rem;
+    color: #555;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* ── VIP Section ────────────────────────────────────────────── */
+.vip-experience-banner {
+    background: linear-gradient(135deg, rgba(0,112,243,0.12) 0%, rgba(121,40,202,0.12) 100%);
+    border: 1px solid rgba(0,112,243,0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+}
+.vip-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #0070F3, #7928CA);
+    color: #fff;
+    font-size: 0.58rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 0.3rem 1rem;
+    border-radius: 99px;
+    margin-bottom: 1rem;
+}
+.vip-experience-banner h2 {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 0 0 0.5rem;
+}
+.vip-experience-banner p {
+    font-size: 0.78rem;
+    color: #666;
+    margin: 0 0 1.5rem;
+    max-width: 400px;
+    margin-left: auto; margin-right: auto;
+}
+.vip-features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+.vip-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 99px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ── History empty state ─────────────────────────────────────── */
+.empty-state-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 99px;
+    padding: 0.4rem 1rem;
+    font-size: 0.62rem;
+    font-weight: 900;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 1rem;
+}
+
+/* ── Alert override (dark) ──────────────────────────────────── */
+.user-profile .alert {
+    border-radius: 12px;
+    font-size: 0.78rem;
+}

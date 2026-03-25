@@ -1,0 +1,131 @@
+/* ============================================
+   SKELETON LOADING - Shimmer Plateado Premium
+   ============================================ */
+
+@keyframes shimmer {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}
+
+@keyframes glow-silver {
+    0%, 100% {
+        box-shadow: 0 0 3px rgba(255, 255, 255, 0.02);
+    }
+    50% {
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.1); /* Reduced glow */
+    }
+}
+
+@keyframes ad-glow-silver {
+    0%, 100% {
+        box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.01);
+    }
+    50% {
+        box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.05);
+    }
+}
+
+.skeleton {
+    display: block;
+    background: #c7c7cc; /* Even darker base for light mode */
+    background-image: linear-gradient(90deg,
+            #c7c7cc 0%,
+            #d1d1d6 35%,
+            #e5e5ea 50%, 
+            #d1d1d6 65%,
+            #c7c7cc 100%);
+    background-repeat: no-repeat;
+    background-size: 1000px 100%;
+    animation: shimmer 1.5s infinite linear; /* Slower and more subtle */
+    border-radius: 8px !important;
+}
+
+[data-theme='dark'] .skeleton {
+    background: #1c1c1e; /* Deep dark for dark mode */
+    background-image: linear-gradient(90deg,
+            #1c1c1e 0%,
+            #2c2c2e 35%,
+            #3a3a3c 50%,
+            #2c2c2e 65%,
+            #1c1c1e 100%);
+    background-size: 1000px 100%;
+    border-radius: 8px !important;
+}
+
+/* ============================================
+   VARIANTES DE SKELETON
+   ============================================ */
+
+/* Fila de tabla */
+.skeleton-table-row td {
+    background: transparent !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Tarjeta de Evento Skeleton */
+.skeleton-event-card {
+    background: #c7c7cc; 
+    border: none;
+    border-radius: 12px !important;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+[data-theme='dark'] .skeleton-event-card {
+    background: #1c1c1e;
+    border: none;
+}
+
+.skeleton-event-image {
+    aspect-ratio: 16/9;
+    height: auto;
+    width: 100%;
+}
+
+.skeleton-event-content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Ad Skeleton */
+.skeleton-ad {
+    width: 100%;
+    height: 100%;
+    min-height: 120px;
+    border-radius: 0px !important;
+    border: none;
+    background: #b0b0b5; /* Significantly darker for ads to stand out */
+    animation: shimmer 2.5s infinite linear, ad-glow-silver 4s infinite ease-in-out !important; 
+    position: relative;
+    z-index: 1;
+    box-shadow: none;
+}
+
+[data-theme='dark'] .skeleton-ad {
+    background: #1c1c1e;
+    border: none;
+}
+
+.skeleton-ad.horizontal {
+    aspect-ratio: 21/9;
+    max-height: 300px;
+}
+
+.skeleton-ad.vertical {
+    height: 600px;
+}
+
+/* Avatar/botón redondo skeleton */
+.skeleton-avatar {
+    border-radius: 50%;
+    flex-shrink: 0;
+}

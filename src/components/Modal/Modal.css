@@ -1,0 +1,321 @@
+/* Modal.css - Sistema de Eventos LAIKA Club - Diseño Moderno */
+
+.modal__backdrop,
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.94); /* Very deep dark overlay */
+  backdrop-filter: none !important; /* NO BLUR EFFECT */
+  display: flex;
+  align-items: flex-start; /* Switch to flex-start and use padding-top */
+  justify-content: center;
+  z-index: var(--z-modal-backdrop);
+  padding: 15vh 1rem var(--spacing-4); /* Lowered from 8vh */
+  animation: fadeIn 0.3s ease;
+}
+
+.checkout-cta.is-loading {
+  opacity: 0.6;
+  background: #ccc;
+  pointer-events: none;
+}
+
+/* ELITE MODAL THEME */
+.modal-elite {
+  border: 2px solid #000 !important;
+}
+
+.modal-elite .modal__header {
+  background: #000 !important;
+  color: #fff !important;
+  border-bottom: 2px solid #ca8a04 !important; /* Gold divider */
+  padding: 1.5rem 2rem !important;
+}
+
+.modal-elite .modal__title {
+  color: #fff !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.2em !important;
+}
+
+.modal-elite .modal__close {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+  color: #fff !important;
+  font-size: 1.2rem !important;
+}
+
+.modal-elite .modal__close:hover {
+  background: #ca8a04 !important;
+  border-color: #ca8a04 !important;
+}
+
+.modal-elite .modal__body {
+  padding: 0 !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+.modal__content,
+.modal-content {
+  background: #fff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.45),
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  max-height: 95vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(60px) scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Tamaños */
+.modal__content--small,
+.modal-small {
+  width: 100%;
+  max-width: 450px;
+}
+
+.modal__content--medium,
+.modal-medium {
+  width: 100%;
+  max-width: 826px;
+}
+
+.modal__content--large,
+.modal-large {
+  width: 100%;
+  max-width: 1000px;
+}
+
+.modal__content--full,
+.modal-full {
+  width: 95%;
+  max-width: 1400px;
+}
+
+.modal__header,
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-8) var(--spacing-10);
+  border-bottom: 2px solid var(--border-color);
+  position: relative;
+  background: var(--bg-tertiary);
+}
+
+.modal__header::after,
+.modal-header::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(192, 192, 192, 0.3),
+    transparent
+  );
+}
+
+.modal__title,
+.modal-title {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-black);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.modal__close,
+.modal-close {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  font-size: var(--font-size-2xl);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.modal__close:hover,
+.modal-close:hover {
+  background: var(--error);
+  color: var(--white);
+  border-color: var(--error);
+  transform: scale(1.05);
+}
+
+.modal__body,
+.modal-body {
+  padding: var(--spacing-6) var(--spacing-10);
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.modal__footer,
+.modal-footer {
+  padding: var(--spacing-6) var(--spacing-10);
+  border-top: 2px solid var(--border-color);
+  display: flex;
+  gap: var(--spacing-4);
+  justify-content: flex-end;
+  background: var(--bg-tertiary);
+  position: relative;
+}
+
+.modal__footer::before,
+.modal-footer::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(192, 192, 192, 0.3),
+    transparent
+  );
+}
+
+/* Scrollbar personalizado */
+.modal__content::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal__content::-webkit-scrollbar-track,
+.modal-content::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-left: 1px solid var(--border-color);
+}
+
+.modal__content::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: var(--border-radius-sm);
+  border: 2px solid var(--bg-primary);
+}
+
+.modal__content::-webkit-scrollbar-thumb:hover,
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-500);
+}
+
+/* Animación de cierre */
+.modal__backdrop--closing,
+.modal-overlay--closing {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+.modal__backdrop--closing .modal__content,
+.modal-overlay--closing .modal-content {
+  animation: slideDown 0.3s ease forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+}
+
+@keyframes slideDown {
+  to {
+    transform: translateY(60px) scale(0.95);
+    opacity: 0;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modal__backdrop,
+  .modal-overlay {
+    padding: var(--spacing-4);
+  }
+
+  .modal__header,
+  .modal-header {
+    padding: var(--spacing-6);
+  }
+
+  .modal__body,
+  .modal-body {
+    padding: var(--spacing-6);
+  }
+
+  .modal__footer,
+  .modal-footer {
+    padding: var(--spacing-4) var(--spacing-6);
+    flex-direction: column;
+  }
+
+  .modal__footer button,
+  .modal-footer button {
+    width: 100%;
+  }
+
+  .modal__title,
+  .modal-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .modal__close,
+  .modal-close {
+    width: 36px;
+    height: 36px;
+    font-size: var(--font-size-xl);
+  }
+
+  .modal__content--small,
+  .modal__content--medium,
+  .modal__content--large,
+  .modal__content--full {
+    width: 100%;
+  }
+}

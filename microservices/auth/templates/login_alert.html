@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            border: 1px solid #000000;
+            padding: 40px;
+        }
+
+        .header {
+            border-bottom: 2px solid #000000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        .content {
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 10px;
+            color: #666666;
+            border-top: 1px solid #eeeeee;
+            padding-top: 20px;
+            text-transform: uppercase;
+        }
+
+        .highlight {
+            font-weight: bold;
+            background: #000000;
+            color: #ffffff;
+            padding: 2px 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">LAIKA Club - Alerta de Seguridad</div>
+        <div class="content">
+            <p>Hola, <span class="highlight">{{ name }}</span>.</p>
+            <p>Se ha detectado un nuevo inicio de sesión en tu cuenta de LAIKA Club.</p>
+            <p><strong>Detalles:</strong></p>
+            <ul>
+                <li><strong>Correo:</strong> {{ email }}</li>
+                <li><strong>Fecha:</strong> {{ date }}</li>
+                <li><strong>Proveedor:</strong> {{ provider }}</li>
+            </ul>
+            <p>Si no fuiste tú, por favor contacta a soporte de inmediato o cambia tu contraseña.</p>
+        </div>
+        <div class="footer">
+            © 2026 LAIKA CLUB | MINIMALIST INDUSTRIAL PLATFORM
+        </div>
+    </div>
+</body>
+
+</html>

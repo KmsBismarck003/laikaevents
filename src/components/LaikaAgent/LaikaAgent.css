@@ -1,0 +1,684 @@
+/* LaikaAgent.css - Estilo de Plantilla Redondeada Industrial Premium */
+
+.laika-agent-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 10000;
+    pointer-events: none;
+    max-width: fit-content;
+}
+
+.laika-agent-container * {
+    pointer-events: all;
+}
+
+/* El Botón Flotante (Pastilla Dinámica) */
+.laika-agent-pill-wrapper {
+    width: auto;
+    min-width: 180px;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.9);
+    /* Contenedor Negro casi puro */
+    backdrop-filter: blur(15px);
+    /* Efecto Blur Oscuro */
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    padding: 0 10px;
+    position: relative;
+    z-index: 10001;
+}
+
+/* Animación de expansión lateral (Automática, sin cursor) */
+.laika-agent-pill-wrapper:not(.active) {
+    animation: pill-lateral-flow 12s infinite ease-in-out;
+}
+
+@keyframes pill-lateral-flow {
+
+    0%,
+    10%,
+    90%,
+    100% {
+        max-width: 180px;
+    }
+
+    20%,
+    80% {
+        max-width: 500px;
+    }
+}
+
+.laika-pill-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    white-space: nowrap;
+    width: 100%;
+    padding-left: 2px;
+}
+
+.laika-logo-box {
+    width: 42px;
+    height: 42px;
+    background: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+}
+
+.laika-mini-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.laika-typing-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #FFFFFF;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding-right: 25px;
+}
+
+.typing-text {
+    letter-spacing: 0.5px;
+    font-family: 'Inter', sans-serif;
+}
+
+.terminal-cursor {
+    color: var(--primary);
+    font-weight: 900;
+    animation: blink-cursor 1s step-end infinite;
+}
+
+@keyframes blink-cursor {
+
+    from,
+    to {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Eliminando transformaciones de escala por cursor */
+.laika-agent-pill-wrapper:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+}
+
+.laika-agent-pill-wrapper.active {
+    min-width: 140px;
+    max-width: 140px;
+    background: #000;
+    border-color: var(--primary);
+    justify-content: center;
+}
+
+/* Botón Pastilla Flotante */
+.laika-agent-pill {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: 0.4rem 0.8rem;
+    /* Más estrecha */
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 220px;
+    /* Reducido para que no sea tan ancha */
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* El Panel "Plantilla" (Bordes Redondeados) */
+.laika-agent-panel {
+    width: 350px;
+    max-width: calc(100vw - 4rem);
+    /* Ensure it stays in body */
+    height: 500px;
+    max-height: calc(100vh - 120px);
+    background: rgba(0, 0, 0, 0.85);
+    /* Negro con transparencia */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform-origin: bottom right;
+    animation: panel-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(25px);
+    /* Más blur */
+    -webkit-backdrop-filter: blur(25px);
+    position: relative;
+    color: white;
+    /* Texto blanco por defecto */
+}
+
+.laika-agent-panel.resizing {
+    transition: none;
+    user-select: none;
+}
+
+.laika-resize-handle {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    cursor: nwse-resize;
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: color 0.2s;
+}
+
+.laika-resize-handle:hover {
+    color: var(--primary);
+}
+
+@keyframes panel-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.laika-agent-header {
+    padding: 20px;
+    background: #000000;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.laika-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    font-weight: 900;
+    font-size: 1.2rem;
+}
+
+.laika-header-info,
+.laika-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+}
+
+.laika-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #FFFFFF;
+}
+
+.laika-status {
+    font-size: 0.65rem;
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.laika-agent-body {
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.laika-chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.laika-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Burbujas de Chat */
+.chat-bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    position: relative;
+    animation: bubble-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes bubble-pop {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.chat-bubble-group {
+    display: flex;
+    gap: 10px;
+    max-width: 90%;
+    margin-bottom: 5px;
+}
+
+.chat-bubble-group.laika,
+.chat-bubble-group.promo {
+    align-self: flex-start;
+    flex-direction: row;
+}
+
+.chat-bubble-group.user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.laika-avatar-bubble,
+.user-avatar-bubble {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-top: auto;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: #000;
+    transition: transform 0.2s ease;
+}
+
+.laika-avatar-bubble {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.laika-avatar-bubble:hover,
+.user-avatar-bubble:hover {
+    transform: scale(1.1);
+}
+
+.laika-avatar-bubble img,
+.user-avatar-bubble img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.bubble-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 100%;
+}
+
+.chat-bubble-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-left: 2px;
+}
+
+.bubble-action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.bubble-action-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--primary);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.bubble-action-btn:active {
+    transform: translateY(0);
+}
+
+/* Estilos base de las burbujas */
+.laika-title-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.msg-icon-header {
+    opacity: 0.7;
+    color: var(--primary);
+}
+
+.chat-bubble.user {
+    background: #FFFFFF;
+    color: #000000;
+    font-weight: 600;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 18px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-bubble.laika {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.95);
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-bubble.laika,
+.chat-bubble.promo {
+    align-self: flex-start;
+    width: fit-content;
+}
+
+.chat-bubble.user {
+    align-self: flex-end;
+    width: fit-content;
+}
+
+.chat-bubble.promo {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    font-weight: 800;
+    border: 2px solid #000;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+.chat-bubble.thinking {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 20px;
+}
+
+.chat-bubble.thinking .dot {
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    display: inline-block;
+    animation: dot-wave 1.4s infinite ease-in-out both;
+}
+
+.chat-bubble.thinking .dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.chat-bubble.thinking .dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes dot-wave {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    30% {
+        transform: translateY(-5px);
+        opacity: 1;
+    }
+}
+
+/* Sección de Sugerencias Eliminada - Se usa ayuda contextual neuronal in-chat */
+.laika-footer-actions {
+    display: flex;
+    flex-direction: column;
+}
+
+.laika-agent-footer {
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #000000;
+}
+
+.laika-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    color: #FFFFFF;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.laika-input:focus {
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.laika-send-btn {
+    background: var(--primary);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.laika-send-btn:hover:not(:disabled) {
+    background: #fff;
+    transform: scale(1.05);
+}
+
+/* Scrollbar para el chat */
+.laika-agent-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.laika-agent-body::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+/* --- Nuevos Estilos Modulares (Fase 3.1) --- */
+
+.laika-settings-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 8px;
+    margin-left: auto;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.laika-settings-btn:hover {
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(90deg);
+}
+
+.laika-settings-view {
+    padding: 5px 0;
+    animation: laika-fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes laika-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.laika-settings-view h4 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    font-weight: 900;
+}
+
+.laika-setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    margin-bottom: 15px;
+}
+
+.laika-setting-item span {
+    font-size: 0.95rem;
+    color: #FFFFFF;
+    font-weight: 500;
+}
+
+.laika-setting-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.settings-back-btn {
+    width: 100%;
+    padding: 14px;
+    background: #FFFFFF;
+    border: none;
+    color: #000000;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.settings-back-btn:hover {
+    background: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Switch Premium Industrial */
+.laika-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.laika-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.laika-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #333;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.laika-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.laika-slider {
+    background-color: var(--primary);
+}
+
+input:checked+.laika-slider:before {
+    transform: translateX(24px);
+}

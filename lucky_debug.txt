@@ -1,0 +1,14 @@
+[2026-03-19 16:43:12.706440] assign_lucky_seat STARTED
+[2026-03-19 16:43:14.195852] Fetching event 229
+[2026-03-19 16:43:15.328419] Sections found: 5
+[2026-03-19 16:43:15.348261] Avail categories: ['VIP']
+[2026-03-19 16:43:15.387002] Winner section: PLATINO VIP
+[2026-03-19 16:43:15.389013] Assigned seat_id: 1090-D-7
+[2026-03-19 16:43:15.578322] EXCEPTION CAUGHT: 500: Error en procesamiento de compra
+[2026-03-19 20:18:37.873082] assign_lucky_seat STARTED
+[2026-03-19 20:18:38.650535] Fetching event 230
+[2026-03-19 20:18:39.071915] Sections found: 5
+[2026-03-19 20:18:39.079646] Avail categories: ['VIP']
+[2026-03-19 20:18:39.091409] Winner section: ZONA PLATA IZQ
+[2026-03-19 20:18:39.093457] Assigned seat_id: 1098-C-7
+[2026-03-19 20:18:39.164001] EXCEPTION CAUGHT: 500: Error en procesamiento de compra

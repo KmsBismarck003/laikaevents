@@ -1,0 +1,116 @@
+/* PermissionGuard.css */
+
+.pg-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* El contenido bloqueado con blur real (solo CSS — no se "desbloquea" en DevTools) */
+.pg-blurred {
+  filter: blur(6px) brightness(0.85);
+  pointer-events: none;
+  user-select: none;
+  /* Evitar que sea legible */
+  -webkit-filter: blur(6px) brightness(0.85);
+}
+
+/* Overlay encima del blur */
+.pg-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  padding: 1rem;
+}
+
+/* Tarjeta del mensaje */
+.pg-card {
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 2rem 2.5rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  animation: pgFadeIn 0.3s ease;
+}
+
+@keyframes pgFadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+.pg-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.pg-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pg-message {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.pg-message strong {
+  color: #111;
+  font-weight: 700;
+}
+
+.pg-request-btn {
+  margin-top: 0.5rem;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.pg-request-btn:hover:not(:disabled) {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.pg-request-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pg-sent {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1.5px solid #22c55e;
+  color: #15803d;
+  border-radius: 8px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}

@@ -1,0 +1,45 @@
+.news-ticker-container {
+    width: 100%;
+    min-height: 32px;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    padding: 6px 0;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 10001; /* Debe estar sobre el navbar si es necesario, o justo debajo */
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+}
+
+.news-ticker-scroll {
+    display: flex;
+    animation: ticker-animation linear infinite;
+    padding-left: 100%;
+    /* Inicia desde fuera de la derecha */
+}
+
+.news-ticker-scroll span {
+    padding-right: 60vw;
+    /* Gran espacio para evitar redundancia visual */
+    flex-shrink: 0;
+}
+
+@keyframes ticker-animation {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
+
+/* Pausar al pasar el ratón para facilitar la lectura si es necesario */
+.news-ticker-container:hover .news-ticker-scroll {
+    animation-play-state: paused;
+}

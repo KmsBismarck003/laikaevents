@@ -1,0 +1,265 @@
+/* ============================================
+   CARD.CSS - LAIKA CLUB
+   Compatible con variables.css existente
+   ============================================ */
+
+.card {
+  background: var(--bg-secondary);
+  border: 1.2px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+[data-theme='dark'] .card {
+  box-shadow: none;
+  border-color: #333333;
+}
+
+/* Hover Effects */
+.card--hoverable {
+  cursor: pointer;
+}
+
+.card--hoverable:hover {
+  border-color: var(--primary);
+  background: var(--bg-tertiary);
+  /* Simple border/bg color swap only */
+}
+
+.card--clickable {
+  cursor: pointer;
+}
+
+/* Variantes */
+.card--bordered {
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+}
+
+.card--bordered:hover {
+  border-color: var(--border-emphasis);
+}
+
+.card--elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+.card--glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--glass-border);
+}
+
+/* ============================================
+   CARD IMAGE
+   ============================================ */
+.card__image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-tertiary);
+}
+
+.card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.card--hoverable:hover .card__image img {
+  transform: none;
+}
+
+/* ============================================
+   CARD CONTENT
+   ============================================ */
+.card__content {
+  padding: 0.75rem 1rem;
+  /* Reduced from --spacing-5 */
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card__header {
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card__title {
+  margin: 0 0 var(--spacing-1) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.card--hoverable:hover .card__title {
+  color: var(--primary);
+}
+
+.card__subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  font-weight: var(--font-weight-medium);
+}
+
+.card__body {
+  color: var(--text-secondary);
+  line-height: var(--line-height-normal);
+  font-size: var(--font-size-base);
+}
+
+/* ============================================
+   CARD FOOTER
+   ============================================ */
+.card__footer {
+  padding: var(--spacing-4) var(--spacing-5);
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border-color);
+}
+
+/* ============================================
+   TAMAÑOS
+   ============================================ */
+.card--small .card__content {
+  padding: var(--spacing-4);
+}
+
+.card--small .card__footer {
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+.card--small .card__image {
+  height: 160px;
+}
+
+.card--large .card__content {
+  padding: var(--spacing-6);
+}
+
+.card--large .card__footer {
+  padding: var(--spacing-5) var(--spacing-6);
+}
+
+.card--large .card__image {
+  height: 260px;
+}
+
+.card--compact .card__content {
+  padding: var(--spacing-4);
+}
+
+/* ============================================
+   CARD STAT (Para estadísticas)
+   ============================================ */
+.card-stat {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 1rem;
+  /* Reduced from --spacing-6 */
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-fast);
+}
+
+.card-stat:hover {
+  border-color: var(--primary);
+  background: var(--bg-tertiary);
+}
+
+[data-theme='dark'] .card-stat {
+  box-shadow: none;
+}
+
+.card-stat__icon {
+  font-size: 2rem;
+  margin-bottom: var(--spacing-3);
+}
+
+.card-stat__value {
+  font-size: 1.5rem;
+  /* Reduced from 3xl */
+  font-weight: var(--font-weight-extrabold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-1);
+}
+
+.card-stat__label {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .card__content {
+    padding: var(--spacing-4);
+  }
+
+  .card__footer {
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+
+  .card__title {
+    font-size: var(--font-size-base);
+  }
+
+  .card__image {
+    height: 175px;
+  }
+
+  .card--large .card__content {
+    padding: var(--spacing-5);
+  }
+
+  .card--large .card__image {
+    height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card__content {
+    padding: var(--spacing-3);
+  }
+
+  .card__title {
+    font-size: var(--font-size-sm);
+  }
+
+  .card__image {
+    height: 155px;
+  }
+}
+
+/* ============================================
+   ACCESIBILIDAD
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  /* Transitions already removed from base card */
+}
+
+@media (hover: none) {
+  .card--hoverable:hover {
+    transform: none;
+  }
+
+  .card--hoverable:active {
+    transform: scale(0.98);
+  }
+}

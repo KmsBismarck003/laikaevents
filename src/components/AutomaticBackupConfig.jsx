@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Button, Badge, Alert, Modal, Spinner } from '../components'
+import { Card, Button, Badge, Modal, SkeletonCard } from '../components'
+import Alert from './Alert/Alert'
+import Icon from './Icons'
 import api from '../services/api'
 import { useNotification } from '../context/NotificationContext'
 import './AutomaticBackupConfig.css'
@@ -90,10 +92,10 @@ const AutomaticBackupConfig = ({ isOpen, onClose }) => {
   }
 
   const frequencyOptions = [
-    { value: 'hourly', label: '⏱️ Cada Hora', icon: '⏱️' },
-    { value: 'daily', label: '📅 Diario', icon: '📅' },
-    { value: 'weekly', label: '📆 Semanal', icon: '📆' },
-    { value: 'monthly', label: '📊 Mensual', icon: '📊' }
+    { value: 'hourly', label: 'Cada Hora', icon: 'clock' },
+    { value: 'daily', label: 'Diario', icon: 'calendar' },
+    { value: 'weekly', label: 'Semanal', icon: 'calendar' },
+    { value: 'monthly', label: 'Mensual', icon: 'chart' }
   ]
 
   const backupTypeOptions = [
@@ -102,322 +104,277 @@ const AutomaticBackupConfig = ({ isOpen, onClose }) => {
   ]
 
   const daysOfWeek = [
-    'Domingo', 'Lunes', 'Martes', 'Miércoles', 
+    'Domingo', 'Lunes', 'Martes', 'Miércoles',
     'Jueves', 'Viernes', 'Sábado'
   ]
 
   const getNextBackupText = () => {
     if (!config.enabled) return 'Deshabilitado'
     if (!nextBackup) return 'Calculando...'
-    
+
     const date = new Date(nextBackup)
     const now = new Date()
     const diff = date - now
     const hours = Math.floor(diff / (1000 * 60 * 60))
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    
+
     if (hours < 1) return `En ${minutes} minutos`
     if (hours < 24) return `En ${hours} horas`
     return date.toLocaleString('es-MX')
   }
 
+  const footer = (
+    <div className="config-actions-footer">
+      <Button variant="secondary" onClick={onClose} disabled={loading} style={{ border: '1px solid #ddd' }}>
+        Cancelar
+      </Button>
+      {config.enabled && (
+        <Button
+          variant="secondary"
+          onClick={handleTestBackup}
+          disabled={loading}
+          style={{ border: '1px solid #ddd' }}
+        >
+          <Icon name="refresh" size={16} className="mr-2" /> Prueba
+        </Button>
+      )}
+      <Button
+        variant="primary"
+        onClick={handleSaveConfig}
+        disabled={loading}
+        style={{ minWidth: '200px' }}
+      >
+        <Icon name="save" size={16} className="mr-2" /> Guardar Configuración
+      </Button>
+    </div>
+  )
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="⚙️ Configuración de Respaldos Automáticos"
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ background: '#000', color: '#fff', padding: '6px', borderRadius: '4px', display: 'flex' }}>
+            <Icon name="settings" size={18} />
+          </div>
+          <span style={{ fontWeight: '900', letterSpacing: '1px' }}>CONFIGURACIÓN DE RESPALDOS</span>
+        </div>
+      }
       size="large"
+      footer={footer}
     >
       <div className="automatic-backup-config">
-        {loading && (
-          <div style={{ textAlign: 'center', padding: '40px' }}>
-            <Spinner text="Cargando configuración..." />
+        {loading ? (
+          <div style={{ padding: '1rem' }}>
+            <SkeletonCard count={3} />
           </div>
-        )}
-
-        {!loading && (
+        ) : (
           <>
             {/* Estado Actual */}
-            <Card className="backup-status-card">
-              <div className="status-grid">
-                <div className="status-item">
-                  <div className="status-icon" style={{ background: config.enabled ? '#d1fae5' : '#fee2e2' }}>
-                    {config.enabled ? '✅' : '⏸️'}
-                  </div>
-                  <div className="status-info">
-                    <p className="status-label">Estado</p>
-                    <p className="status-value">
-                      <Badge variant={config.enabled ? 'success' : 'default'}>
-                        {config.enabled ? 'Activo' : 'Deshabilitado'}
-                      </Badge>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="status-item">
-                  <div className="status-icon" style={{ background: '#dbeafe' }}>
-                    📅
-                  </div>
-                  <div className="status-info">
-                    <p className="status-label">Próximo Respaldo</p>
-                    <p className="status-value">{getNextBackupText()}</p>
-                  </div>
-                </div>
-
-                <div className="status-item">
-                  <div className="status-icon" style={{ background: '#fef3c7' }}>
-                    📁
-                  </div>
-                  <div className="status-info">
-                    <p className="status-label">Último Respaldo</p>
-                    <p className="status-value">
-                      {lastBackup ? new Date(lastBackup).toLocaleString('es-MX') : 'Nunca'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="status-item">
-                  <div className="status-icon" style={{ background: '#ddd6fe' }}>
-                    🗄️
-                  </div>
-                  <div className="status-info">
-                    <p className="status-label">Respaldos Programados</p>
-                    <p className="status-value">{scheduledBackups.length}</p>
-                  </div>
+            <div className="status-grid">
+              <div className="status-item-mini">
+                <small>ESTADO</small>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                  <div className={`status-dot ${config.enabled ? 'active' : 'inactive'}`} />
+                  <span style={{ fontWeight: '800', fontSize: '1rem' }}>{config.enabled ? 'ACTIVO' : 'OFF'}</span>
                 </div>
               </div>
-            </Card>
 
-            {/* Toggle Principal */}
-            <div className="config-section">
-              <div className="section-header">
-                <h3>Habilitar Respaldos Automáticos</h3>
-                <label className="toggle-switch">
+              <div className="status-item-mini">
+                <small>PRÓXIMO EVENTO</small>
+                <div style={{ fontWeight: '800', marginTop: '4px' }}>{getNextBackupText()}</div>
+              </div>
+
+              <div className="status-item-mini">
+                <small>ÚLTIMA EJECUCIÓN</small>
+                <div style={{ fontWeight: '800', marginTop: '4px' }}>
+                  {lastBackup ? new Date(lastBackup).toLocaleString('es-MX', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }) : 'NUNCA'}
+                </div>
+              </div>
+
+              <div className="status-item-mini">
+                <small>HISTORIAL</small>
+                <div style={{ fontWeight: '800', marginTop: '4px' }}>{scheduledBackups.length} archivos</div>
+              </div>
+            </div>
+
+            {/* Configuración Principal */}
+            <div className="config-container-industrial">
+              <div className="config-main-toggle">
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '900' }}>AUTOMATIZACIÓN DE RESPALDOS</h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: '#888' }}>El sistema gestionará copias de seguridad automáticas basadas en estos parámetros.</p>
+                </div>
+                <label className="premium-toggle">
                   <input
                     type="checkbox"
                     checked={config.enabled}
                     onChange={(e) => handleConfigChange('enabled', e.target.checked)}
                   />
-                  <span className="toggle-slider"></span>
+                  <span className="premium-slider"></span>
                 </label>
               </div>
-              <p className="section-description">
-                Cuando está activado, el sistema creará respaldos automáticamente según la configuración
-              </p>
-            </div>
 
-            {config.enabled && (
-              <>
-                {/* Frecuencia */}
-                <div className="config-section">
-                  <h3>Frecuencia de Respaldo</h3>
-                  <div className="frequency-options">
-                    {frequencyOptions.map(option => (
-                      <button
-                        key={option.value}
-                        className={`frequency-button ${config.frequency === option.value ? 'active' : ''}`}
-                        onClick={() => handleConfigChange('frequency', option.value)}
-                      >
-                        <span className="frequency-icon">{option.icon}</span>
-                        <span className="frequency-label">{option.label}</span>
-                      </button>
-                    ))}
+              {config.enabled && (
+                <div className="industrial-settings-pane">
+                  {/* Frecuencia Row */}
+                  <div className="settings-row">
+                    <div className="settings-label">
+                       <Icon name="calendar" size={14} />
+                       <span>FRECUENCIA</span>
+                    </div>
+                    <div className="settings-control">
+                      <div className="segmented-control">
+                        {frequencyOptions.map(option => (
+                          <button
+                            key={option.value}
+                            className={config.frequency === option.value ? 'active' : ''}
+                            onClick={() => handleConfigChange('frequency', option.value)}
+                          >
+                            {option.label.toUpperCase()}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Configuración Específica por Frecuencia */}
-                <div className="config-section">
-                  <h3>Programación</h3>
-                  
-                  {config.frequency === 'weekly' && (
-                    <div className="schedule-config">
-                      <label>
-                        <span>Día de la Semana:</span>
-                        <select
-                          value={config.dayOfWeek}
-                          onChange={(e) => handleConfigChange('dayOfWeek', parseInt(e.target.value))}
-                          className="config-select"
+                  {/* Programación Dinámica */}
+                  {(config.frequency === 'weekly' || config.frequency === 'monthly' || config.frequency !== 'hourly') && (
+                    <div className="settings-row">
+                      <div className="settings-label">
+                         <Icon name="clock" size={14} />
+                         <span>PROGRAMACIÓN</span>
+                      </div>
+                      <div className="settings-control" style={{ display: 'flex', gap: '10px' }}>
+                        {config.frequency === 'weekly' && (
+                          <select
+                            value={config.dayOfWeek}
+                            onChange={(e) => handleConfigChange('dayOfWeek', parseInt(e.target.value))}
+                            className="industrial-select"
+                          >
+                            {daysOfWeek.map((day, index) => (
+                              <option key={index} value={index}>{day}</option>
+                            ))}
+                          </select>
+                        )}
+                        {config.frequency === 'monthly' && (
+                          <input
+                            type="number"
+                            min="1"
+                            max="31"
+                            value={config.dayOfMonth}
+                            onChange={(e) => handleConfigChange('dayOfMonth', parseInt(e.target.value))}
+                            className="industrial-input"
+                            style={{ width: '80px' }}
+                            placeholder="Día"
+                          />
+                        )}
+                        {config.frequency !== 'hourly' && (
+                          <input
+                            type="time"
+                            value={config.time}
+                            onChange={(e) => handleConfigChange('time', e.target.value)}
+                            className="industrial-input"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tipo de Respaldo */}
+                  <div className="settings-row">
+                    <div className="settings-label">
+                       <Icon name="database" size={14} />
+                       <span>MODO DE COPIA</span>
+                    </div>
+                    <div className="settings-control" style={{ display: 'flex', gap: '8px' }}>
+                      {backupTypeOptions.map(option => (
+                        <button
+                          key={option.value}
+                          className={`type-tag ${config.backupType === option.value ? 'active' : ''}`}
+                          onClick={() => handleConfigChange('backupType', option.value)}
                         >
-                          {daysOfWeek.map((day, index) => (
-                            <option key={index} value={index}>{day}</option>
-                          ))}
-                        </select>
-                      </label>
+                          {option.label.toUpperCase()}
+                        </button>
+                      ))}
                     </div>
-                  )}
-
-                  {config.frequency === 'monthly' && (
-                    <div className="schedule-config">
-                      <label>
-                        <span>Día del Mes:</span>
-                        <input
-                          type="number"
-                          min="1"
-                          max="31"
-                          value={config.dayOfMonth}
-                          onChange={(e) => handleConfigChange('dayOfMonth', parseInt(e.target.value))}
-                          className="config-input"
-                        />
-                      </label>
-                    </div>
-                  )}
-
-                  {config.frequency !== 'hourly' && (
-                    <div className="schedule-config">
-                      <label>
-                        <span>Hora de Ejecución:</span>
-                        <input
-                          type="time"
-                          value={config.time}
-                          onChange={(e) => handleConfigChange('time', e.target.value)}
-                          className="config-input"
-                        />
-                      </label>
-                      <p className="help-text">Formato 24 horas (ej: 02:00 para 2:00 AM)</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Tipo de Respaldo */}
-                <div className="config-section">
-                  <h3>Tipo de Respaldo</h3>
-                  <div className="backup-type-options">
-                    {backupTypeOptions.map(option => (
-                      <label
-                        key={option.value}
-                        className={`backup-type-option ${config.backupType === option.value ? 'selected' : ''}`}
-                      >
-                        <input
-                          type="radio"
-                          name="backupType"
-                          value={option.value}
-                          checked={config.backupType === option.value}
-                          onChange={(e) => handleConfigChange('backupType', e.target.value)}
-                        />
-                        <div className="option-content">
-                          <strong>{option.label}</strong>
-                          <p>{option.description}</p>
-                        </div>
-                      </label>
-                    ))}
                   </div>
-                </div>
 
-                {/* Retención de Respaldos */}
-                <div className="config-section">
-                  <h3>Retención de Respaldos</h3>
-                  
-                  <div className="retention-config">
-                    <label>
-                      <span>📅 Días de Retención:</span>
+                  {/* Retención */}
+                  <div className="settings-row">
+                    <div className="settings-label">
+                       <Icon name="trash" size={14} />
+                       <span>RETENCIÓN</span>
+                    </div>
+                    <div className="settings-control" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                       <input
                         type="number"
                         min="1"
-                        max="365"
                         value={config.retentionDays}
                         onChange={(e) => handleConfigChange('retentionDays', parseInt(e.target.value))}
-                        className="config-input"
+                        className="industrial-input"
+                        style={{ width: '80px' }}
                       />
-                    </label>
-                    <p className="help-text">
-                      Los respaldos más antiguos se eliminarán automáticamente
-                    </p>
-                  </div>
-
-                  <div className="retention-config">
-                    <label>
-                      <span>🗄️ Máximo de Respaldos:</span>
+                      <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#888' }}>DÍAS</span>
+                      
+                      <div style={{ width: '1px', height: '15px', background: '#ddd', margin: '0 5px' }} />
+                      
                       <input
                         type="number"
                         min="1"
-                        max="100"
                         value={config.maxBackups}
                         onChange={(e) => handleConfigChange('maxBackups', parseInt(e.target.value))}
-                        className="config-input"
+                        className="industrial-input"
+                        style={{ width: '80px' }}
                       />
-                    </label>
-                    <p className="help-text">
-                      Número máximo de respaldos a conservar (los más antiguos se eliminarán)
-                    </p>
+                      <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#888' }}>FILES</span>
+                    </div>
+                  </div>
+
+                  {/* Notificaciones */}
+                  <div className="settings-row" style={{ borderBottom: 'none' }}>
+                    <div className="settings-label">
+                       <Icon name="bell" size={14} />
+                       <span>ALERTAS</span>
+                    </div>
+                    <div className="settings-control" style={{ display: 'flex', gap: '15px' }}>
+                      <label className="industrial-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={config.notifyOnSuccess}
+                          onChange={(e) => handleConfigChange('notifyOnSuccess', e.target.checked)}
+                        />
+                        <span>EXITO</span>
+                      </label>
+                      <label className="industrial-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={config.notifyOnError}
+                          onChange={(e) => handleConfigChange('notifyOnError', e.target.checked)}
+                        />
+                        <span>ERROR</span>
+                      </label>
+                    </div>
                   </div>
                 </div>
-
-                {/* Notificaciones */}
-                <div className="config-section">
-                  <h3>Notificaciones</h3>
-                  
-                  <div className="notification-options">
-                    <label className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        checked={config.notifyOnSuccess}
-                        onChange={(e) => handleConfigChange('notifyOnSuccess', e.target.checked)}
-                      />
-                      <span>✅ Notificar cuando el respaldo se complete exitosamente</span>
-                    </label>
-
-                    <label className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        checked={config.notifyOnError}
-                        onChange={(e) => handleConfigChange('notifyOnError', e.target.checked)}
-                      />
-                      <span>❌ Notificar cuando ocurra un error en el respaldo</span>
-                    </label>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Resumen de Configuración */}
-            {config.enabled && (
-              <Alert type="info" closable={false}>
-                <strong>📋 Resumen de Configuración:</strong>
-                <ul style={{ marginTop: '8px', marginLeft: '20px' }}>
-                  <li>
-                    Frecuencia: <strong>{frequencyOptions.find(f => f.value === config.frequency)?.label}</strong>
-                  </li>
-                  {config.frequency !== 'hourly' && (
-                    <li>Hora: <strong>{config.time}</strong></li>
-                  )}
-                  {config.frequency === 'weekly' && (
-                    <li>Día: <strong>{daysOfWeek[config.dayOfWeek]}</strong></li>
-                  )}
-                  {config.frequency === 'monthly' && (
-                    <li>Día del mes: <strong>{config.dayOfMonth}</strong></li>
-                  )}
-                  <li>Tipo: <strong>{config.backupType}</strong></li>
-                  <li>Retención: <strong>{config.retentionDays} días</strong> o máximo <strong>{config.maxBackups} respaldos</strong></li>
-                </ul>
-              </Alert>
-            )}
-
-            {/* Botones de Acción */}
-            <div className="config-actions">
-              <Button
-                variant="primary"
-                onClick={handleSaveConfig}
-                disabled={loading}
-                fullWidth
-              >
-                💾 Guardar Configuración
-              </Button>
-              
-              {config.enabled && (
-                <Button
-                  variant="secondary"
-                  onClick={handleTestBackup}
-                  disabled={loading}
-                  fullWidth
-                >
-                  🧪 Crear Respaldo de Prueba Ahora
-                </Button>
               )}
-
-              <Button variant="secondary" onClick={onClose} fullWidth>
-                Cancelar
-              </Button>
             </div>
+
+            {config.enabled && (
+              <div className="industrial-summary">
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                   <Icon name="info" size={16} color="var(--primary)" />
+                   <strong style={{ fontSize: '0.7rem', letterSpacing: '0.5px' }}>CONFIGURACIÓN ACTUAL DE SEGURIDAD</strong>
+                 </div>
+                 <div className="summary-pills">
+                   <div className="pill">FRECUENCIA: {config.frequency.toUpperCase()}</div>
+                   {config.frequency !== 'hourly' && <div className="pill">HORA: {config.time}</div>}
+                   <div className="pill">MODO: {config.backupType.toUpperCase()}</div>
+                   <div className="pill">LÍMITE: {config.maxBackups} ARCHIVOS</div>
+                 </div>
+              </div>
+            )}
           </>
         )}
       </div>

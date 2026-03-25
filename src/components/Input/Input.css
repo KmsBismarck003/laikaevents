@@ -1,0 +1,271 @@
+/* ============================================
+   INPUT.CSS - LAIKA CLUB
+   Compatible con variables.css existente
+   ============================================ */
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-bottom: var(--spacing-5);
+}
+
+.input-wrapper--full-width {
+  width: 100%;
+}
+
+/* ============================================
+   LABEL
+   ============================================ */
+.input__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.input__required {
+  color: var(--error);
+  margin-left: var(--spacing-1);
+}
+
+/* ============================================
+   INPUT CONTAINER
+   ============================================ */
+.input__container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* ============================================
+   INPUT BASE
+   ============================================ */
+.input {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 1px solid var(--border-color);
+  border-radius: 0px;
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+  font-weight: var(--font-weight-medium);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+  font-weight: var(--font-weight-normal);
+}
+
+.input:hover {
+  border-color: var(--border-emphasis);
+}
+
+.input:focus {
+  border-color: var(--primary);
+  background: var(--bg-tertiary);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05); /* Greyish focus ring instead of blueish */
+}
+
+/* ============================================
+   BROWSER AUTOFILL OVERRIDES (Fix Blue Background)
+   ============================================ */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px var(--bg-secondary) inset !important;
+  -webkit-text-fill-color: var(--text-primary) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+[data-theme='dark'] .input:-webkit-autofill,
+[data-theme='dark'] .input:-webkit-autofill:hover, 
+[data-theme='dark'] .input:-webkit-autofill:focus, 
+[data-theme='dark'] .input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 100px var(--bg-tertiary) inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.input:disabled {
+  background: var(--bg-tertiary);
+  cursor: not-allowed;
+  opacity: 0.5;
+  border-color: var(--border-subtle);
+}
+
+/* ============================================
+   INPUT CON ICONO
+   ============================================ */
+.input--with-icon {
+  padding-left: 2.75rem !important;
+}
+
+.input__icon {
+  position: absolute;
+  left: var(--spacing-4);
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: var(--font-size-base);
+  transition: color var(--transition-fast);
+}
+
+.input:focus~.input__icon,
+.input-wrapper:focus-within .input__icon {
+  color: var(--primary);
+}
+
+/* ============================================
+   INPUT PASSWORD
+   ============================================ */
+.input--password {
+  padding-right: 2.75rem;
+}
+
+.input__toggle-password {
+  position: absolute;
+  right: var(--spacing-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-1);
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-base);
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+  z-index: 1;
+}
+
+.input__toggle-password:hover {
+  color: var(--primary);
+}
+
+/* ============================================
+   ESTADO DE ERROR
+   ============================================ */
+.input-wrapper--error .input {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px var(--error-light);
+}
+
+.input-wrapper--error .input:focus {
+  box-shadow: 0 0 0 3px var(--error-light);
+}
+
+.input-wrapper--error .input__icon {
+  color: var(--error);
+}
+
+.input__error {
+  font-size: var(--font-size-sm);
+  color: var(--error);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-weight: var(--font-weight-medium);
+}
+
+.input__error::before {
+  content: '⚠';
+  font-size: var(--font-size-sm);
+}
+
+/* ============================================
+   HELPER TEXT
+   ============================================ */
+.input__helper {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  display: block;
+  font-weight: var(--font-weight-normal);
+}
+
+/* ============================================
+   TEXTAREA
+   ============================================ */
+textarea.input {
+  resize: vertical;
+  min-height: 100px;
+  padding: var(--spacing-4);
+  line-height: var(--line-height-normal);
+}
+
+/* ============================================
+   SELECT
+   ============================================ */
+select.input {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-4) center;
+  background-size: 1rem;
+  padding-right: 2.75rem;
+  appearance: none;
+}
+
+select.input:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+select.input option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: var(--spacing-2);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .input {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+
+  .input--with-icon {
+    padding-left: 2.5rem;
+  }
+
+  .input--password {
+    padding-right: 2.5rem;
+  }
+
+  .input__icon {
+    left: var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+
+  .input__toggle-password {
+    right: var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+
+  .input__label {
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* ============================================
+   ACCESIBILIDAD
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+
+  .input,
+  .input__icon,
+  .input__toggle-password {
+    transition: none;
+  }
+}
+
+/* Focus visible para navegación por teclado */
+.input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

@@ -1,0 +1,134 @@
+.laika-accordion {
+  border: 1px solid #333;
+  border-radius: 0px;
+  background: #000000;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+[data-theme='dark'] .laika-accordion {
+  background: #000000;
+  border-color: #333;
+}
+
+/* Hover effect on the container */
+.laika-accordion:hover {
+  border-color: #fff;
+}
+
+[data-theme='dark'] .laika-accordion:hover {
+  border-color: #ffffff;
+}
+
+.laika-accordion.open {
+  border-color: #555;
+}
+
+[data-theme='dark'] .laika-accordion.open {
+  border-color: #555;
+}
+
+.laika-accordion-header {
+  width: 100%;
+  padding: 1.2rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000000 !important;
+  background: #000000 !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  cursor: pointer;
+  color: #ffffff !important;
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 0.2s ease;
+}
+
+[data-theme='dark'] .laika-accordion-header {
+  color: #ffffff !important;
+  background: #000000 !important;
+}
+
+.laika-accordion-header:hover {
+  background: #111;
+}
+
+[data-theme='dark'] .laika-accordion-header:hover {
+  background: #111;
+}
+
+.laika-accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.accordion-icon {
+  color: #fff;
+}
+
+[data-theme='dark'] .accordion-icon {
+  color: #fff;
+}
+
+.accordion-toggle-icon {
+  color: #fff;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.laika-accordion-content-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.laika-accordion.open .laika-accordion-content-wrapper {
+  grid-template-rows: 1fr;
+}
+
+.laika-accordion-content {
+  overflow: hidden;
+  padding: 0 1.25rem;
+  opacity: 0;
+  background: #000000;
+  transition: opacity 0.3s ease, padding 0.3s ease;
+}
+
+.laika-accordion.open .laika-accordion-content {
+  padding: 0 1.25rem 1.25rem;
+  opacity: 1;
+}
+
+/* Base styles for content inside */
+.laika-accordion-content p {
+  color: #ccc;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+}
+
+[data-theme='dark'] .laika-accordion-content p {
+  color: #ccc;
+}
+
+.laika-accordion-content ul {
+  padding-left: 1.25rem;
+  margin: 0;
+  color: #ccc;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+[data-theme='dark'] .laika-accordion-content ul {
+  color: #ccc;
+}
+
+.laika-accordion-content li {
+  margin-bottom: 0.25rem;
+}

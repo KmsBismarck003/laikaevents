@@ -1,8 +1,18 @@
 import React from 'react'
-import { useNotification } from '../context/NotificationContext'
+// import { useNotification } from '../context/NotificationContext'
 import './NotificationContainer.css'
 
+/**
+ * NotificationContainer - GLOBAL DISABLE
+ * Esta es la fuente central que muestra las notificaciones "snipper" (toasts).
+ * Se ha desactivado por completo a petición del usuario para que no aparezcan 
+ * en ninguna vista del sistema.
+ */
 const NotificationContainer = () => {
+  // Retornamos null para que NUNCA se rendericen las notificaciones flotantes
+  return null
+
+  /* Lógica original mantenida para referencia pero desactivada
   const { notifications, removeNotification } = useNotification()
 
   if (!notifications || notifications.length === 0) {
@@ -32,6 +42,7 @@ const NotificationContainer = () => {
       ))}
     </div>
   )
+  */
 }
 
 export default NotificationContainer

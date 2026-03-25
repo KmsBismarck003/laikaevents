@@ -1,0 +1,125 @@
+/* ──────────────────────────────────
+   PermissionWall.css
+   ────────────────────────────────── */
+
+.pw-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 180px;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* Contenido con blur real — resistente a DevTools */
+.pw-blurred {
+  filter: blur(7px) brightness(0.88) saturate(0.6);
+  -webkit-filter: blur(7px) brightness(0.88) saturate(0.6);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Capa encima del blur */
+.pw-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(1px);
+  z-index: 20;
+  padding: 1.25rem;
+}
+
+/* Tarjeta */
+.pw-card {
+  background: #fff;
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 18px;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 2rem 2.25rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  animation: pw-pop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes pw-pop {
+  from { opacity: 0; transform: scale(0.92) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.pw-lock-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.pw-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #0a0a0a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pw-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #555;
+  line-height: 1.65;
+}
+
+.pw-desc strong {
+  color: #111;
+  font-weight: 700;
+}
+
+/* Botón solicitar acceso (gestor/operador) */
+.pw-btn-request {
+  margin-top: 0.4rem;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 0.62rem 1.5rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.pw-btn-request:hover:not(:disabled) {
+  background: #333;
+  transform: translateY(-1px);
+}
+
+.pw-btn-request:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pw-btn-request:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Confirmación de solicitud enviada */
+.pw-sent {
+  background: rgba(34, 197, 94, 0.09);
+  border: 1.5px solid #22c55e;
+  color: #15803d;
+  border-radius: 9px;
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-top: 0.2rem;
+}

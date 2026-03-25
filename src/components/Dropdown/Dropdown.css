@@ -1,0 +1,183 @@
+/* Dropdown.css - Sistema de Eventos LAIKA Club - Diseño Moderno */
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown__trigger {
+  cursor: pointer;
+  user-select: none;
+}
+
+.dropdown__menu {
+  position: absolute;
+  top: calc(100% + var(--spacing-2));
+  min-width: 220px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-2) 0;
+  z-index: var(--z-dropdown);
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Removed top border bar as it causes flickering in some themes */
+
+.dropdown__menu--open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.dropdown__menu--left {
+  left: 0;
+}
+
+.dropdown__menu--right {
+  right: 0;
+}
+
+.dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4) var(--spacing-5);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.dropdown__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-light), transparent);
+  transition: width var(--transition-base);
+  opacity: 0.1;
+}
+
+.dropdown__item:hover:not(.dropdown__item--disabled) {
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: translateX(4px);
+}
+
+.dropdown__item:hover:not(.dropdown__item--disabled)::before {
+  width: 100%;
+}
+
+.dropdown__item--danger {
+  color: var(--error);
+}
+
+.dropdown__item--danger:hover:not(.dropdown__item--disabled) {
+  background: rgba(255, 51, 102, 0.05);
+  color: var(--error);
+}
+
+/* Color variations for specific file formats */
+.dropdown__item--excel {
+  color: #22c55e !important;
+}
+
+.dropdown__item--excel:hover:not(.dropdown__item--disabled) {
+  background: rgba(34, 197, 94, 0.05) !important;
+}
+
+.dropdown__item--pdf {
+  color: #ef4444 !important;
+}
+
+.dropdown__item--pdf:hover:not(.dropdown__item--disabled) {
+  background: rgba(239, 68, 68, 0.05) !important;
+}
+
+.dropdown__item--json {
+  color: #f59e0b !important;
+}
+
+.dropdown__item--json:hover:not(.dropdown__item--disabled) {
+  background: rgba(245, 158, 11, 0.05) !important;
+}
+
+.dropdown__item--sql {
+  color: #3b82f6 !important;
+}
+
+.dropdown__item--sql:hover:not(.dropdown__item--disabled) {
+  background: rgba(59, 130, 246, 0.05) !important;
+}
+
+.dropdown__item--svg {
+  color: #8b5cf6 !important;
+}
+
+.dropdown__item--svg:hover:not(.dropdown__item--disabled) {
+  background: rgba(139, 92, 246, 0.05) !important;
+}
+
+.dropdown__item--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dropdown__item-icon {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-xl);
+}
+
+.dropdown__item-text {
+  flex: 1;
+}
+
+.dropdown__divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: var(--spacing-2) 0;
+  position: relative;
+}
+
+.dropdown__divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(192, 192, 192, 0.2),
+      transparent);
+}
+
+/* Scrollbar personalizado */
+.dropdown__menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdown__menu::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+.dropdown__menu::-webkit-scrollbar-thumb {
+  background: var(--gray-400);
+  border-radius: var(--border-radius-sm);
+}
+
+.dropdown__menu::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-primary);
+}
