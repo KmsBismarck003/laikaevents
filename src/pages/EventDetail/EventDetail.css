@@ -41,10 +41,7 @@
 }
 
 /* ── FORCE ALL TEXT WHITE inside event page ─────────────────── */
-.event-detail-page
-  *:not(button):not(.buy-btn-premium):not(.buy-btn-premium *):not(
-    .function-chip.active
-  ):not(.badge-primary):not(.badge--primary):not(.ticket-badge):not(.laika-modal-overlay *):not(.winner-announce-overlay *) {
+.event-detail-page *:not(button):not(.buy-btn-premium):not(.buy-btn-premium *):not(.function-chip.active):not(.badge-primary):not(.badge--primary):not(.ticket-badge):not(.badge):not(.badge *):not(.laika-modal-overlay *):not(.winner-announce-overlay *) {
   color: #fff !important;
 }
 
@@ -466,6 +463,17 @@
   color: #000000 !important;
   border-radius: 13px !important;
   font-weight: 800 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Fuerza el texto negro en cualquier Badge dentro de la página de detalles */
+.event-detail-page .badge,
+.event-detail-page .badge--primary,
+.event-detail-page .badge--default,
+.event-detail-page .badge-primary {
+  color: #000000 !important;
+  background: #ffffff !important;
 }
 
 .ticket-type-desc {
